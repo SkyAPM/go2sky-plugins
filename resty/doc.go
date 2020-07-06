@@ -15,22 +15,5 @@
 // specific language governing permissions and limitations
 // under the License.
 
-package go_resty
-
-import (
-	"log"
-
-	"github.com/SkyAPM/go2sky"
-	"github.com/SkyAPM/go2sky/plugins/http"
-	"github.com/go-resty/resty/v2"
-)
-
-// NewGoResty returns a go_resty Client with tracer
-func NewGoResty(tracer *go2sky.Tracer, options ...http.ClientOption) *resty.Client {
-	hc, err := http.NewClient(tracer, options...)
-	if err != nil {
-		log.Fatalf("create client error %v \n", err)
-	}
-
-	return resty.NewWithClient(hc)
-}
+// Package resty (go-resty) is a plugin that can be used to trace GO Resty framework.
+package resty

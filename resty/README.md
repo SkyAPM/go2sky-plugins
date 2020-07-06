@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-go get -u github.com/SkyAPM/go2sky-plugins/go_resty
+go get -u github.com/SkyAPM/go2sky-plugins/resty
 ```
 
 ## Usage
@@ -14,7 +14,7 @@ import (
 	"log"
 
 	"github.com/SkyAPM/go2sky"
-	"github.com/SkyAPM/go2sky-plugins/go_resty"
+	"github.com/SkyAPM/go2sky-plugins/resty"
 	"github.com/SkyAPM/go2sky/reporter"
 )
 
@@ -31,8 +31,8 @@ func main() {
 		log.Fatalf("create tracer error %v \n", err)
 	}
 
-	// create go_resty client
-	client := go_resty.NewGoResty(tracer)
+	// create resty client
+	client := resty.NewGoResty(tracer)
 	// do something
 }
 ```
