@@ -15,13 +15,14 @@
 // specific language governing permissions and limitations
 // under the License.
 
-//Package v2 (Gin) is a HTTP web framework written in
+//Package v2 is a HTTP web framework written in
 //Go (Golang) plugin which can be used for integration with Gin http server.
 package v2
 
 import (
 	"fmt"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/SkyAPM/go2sky"
@@ -32,6 +33,15 @@ import (
 
 const componentIDGINHttpServer = 5006
 
+type routeInfo struct {
+	operationName string
+}
+
+type middleware struct {
+	routeMap     map[string]map[string]routeInfo
+	routeMapOnce sync.Once
+}
+
 //Middleware gin middleware return HandlerFunc  with tracing.
 func Middleware(engine *gin.Engine, tracer *go2sky.Tracer) gin.HandlerFunc {
 	if engine == nil || tracer == nil {
@@ -40,8 +50,33 @@ func Middleware(engine *gin.Engine, tracer *go2sky.Tracer) gin.HandlerFunc {
 		}
 	}
 
+	m := new(middleware)
+
 	return func(c *gin.Context) {
-		span, ctx, err := tracer.CreateEntrySpan(c.Request.Context(), getOperationName(c), func() (string, error) {
+		m.routeMapOnce.Do(func() {
+			routes := engine.Routes()
+			rm := make(map[string]map[string]routeInfo)
+			for _, r := range routes {
+				mm := rm[r.Method]
+				if mm == nil {
+					mm = make(map[string]routeInfo)
+					rm[r.Method] = mm
+				}
+				mm[r.Handler] = routeInfo{
+					operationName: fmt.Sprintf("/%s%s", r.Method, r.Path),
+				}
+			}
+			m.routeMap = rm
+		})
+		var operationName string
+		handlerName := c.HandlerName()
+		if routeInfo, ok := m.routeMap[c.Request.Method][handlerName]; ok {
+			operationName = routeInfo.operationName
+		}
+		if operationName == "" {
+			operationName = c.Request.Method
+		}
+		span, ctx, err := tracer.CreateEntrySpan(c.Request.Context(), operationName, func() (string, error) {
 			return c.Request.Header.Get(propagation.Header), nil
 		})
 		if err != nil {
@@ -63,8 +98,4 @@ func Middleware(engine *gin.Engine, tracer *go2sky.Tracer) gin.HandlerFunc {
 		span.Tag(go2sky.TagStatusCode, strconv.Itoa(c.Writer.Status()))
 		span.End()
 	}
-}
-
-func getOperationName(c *gin.Context) string {
-	return fmt.Sprintf("/%s%s", c.Request.Method, c.FullPath())
 }

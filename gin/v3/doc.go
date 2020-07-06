@@ -15,6 +15,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-//Package v0 (GIN) is a HTTP web framework written in
+//Package v3 (GIN) is a HTTP web framework written in
 //Go (Golang) plugin which can be used for integration with Gin http server.
-package v0
+package v3

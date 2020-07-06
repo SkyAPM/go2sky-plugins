@@ -6,7 +6,7 @@ The plugins of go2sky
 
 ### Plugin Summary
  
-1. [HTTP Server & Client](http/README.md)
-1. [Gin](gin/README.md)
-1. [Gear](gear/README.md)
-1. [GO-Resty](resty/README.md)
+1. [http server & client](http/README.md)
+1. [gin](gin/README.md)
+1. [gear](gear/README.md)
+1. [go-resty](resty/README.md)
