@@ -15,13 +15,15 @@
 # limitations under the License.
 #
 
+TEST_SHELL="./tools/test.sh"
+
 .PHONY: test
 test:
-	./tools/test.sh
+	${TEST_SHELL} test
 
 .PHONY: deps
 deps:
-	./tools/deps.sh
+	${TEST_SHELL} deps
 
 LINTER := bin/golangci-lint
 $(LINTER):
@@ -29,11 +31,11 @@ $(LINTER):
 
 .PHONY: lint
 lint: $(LINTER)
-	./tools/lint.sh lint
+	${TEST_SHELL} lint
 
 .PHONY: fix
 fix: $(LINTER)
-	./tools/lint.sh fix
+	${TEST_SHELL} fix
 
 .PHONY: license
 license:

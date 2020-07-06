@@ -16,12 +16,68 @@
 # specific language governing permissions and limitations
 # under the License.
 
-mod="github.com/SkyAPM/go2sky-plugins"
+GO111MODULE=on
+PLUGINS_HOME=$(cd "$(dirname "$0")";cd ..;pwd)
 PKGS=""
-for d in $(find * -name 'go.mod'); do
-  pushd $(dirname $d) >/dev/null
-  echo "🟢 testing `sed -n 1p go.mod|cut -d ' ' -f2`"
-  go mod download
-  go test -v ./...
-  popd >/dev/null
-done
+
+function test() {
+    for d in $(find * -name 'go.mod'); do
+        pushd $(dirname $d) >/dev/null
+        echo "🟢 testing `sed -n 1p go.mod|cut -d ' ' -f2`"
+        go mod download
+        go test -v ./...
+        popd >/dev/null
+    done
+}
+
+function deps() {
+    for d in $(find * -name 'go.mod'); do
+        pushd $(dirname $d)
+        echo "🟢 download `sed -n 1p go.mod|cut -d ' ' -f2`"
+        go mod download
+        popd
+    done
+}
+
+function lint() {
+    LINTER=${PLUGINS_HOME}/bin/golangci-lint
+    LINTER_CONFIG=${PLUGINS_HOME}/golangci.yml
+    for d in $(find * -name 'go.mod'); do
+        pushd $(dirname $d)
+        echo "🟢 golangci lint `sed -n 1p go.mod|cut -d ' ' -f2`"
+        ${LINTER} run --timeout=10m --exclude-use-default=false --config=${LINTER_CONFIG}
+        popd
+    done
+}
+
+function fix() {
+    LINTER=${PLUGINS_HOME}/bin/golangci-lint
+    for d in $(find * -name 'go.mod'); do
+        pushd $(dirname $d)
+        echo "🟢 golangci fix `sed -n 1p go.mod|cut -d ' ' -f2`"
+        ${LINTER} run -v --fix ./...
+        popd
+    done
+}
+
+function print_help(){
+    echo "options: deps, test, lint, fix"
+}
+
+case $1 in
+  deps)
+    deps
+    ;;
+  test)
+    test
+    ;;
+  lint)
+    lint
+    ;;
+  fix)
+    fix
+    ;;
+  *)
+    print_help
+    ;;
+esac

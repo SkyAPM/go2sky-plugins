@@ -1,4 +1,4 @@
-module github.com/SkyAPM/go2sky-plugins/gin/v1
+module github.com/SkyAPM/go2sky-plugins/gin/v0
 
 go 1.12
 

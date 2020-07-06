@@ -15,9 +15,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-//Package v1 is a HTTP web framework written in
+//Package v0 is a HTTP web framework written in
 //Go (Golang) plugin which can be used for integration with Gin http server.
-package v1
+package v0
 
 import (
 	"fmt"

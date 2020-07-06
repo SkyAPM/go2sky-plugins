@@ -27,15 +27,11 @@ jobs:
   build:
     name: Build & Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [1.12, 1.13, 1.14]
-      fail-fast: false
     steps:
-      - name: Set up ${{ matrix.go-version }}
-        uses: actions/setup-go@v1
+      - name: Set up 1.12
+        uses: actions/setup-go@v0
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: 1.12
         id: go
 
       - name: Check out code into the Go module directory
