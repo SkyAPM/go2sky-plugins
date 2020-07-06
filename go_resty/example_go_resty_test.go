@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-package resty
+package go_resty
 
 import (
 	"fmt"
@@ -51,7 +51,7 @@ func ExampleNewGoResty() {
 	ts := httptest.NewServer(sm(endFunc()))
 	defer ts.Close()
 
-	// create resty client
+	// create go_resty client
 	client := NewGoResty(tracer)
 	resp, err := client.R().Get(fmt.Sprintf("%s/end", ts.URL))
 

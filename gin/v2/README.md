@@ -37,7 +37,9 @@ func main() {
 
 	//Use go2sky middleware with tracing
 	r.Use(v2.Middleware(r, tracer))
-	
+
 	// do something
 }
 ```
+
+[See more](example_gin_test.go).

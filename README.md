@@ -9,4 +9,4 @@ The plugins of go2sky
 1. [http server & client](http/README.md)
 1. [gin](gin/README.md)
 1. [gear](gear/README.md)
-1. [go-resty](resty/README.md)
+1. [go-resty](go_resty/README.md)
