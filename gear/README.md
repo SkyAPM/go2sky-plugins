@@ -20,6 +20,7 @@ import (
 )
 
 func main() {
+    // Use gRPC reporter for production
 	re, err := reporter.NewLogReporter()
 	if err != nil {
 		log.Fatalf("new reporter error %v \n", err)

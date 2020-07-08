@@ -18,6 +18,7 @@
 package gear
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -36,7 +37,7 @@ func Middleware(tracer *go2sky.Tracer) gear.Middleware {
 			return nil
 		}
 
-		span, _, err := tracer.CreateEntrySpan(ctx, ctx.Path, func() (string, error) {
+		span, _, err := tracer.CreateEntrySpan(ctx, operationName(ctx), func() (string, error) {
 			return ctx.GetHeader(propagation.Header), nil
 		})
 		if err != nil {
@@ -58,4 +59,8 @@ func Middleware(tracer *go2sky.Tracer) gear.Middleware {
 		})
 		return nil
 	}
+}
+
+func operationName(ctx *gear.Context) string {
+	return fmt.Sprintf("%s/%s", ctx.Method, ctx.Path)
 }
