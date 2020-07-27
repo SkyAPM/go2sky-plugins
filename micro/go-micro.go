@@ -22,41 +22,41 @@ import (
 	"fmt"
 	"github.com/SkyAPM/go2sky"
 	"github.com/micro/go-micro/v2/client"
+	"github.com/micro/go-micro/v2/metadata"
 	"github.com/micro/go-micro/v2/server"
 	"time"
 )
 
+
 type swWrapper struct {
-	sw 		go2sky.Tracer
+	sw	go2sky.Tracer
 	client.Client
 }
 
-func StartSpanFromContext(ctx context.Context, tracer go2sky.Tracer, name string) (go2sky.Span, context.Context, error) {
-	span, ctx, err := tracer.CreateEntrySpan(ctx, name, nil)
-	if err != nil {
-		return nil, ctx, err
-	}
-	span.SetOperationName(name)
-
-	return span, ctx, nil
-}
 
 func (s *swWrapper) Call (ctx context.Context, req client.Request, rsp interface{}, opts ...client.CallOption) error {
-	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
-	span, ctx, err := StartSpanFromContext(ctx, s.sw, name)
+	span, err:= s.sw.CreateExitSpan(ctx, req.Endpoint(), req.Service(), nil)
 	if err != nil {
 		return err
 	}
+	md, ok := metadata.FromContext(ctx)
+	if !ok {
+		md = make(metadata.Metadata)
+	}
 	defer span.End()
-	if err = s.Client.Call(ctx, req, rsp, opts...); err != nil {
+	//TODO
+	span.Tag(go2sky.TagHTTPMethod, req.Method())
+	for k, v := range md {
+		span.Tag(go2sky.Tag(k), v)
+	}
+	if err= s.Client.Call(ctx, req, rsp, opts ...); err != nil {
 		span.Error(time.Now(), err.Error())
 	}
 	return err
 }
 
-func (s *swWrapper) Stream (ctx context.Context, req client.Request, opts ...client.CallOption) (client.Stream, error) {
-	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
-	span, ctx, err := StartSpanFromContext(ctx, s.sw, name)
+/*func (s *swWrapper) Stream (ctx context.Context, req client.Request, opts ...client.CallOption) (client.Stream, error) {
+	span, err := s.sw.CreateExitSpan(ctx, req.Endpoint(), req.Service(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -66,11 +66,11 @@ func (s *swWrapper) Stream (ctx context.Context, req client.Request, opts ...cli
 		span.Error(time.Now(), err.Error())
 	}
 	return stream, err
-}
+}*/
 
-func (s *swWrapper) Publish(ctx context.Context, p client.Message, opts ...client.PublishOption) error {
+/*func (s *swWrapper) Publish(ctx context.Context, p client.Message, opts ...client.PublishOption) error {
 	name := fmt.Sprintf("Pub to %s", p.Topic())
-	span, ctx, err := StartSpanFromContext(ctx, s.sw, name)
+	span, err := s.sw.CreateExitSpan(ctx, name, "", nil)
 	if err != nil {
 		return err
 	}
@@ -79,25 +79,26 @@ func (s *swWrapper) Publish(ctx context.Context, p client.Message, opts ...clien
 		span.Error(time.Now(), err.Error())
 	}
 	return err
-}
+}*/
 
 //NewClientWrapper accepts a go2sky Tracer and returns a Client Wrapper
-func NewClientWrapper (sw go2sky.Tracer) client.Wrapper {
+func NewClientWrapper (sw *go2sky.Tracer) client.Wrapper {
 	return func(c client.Client) client.Client {
-			return &swWrapper{sw:sw, Client: c}
-		}
+		return &swWrapper{sw:*sw, Client: c}
+	}
 }
 
 //NewHandlerWrapper accepts a go2sky Tracer and returns a Server Wrapper
-func NewHandlerWrapper(sw go2sky.Tracer) server.HandlerWrapper {
+func NewHandlerWrapper(sw *go2sky.Tracer) server.HandlerWrapper {
 	return func(h server.HandlerFunc) server.HandlerFunc {
 		return func(ctx context.Context, req server.Request, rsp interface{}) error {
 			name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
-			span, ctx, err := StartSpanFromContext(ctx, sw, name)
+			span, ctx, err := sw.CreateEntrySpan(ctx, name, nil)
 			if err != nil {
 				return err
 			}
-			defer span.End()
+			//TODO
+			span.Tag(go2sky.TagHTTPMethod, req.Method())
 			if err = h(ctx, req, rsp); err != nil {
 				span.Error(time.Now(), err.Error())
 			}
@@ -105,4 +106,3 @@ func NewHandlerWrapper(sw go2sky.Tracer) server.HandlerWrapper {
 		}
 	}
 }
-
