@@ -15,4 +15,4 @@
 // specific language governing permissions and limitations
 // under the License.
 
-package micro
+package sw_micro

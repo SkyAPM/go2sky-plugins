@@ -1,4 +1,4 @@
-package micro
+package sw_micro
 
 import (
 	"context"

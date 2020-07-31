@@ -17,6 +17,6 @@
 
 // Package micro (go-micro) is a plugin that can be used to trace Go-micro framework.
 
-package micro
+package sw_micro
 
 
