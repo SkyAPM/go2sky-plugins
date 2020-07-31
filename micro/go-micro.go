@@ -1,4 +1,4 @@
-package skywalking
+package micro
 
 import (
 	"context"
@@ -21,7 +21,11 @@ func NewHnadlerWrapper(sw *go2sky.Tracer) server.HandlerWrapper {
 		return func(ctx context.Context, req server.Request, rsp interface{}) error {
 			name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 			span, ctx, err := sw.CreateEntrySpan(ctx, name, func() (string, error) {
-				return getHeader(req.Header(),propagation.Header), nil
+				str, ok := metadata.Get(ctx, propagation.Header)
+				if !ok {
+					return "", nil
+				}
+				return str, nil
 			})
 			if err != nil {
 				return err
@@ -35,32 +39,19 @@ func NewHnadlerWrapper(sw *go2sky.Tracer) server.HandlerWrapper {
 	}
 }
 
-func getHeader(head map[string]string, str string) string {
-	return head[str]
-}
-
-func setHeader(m map[string]string, header string) {
-	m[propagation.Header] = header
-}
-
 func (s *swWrapper) Call(ctx context.Context, req client.Request, rsp interface{}, opts ...client.CallOption) error {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
-	span, err:= s.sw.CreateExitSpan(ctx,name, name, func(header string) error {
-		return nil    // TODO
+	span, err:= s.sw.CreateExitSpan(ctx,name, "", func(header string) error {
+		swHeader := make(metadata.Metadata)
+		swHeader[propagation.Header] = header
+		metadata.MergeContext(ctx, swHeader, true)
+		return nil
 	})
 	if err != nil {
 		return err
 	}
-	md, ok := metadata.FromContext(ctx)
-	if !ok {
-		md = make(metadata.Metadata)
-	}
 	defer span.End()
-	//TODO
 	span.Tag(go2sky.TagHTTPMethod, req.Method())
-	for k, v := range md {
-		span.Tag(go2sky.Tag(k), v)
-	}
 	if err= s.Client.Call(ctx, req, rsp, opts ...); err != nil {
 		span.Error(time.Now(), err.Error())
 	}
