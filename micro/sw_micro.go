@@ -98,6 +98,8 @@ func NewCallWrapper(sw *go2sky.Tracer) client.CallWrapper {
 			if err != nil {
 				return err
 			}
+			span.Tag(go2sky.TagHTTPMethod, req.Method())
+			span.Tag(go2sky.TagURL, req.Service()+req.Endpoint())
 			defer span.End()
 			if err = cf(ctx, node, req, rsp, opts); err != nil {
 				span.Error(time.Now(), err.Error())
@@ -124,6 +126,8 @@ func NewSubscriberWrapper(sw *go2sky.Tracer) server.SubscriberWrapper {
 				return err
 			}
 			defer span.End()
+			span.Tag(go2sky.TagHTTPMethod, msg.ContentType())
+			span.Tag(go2sky.TagURL, msg.Topic())
 			if err = next(ctx, msg); err != nil {
 				span.Error(time.Now(), err.Error())
 			}
