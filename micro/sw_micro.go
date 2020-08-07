@@ -47,6 +47,8 @@ func (s *swWrapper) Stream(ctx context.Context, req client.Request, opts ...clie
 		return nil
 	})
 	defer span.End()
+	span.Tag(go2sky.TagHTTPMethod, req.Method())
+	span.Tag(go2sky.TagURL, req.Service()+req.Endpoint())
 	stream, err := s.Client.Stream(ctx, req, opts...)
 	if err != nil {
 		span.Error(time.Now(), err.Error())
@@ -62,6 +64,8 @@ func (s *swWrapper) Publish(ctx context.Context, p client.Message, opts ...clien
 		ctx = metadata.NewContext(ctx, swHeader)
 		return nil
 	})
+	span.Tag(go2sky.TagHTTPMethod, p.ContentType())
+	span.Tag(go2sky.TagURL, p.Topic())
 	if err != nil {
 		return err
 	}
