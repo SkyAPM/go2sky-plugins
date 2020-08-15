@@ -2,14 +2,14 @@ package sw_micro
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/propagation"
-	"github.com/micro/go-micro/v2/client"
-	"github.com/micro/go-micro/v2/metadata"
-	"github.com/micro/go-micro/v2/registry"
+	"github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/metadata"
+	"github.com/micro/go-micro/server"
 	"time"
+	"encoding/json"
 )
 
 type swWrapper struct {
@@ -20,17 +20,21 @@ type swWrapper struct {
 func (s *swWrapper) Call(ctx context.Context, req client.Request, rsp interface{}, opts ...client.CallOption) error {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 	span, err:= s.sw.CreateExitSpan(ctx,name, req.Service(), func(header string) error {
-		swHeader := make(metadata.Metadata)
-		swHeader[propagation.Header] = header
-		ctx = metadata.NewContext(ctx, swHeader)
+		mda, _ := metadata.FromContext(ctx)
+		md := metadata.Copy(mda)
+		md[propagation.Header] = header
+		ctx = metadata.NewContext(ctx, md)
 		return nil
 	})
 	if err != nil {
 		return err
 	}
+
+	b, err := json.Marshal(span)
+	fmt.Printf("%s", b)
+
 	defer span.End()
-	span.Tag(go2sky.TagHTTPMethod, req.Method())
-	span.Tag(go2sky.TagURL, req.Service()+req.Endpoint())
+
 	if err= s.Client.Call(ctx, req, rsp, opts ...); err != nil {
 		span.Error(time.Now(), err.Error())
 	}
@@ -80,7 +84,7 @@ func NewClientWrapper (sw *go2sky.Tracer) client.Wrapper {
 		return &swWrapper{sw: *sw, Client: c}
 	}
 }
-
+/*
 func NewCallWrapper(sw *go2sky.Tracer) client.CallWrapper {
 	return func(cf client.CallFunc) client.CallFunc {
 		return func(ctx context.Context, node *registry.Node, req client.Request, rsp interface{}, opts client.CallOptions) error {
@@ -107,7 +111,7 @@ func NewCallWrapper(sw *go2sky.Tracer) client.CallWrapper {
 		}
 	}
 }
-/*
+
 func NewSubscriberWrapper(sw *go2sky.Tracer) server.SubscriberWrapper {
 	return func(next server.SubscriberFunc) server.SubscriberFunc {
 		return func(ctx context.Context, msg server.Message) error {
@@ -134,27 +138,26 @@ func NewSubscriberWrapper(sw *go2sky.Tracer) server.SubscriberWrapper {
 		}
 	}
 }
-
+*/
 func NewHnadlerWrapper(sw *go2sky.Tracer) server.HandlerWrapper {
 	return func(fn server.HandlerFunc) server.HandlerFunc {
 		return func(ctx context.Context, req server.Request, rsp interface{}) error {
 			name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 			span, ctx, err := sw.CreateEntrySpan(ctx, name, func() (string, error) {
-				str, ok := metadata.Get(ctx, propagation.Header)
-				if !ok {
-					return "no key", nil
-				}
+				str, _ := metadata.Get(ctx, "Sw8")
 				return str, nil
 			})
 			if err != nil {
 				return err
 			}
-			span.Tag(go2sky.TagHTTPMethod, req.Method())
-			span.Tag(go2sky.TagURL, req.Service()+req.Endpoint())
+
+			b, err := json.Marshal(span)
+			fmt.Printf("%s", b)
+
 			if err = fn(ctx, req, rsp); err != nil {
 				span.Error(time.Now(), err.Error())
 			}
 			return err
 		}
 	}
-}*/
+}
