@@ -9,7 +9,6 @@ import (
 	"github.com/micro/go-micro/v2/client"
 	"github.com/micro/go-micro/v2/metadata"
 	"github.com/micro/go-micro/v2/registry"
-	"github.com/micro/go-micro/v2/server"
 	"time"
 )
 
@@ -37,7 +36,7 @@ func (s *swWrapper) Call(ctx context.Context, req client.Request, rsp interface{
 	}
 	return err
 }
-
+/*
 func (s *swWrapper) Stream(ctx context.Context, req client.Request, opts ...client.CallOption) (client.Stream, error) {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
@@ -74,7 +73,7 @@ func (s *swWrapper) Publish(ctx context.Context, p client.Message, opts ...clien
 		span.Error(time.Now(), err.Error())
 	}
 	return err
-}
+}*/
 
 func NewClientWrapper (sw *go2sky.Tracer) client.Wrapper {
 	return func(c client.Client) client.Client {
@@ -108,7 +107,7 @@ func NewCallWrapper(sw *go2sky.Tracer) client.CallWrapper {
 		}
 	}
 }
-
+/*
 func NewSubscriberWrapper(sw *go2sky.Tracer) server.SubscriberWrapper {
 	return func(next server.SubscriberFunc) server.SubscriberFunc {
 		return func(ctx context.Context, msg server.Message) error {
@@ -158,4 +157,4 @@ func NewHnadlerWrapper(sw *go2sky.Tracer) server.HandlerWrapper {
 			return err
 		}
 	}
-}
+}*/
