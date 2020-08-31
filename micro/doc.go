@@ -15,8 +15,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-// Package micro (go-micro) is a plugin that can be used to trace Go-micro framework.
+// Package micro (sw_micro) is a plugin that can be used to trace Go-micro framework.
 
-package sw_micro
-
-
+package swmicro
