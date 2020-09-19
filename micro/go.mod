@@ -17,7 +17,7 @@
 
 // Package micro (sw_micro) is a plugin that can be used to trace Go-micro framework.
 
-module swmicro
+module go_micro
 
 go 1.14
 
