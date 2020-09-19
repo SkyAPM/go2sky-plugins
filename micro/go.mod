@@ -1,4 +1,4 @@
-module go-micro
+module go_micro
 
 go 1.14
 
