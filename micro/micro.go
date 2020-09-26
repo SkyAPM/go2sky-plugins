@@ -108,6 +108,7 @@ func WithSubscriberTag(key string) SubscriberOption {
 	}
 }
 
+// Call
 func (s *ClientWrapper) Call(ctx context.Context, req client.Request, rsp interface{}, opts ...client.CallOption) error {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
@@ -134,6 +135,7 @@ func (s *ClientWrapper) Call(ctx context.Context, req client.Request, rsp interf
 	return err
 }
 
+// Stream
 func (s *ClientWrapper) Stream(ctx context.Context, req client.Request, opts ...client.CallOption) (client.Stream, error) {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
@@ -161,6 +163,7 @@ func (s *ClientWrapper) Stream(ctx context.Context, req client.Request, opts ...
 	return stream, err
 }
 
+// Publish
 func (s *ClientWrapper) Publish(ctx context.Context, p client.Message, opts ...client.PublishOption) error {
 	name := fmt.Sprintf("Pub to %s", p.Topic())
 	span, err := s.sw.CreateExitSpan(ctx, name, p.ContentType(), func(header string) error {
@@ -187,7 +190,7 @@ func (s *ClientWrapper) Publish(ctx context.Context, p client.Message, opts ...c
 	return err
 }
 
-//NewClientWrapper return a client with wrapper
+// NewClientWrapper accepts an skywalking Tracer and returns a Client Wrapper
 func NewClientWrapper(sw *go2sky.Tracer, options ...ClientOption) client.Wrapper {
 	return func(c client.Client) client.Client {
 		co := &ClientWrapper{
@@ -201,7 +204,7 @@ func NewClientWrapper(sw *go2sky.Tracer, options ...ClientOption) client.Wrapper
 	}
 }
 
-//NewCallWrapper return call with wrapper
+// NewCallWrapper accepts an skywalking Tracer and returns a Call Wrapper
 func NewCallWrapper(sw *go2sky.Tracer, options ...CallOption) client.CallWrapper {
 	return func(cf client.CallFunc) client.CallFunc {
 		return func(ctx context.Context, node *registry.Node, req client.Request, rsp interface{}, opts client.CallOptions) error {
@@ -241,7 +244,7 @@ func NewCallWrapper(sw *go2sky.Tracer, options ...CallOption) client.CallWrapper
 	}
 }
 
-//NewSubscriberWrapper return a subscriber with wrapper
+// NewHandlerWrapper accepts an skywalking Tracer and returns a Handler Wrapper
 func NewSubscriberWrapper(sw *go2sky.Tracer, options ...SubscriberOption) server.SubscriberWrapper {
 	return func(next server.SubscriberFunc) server.SubscriberFunc {
 		return func(ctx context.Context, msg server.Message) error {
@@ -281,7 +284,7 @@ func NewSubscriberWrapper(sw *go2sky.Tracer, options ...SubscriberOption) server
 	}
 }
 
-//NewHandlerWrapper return a server.Hanler with wrapper
+// NewSubscriberWrapper accepts an skywalking Tracer and returns a Subscriber Wrapper
 func NewHandlerWrapper(sw *go2sky.Tracer, options ...HandlerOption) server.HandlerWrapper {
 	return func(fn server.HandlerFunc) server.HandlerFunc {
 		return func(ctx context.Context, req server.Request, rsp interface{}) error {
