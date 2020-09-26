@@ -21,7 +21,7 @@ import (
 	"time"
    	"github.com/SkyAPM/go2sky"
    	"github.com/SkyAPM/go2sky/reporter"
-	sw "github.com/SkyAPM/go2sky-plugins/go_micro"
+	sw "github.com/SkyAPM/go2sky-plugins/micro"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/client"
 )
