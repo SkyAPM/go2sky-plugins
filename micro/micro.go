@@ -26,12 +26,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/micro/go-micro/registry"
-
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/propagation"
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/metadata"
+	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/server"
 )
 
@@ -108,7 +107,7 @@ func WithSubscriberTag(key string) SubscriberOption {
 	}
 }
 
-// Call
+// Call is used for client calls
 func (s *ClientWrapper) Call(ctx context.Context, req client.Request, rsp interface{}, opts ...client.CallOption) error {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
@@ -135,7 +134,7 @@ func (s *ClientWrapper) Call(ctx context.Context, req client.Request, rsp interf
 	return err
 }
 
-// Stream
+// Stream is used streaming
 func (s *ClientWrapper) Stream(ctx context.Context, req client.Request, opts ...client.CallOption) (client.Stream, error) {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
@@ -163,7 +162,7 @@ func (s *ClientWrapper) Stream(ctx context.Context, req client.Request, opts ...
 	return stream, err
 }
 
-// Publish
+// Publish is used publish message to subscriber
 func (s *ClientWrapper) Publish(ctx context.Context, p client.Message, opts ...client.PublishOption) error {
 	name := fmt.Sprintf("Pub to %s", p.Topic())
 	span, err := s.sw.CreateExitSpan(ctx, name, p.ContentType(), func(header string) error {
