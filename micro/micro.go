@@ -68,6 +68,7 @@ type CallOption func(*callWrapper)
 // SubscriberOption allow optional configuration of Subscriber
 type SubscriberOption func(*subscriberWrapper)
 
+// WithClientTag allow users to customize tags
 func WithClientTag(key string) ClientOption {
 	return func(c *ClientWrapper) {
 		if c.extraTags == nil {
@@ -77,6 +78,7 @@ func WithClientTag(key string) ClientOption {
 	}
 }
 
+// WithHandlerTag allow users to customize tags
 func WithHandlerTag(key string) HandlerOption {
 	return func(h *handlerWrapper) {
 		if h.extraTags == nil {
@@ -86,6 +88,7 @@ func WithHandlerTag(key string) HandlerOption {
 	}
 }
 
+// WithCallTag allow users to customize tags
 func WithCallTag(key string) CallOption {
 	return func(c *callWrapper) {
 		if c.extraTags == nil {
@@ -95,6 +98,7 @@ func WithCallTag(key string) CallOption {
 	}
 }
 
+// WithSubscriberTag allow users to customize tags
 func WithSubscriberTag(key string) SubscriberOption {
 	return func(s *subscriberWrapper) {
 		if s.extraTags == nil {
@@ -310,4 +314,3 @@ func NewHandlerWrapper(sw *go2sky.Tracer, options ...HandlerOption) server.Handl
 		}
 	}
 }
-

@@ -92,4 +92,3 @@ func ExampleNewHandlerWrapper() {
 	wg.Wait()
 	// Output:
 }
-
