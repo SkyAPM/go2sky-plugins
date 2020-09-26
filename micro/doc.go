@@ -16,5 +16,4 @@
 // under the License.
 
 // Package micro (sw_micro) is a plugin that can be used to trace Go-micro framework.
-
-package go_micro
+package micro

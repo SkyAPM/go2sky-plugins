@@ -17,17 +17,18 @@
 
 // Package micro (sw_micro) is a plugin that can be used to trace Go-micro framework.
 
-package go_micro
+package micro
 
 import (
 	"context"
+	"log"
+	"sync"
+	"time"
+
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
 	"github.com/micro/go-micro"
 	"github.com/micro/go-micro/client"
-	"log"
-	"sync"
-	"time"
 )
 
 type Greeter struct{}
@@ -55,7 +56,7 @@ func ExampleNewHandlerWrapper() {
 		service := micro.NewService(
 			micro.Name("greeter"),
 			//Use go2sky middleware with tracing
-			micro.WrapHandler(NewHandlerWrapper(tracer)),
+			micro.WrapHandler(NewHandlerWrapper(tracer, WithHandlerTag("servertag", "serversuccess"))),
 		)
 		// initialise command line
 		// set the handler
@@ -78,7 +79,7 @@ func ExampleNewHandlerWrapper() {
 		cli := micro.NewService(
 			micro.Name("micro_client"),
 			//Use go2sky middleware with tracing
-			micro.WrapClient(NewClientWrapper(tracer)),
+			micro.WrapClient(NewClientWrapper(tracer, WithClientTag("test", "success"))),
 		)
 		c := cli.Client()
 		request := c.NewRequest("greeter", "Greeter.Hello", "john", client.WithContentType("application/json"))
@@ -86,7 +87,7 @@ func ExampleNewHandlerWrapper() {
 		if err := c.Call(context.TODO(), request, &response); err != nil {
 			log.Fatalf("call service err %v \n", err)
 		}
-		log.Fatalf("reseponse: %v \n", response)
+		log.Printf("reseponse: %v \n", response)
 	}()
 	wg.Wait()
 	// Output:
