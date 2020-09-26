@@ -34,7 +34,7 @@ import (
 	"github.com/micro/go-micro/server"
 )
 
-type ClientWrapper struct {
+type clientWrapper struct {
 	sw *go2sky.Tracer
 	client.Client
 	extraTags metadata.Metadata
@@ -56,7 +56,7 @@ type subscriberWrapper struct {
 }
 
 // ClientOption allow optional configuration of Client
-type ClientOption func(*ClientWrapper)
+type ClientOption func(*clientWrapper)
 
 // HandlerOption allow optional configuration of Handler
 type HandlerOption func(*handlerWrapper)
@@ -69,7 +69,7 @@ type SubscriberOption func(*subscriberWrapper)
 
 // WithClientTag allow users to customize tags
 func WithClientTag(key string) ClientOption {
-	return func(c *ClientWrapper) {
+	return func(c *clientWrapper) {
 		if c.extraTags == nil {
 			c.extraTags = make(metadata.Metadata)
 		}
@@ -108,7 +108,7 @@ func WithSubscriberTag(key string) SubscriberOption {
 }
 
 // Call is used for client calls
-func (s *ClientWrapper) Call(ctx context.Context, req client.Request, rsp interface{}, opts ...client.CallOption) error {
+func (s *clientWrapper) Call(ctx context.Context, req client.Request, rsp interface{}, opts ...client.CallOption) error {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
 		mda, _ := metadata.FromContext(ctx)
@@ -135,7 +135,7 @@ func (s *ClientWrapper) Call(ctx context.Context, req client.Request, rsp interf
 }
 
 // Stream is used streaming
-func (s *ClientWrapper) Stream(ctx context.Context, req client.Request, opts ...client.CallOption) (client.Stream, error) {
+func (s *clientWrapper) Stream(ctx context.Context, req client.Request, opts ...client.CallOption) (client.Stream, error) {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
 		mda, _ := metadata.FromContext(ctx)
@@ -163,7 +163,7 @@ func (s *ClientWrapper) Stream(ctx context.Context, req client.Request, opts ...
 }
 
 // Publish is used publish message to subscriber
-func (s *ClientWrapper) Publish(ctx context.Context, p client.Message, opts ...client.PublishOption) error {
+func (s *clientWrapper) Publish(ctx context.Context, p client.Message, opts ...client.PublishOption) error {
 	name := fmt.Sprintf("Pub to %s", p.Topic())
 	span, err := s.sw.CreateExitSpan(ctx, name, p.ContentType(), func(header string) error {
 		mda, _ := metadata.FromContext(ctx)
@@ -192,7 +192,7 @@ func (s *ClientWrapper) Publish(ctx context.Context, p client.Message, opts ...c
 // NewClientWrapper accepts an skywalking Tracer and returns a Client Wrapper
 func NewClientWrapper(sw *go2sky.Tracer, options ...ClientOption) client.Wrapper {
 	return func(c client.Client) client.Client {
-		co := &ClientWrapper{
+		co := &clientWrapper{
 			sw:     sw,
 			Client: c,
 		}
