@@ -1,4 +1,4 @@
-module micro
+module github.com/SkyAPM/go2sky-plugins/micro
 
 go 1.14
 

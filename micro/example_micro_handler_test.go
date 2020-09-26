@@ -56,7 +56,7 @@ func ExampleNewHandlerWrapper() {
 		service := micro.NewService(
 			micro.Name("greeter"),
 			//Use go2sky middleware with tracing
-			micro.WrapHandler(NewHandlerWrapper(tracer, WithHandlerTag("servertag", "serversuccess"))),
+			micro.WrapHandler(NewHandlerWrapper(tracer, WithHandlerTag("User-Agent"))),
 		)
 		// initialise command line
 		// set the handler
@@ -79,7 +79,7 @@ func ExampleNewHandlerWrapper() {
 		cli := micro.NewService(
 			micro.Name("micro_client"),
 			//Use go2sky middleware with tracing
-			micro.WrapClient(NewClientWrapper(tracer, WithClientTag("test", "success"))),
+			micro.WrapClient(NewClientWrapper(tracer, WithClientTag("Micro-From-Service"))),
 		)
 		c := cli.Client()
 		request := c.NewRequest("greeter", "Greeter.Hello", "john", client.WithContentType("application/json"))
@@ -92,3 +92,4 @@ func ExampleNewHandlerWrapper() {
 	wg.Wait()
 	// Output:
 }
+
