@@ -243,7 +243,7 @@ func NewCallWrapper(sw *go2sky.Tracer, options ...CallOption) client.CallWrapper
 	}
 }
 
-// NewHandlerWrapper accepts an skywalking Tracer and returns a Handler Wrapper
+// NewSubscriberWrapper accepts an skywalking Tracer and returns a Handler Wrapper
 func NewSubscriberWrapper(sw *go2sky.Tracer, options ...SubscriberOption) server.SubscriberWrapper {
 	return func(next server.SubscriberFunc) server.SubscriberFunc {
 		return func(ctx context.Context, msg server.Message) error {
@@ -283,7 +283,7 @@ func NewSubscriberWrapper(sw *go2sky.Tracer, options ...SubscriberOption) server
 	}
 }
 
-// NewSubscriberWrapper accepts an skywalking Tracer and returns a Subscriber Wrapper
+// NewHandlerWrapper accepts an skywalking Tracer and returns a Subscriber Wrapper
 func NewHandlerWrapper(sw *go2sky.Tracer, options ...HandlerOption) server.HandlerWrapper {
 	return func(fn server.HandlerFunc) server.HandlerFunc {
 		return func(ctx context.Context, req server.Request, rsp interface{}) error {
