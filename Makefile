@@ -16,14 +16,15 @@
 #
 
 TEST_SHELL="./tools/test.sh"
+PLUGIN_DIR?=''
 
 .PHONY: test
 test:
-	${TEST_SHELL} test
+	${TEST_SHELL} test ${PLUGIN_DIR}
 
 .PHONY: deps
 deps:
-	${TEST_SHELL} deps
+	${TEST_SHELL} deps  ${PLUGIN_DIR}
 
 LINTER := bin/golangci-lint
 $(LINTER):
@@ -31,11 +32,11 @@ $(LINTER):
 
 .PHONY: lint
 lint: $(LINTER)
-	${TEST_SHELL} lint
+	${TEST_SHELL} lint ${PLUGIN_DIR}
 
 .PHONY: fix
 fix: $(LINTER)
-	${TEST_SHELL} fix
+	${TEST_SHELL} fix ${PLUGIN_DIR}
 
 .PHONY: license
 license:
