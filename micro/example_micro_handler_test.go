@@ -15,8 +15,6 @@
 // specific language governing permissions and limitations
 // under the License.
 
-// Package micro (sw_micro) is a plugin that can be used to trace Go-micro framework.
-
 package micro
 
 import (
@@ -56,7 +54,7 @@ func ExampleNewHandlerWrapper() {
 		service := micro.NewService(
 			micro.Name("greeter"),
 			//Use go2sky middleware with tracing
-			micro.WrapHandler(NewHandlerWrapper(tracer, WithHandlerTag("User-Agent"))),
+			micro.WrapHandler(NewHandlerWrapper(tracer, "User-Agent")),
 		)
 		// initialise command line
 		// set the handler
@@ -79,7 +77,7 @@ func ExampleNewHandlerWrapper() {
 		cli := micro.NewService(
 			micro.Name("micro_client"),
 			//Use go2sky middleware with tracing
-			micro.WrapClient(NewClientWrapper(tracer, WithClientTag("Micro-From-Service"))),
+			micro.WrapClient(NewClientWrapper(tracer, WithClientWrapperReportTags("Micro-From-Service"))),
 		)
 		c := cli.Client()
 		request := c.NewRequest("greeter", "Greeter.Hello", "john", client.WithContentType("application/json"))

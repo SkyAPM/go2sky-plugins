@@ -15,95 +15,45 @@
 // specific language governing permissions and limitations
 // under the License.
 
-// Package micro (sw_micro) is a plugin that can be used to trace Go-micro framework.
 package micro
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/propagation"
+	language_agent "github.com/SkyAPM/go2sky/reporter/grpc/language-agent"
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/metadata"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/server"
 )
 
+const (
+	componentIDGoMicroClient = 5008
+	componentIDGoMicroServer = 5009
+)
+
+var errTracerIsNil = errors.New("tracer is nil")
+
 type clientWrapper struct {
-	sw *go2sky.Tracer
 	client.Client
-	extraTags metadata.Metadata
-}
 
-type handlerWrapper struct {
-	sw        *go2sky.Tracer
-	extraTags metadata.Metadata
-}
-
-type callWrapper struct {
-	sw        *go2sky.Tracer
-	extraTags metadata.Metadata
-}
-
-type subscriberWrapper struct {
-	sw        *go2sky.Tracer
-	extraTags metadata.Metadata
+	sw         *go2sky.Tracer
+	reportTags []string
 }
 
 // ClientOption allow optional configuration of Client
 type ClientOption func(*clientWrapper)
 
-// HandlerOption allow optional configuration of Handler
-type HandlerOption func(*handlerWrapper)
-
-// CallOption allow optional configuration of Call
-type CallOption func(*callWrapper)
-
-// SubscriberOption allow optional configuration of Subscriber
-type SubscriberOption func(*subscriberWrapper)
-
-// WithClientTag allow users to customize tags
-func WithClientTag(key string) ClientOption {
+// WithClientWrapperReportTags customize span tags
+func WithClientWrapperReportTags(reportTags ...string) ClientOption {
 	return func(c *clientWrapper) {
-		if c.extraTags == nil {
-			c.extraTags = make(metadata.Metadata)
-		}
-		c.extraTags[key] = ""
-	}
-}
-
-// WithHandlerTag allow users to customize tags
-func WithHandlerTag(key string) HandlerOption {
-	return func(h *handlerWrapper) {
-		if h.extraTags == nil {
-			h.extraTags = make(metadata.Metadata)
-		}
-		h.extraTags[key] = ""
-	}
-}
-
-// WithCallTag allow users to customize tags
-func WithCallTag(key string) CallOption {
-	return func(c *callWrapper) {
-		if c.extraTags == nil {
-			c.extraTags = make(metadata.Metadata)
-		}
-		c.extraTags[key] = ""
-	}
-}
-
-// WithSubscriberTag allow users to customize tags
-func WithSubscriberTag(key string) SubscriberOption {
-	return func(s *subscriberWrapper) {
-		if s.extraTags == nil {
-			s.extraTags = make(metadata.Metadata)
-		}
-		s.extraTags[key] = ""
+		c.reportTags = append(c.reportTags, reportTags...)
 	}
 }
 
@@ -120,13 +70,15 @@ func (s *clientWrapper) Call(ctx context.Context, req client.Request, rsp interf
 	if err != nil {
 		return err
 	}
+
+	span.SetComponent(componentIDGoMicroClient)
+	span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+
 	defer span.End()
-	for k := range s.extraTags {
-		v, ok := metadata.Get(ctx, k)
-		if !ok {
-			log.Fatalf("set tag %s failed \n", k)
+	for _, k := range s.reportTags {
+		if v, ok := metadata.Get(ctx, k); ok {
+			span.Tag(go2sky.Tag(k), v)
 		}
-		span.Tag(go2sky.Tag(k), v)
 	}
 	if err = s.Client.Call(ctx, req, rsp, opts...); err != nil {
 		span.Error(time.Now(), err.Error())
@@ -147,13 +99,15 @@ func (s *clientWrapper) Stream(ctx context.Context, req client.Request, opts ...
 	if err != nil {
 		return nil, err
 	}
+
+	span.SetComponent(componentIDGoMicroClient)
+	span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+
 	defer span.End()
-	for k := range s.extraTags {
-		v, ok := metadata.Get(ctx, k)
-		if !ok {
-			log.Fatalf("set tag %s failed \n", k)
+	for _, k := range s.reportTags {
+		if v, ok := metadata.Get(ctx, k); ok {
+			span.Tag(go2sky.Tag(k), v)
 		}
-		span.Tag(go2sky.Tag(k), v)
 	}
 	stream, err := s.Client.Stream(ctx, req, opts...)
 	if err != nil {
@@ -175,13 +129,15 @@ func (s *clientWrapper) Publish(ctx context.Context, p client.Message, opts ...c
 	if err != nil {
 		return err
 	}
+
+	span.SetComponent(componentIDGoMicroClient)
+	span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+
 	defer span.End()
-	for k := range s.extraTags {
-		v, ok := metadata.Get(ctx, k)
-		if !ok {
-			log.Fatalf("set tag %s failed \n", k)
+	for _, k := range s.reportTags {
+		if v, ok := metadata.Get(ctx, k); ok {
+			span.Tag(go2sky.Tag(k), v)
 		}
-		span.Tag(go2sky.Tag(k), v)
 	}
 	if err = s.Client.Publish(ctx, p, opts...); err != nil {
 		span.Error(time.Now(), err.Error())
@@ -189,7 +145,7 @@ func (s *clientWrapper) Publish(ctx context.Context, p client.Message, opts ...c
 	return err
 }
 
-// NewClientWrapper accepts an skywalking Tracer and returns a Client Wrapper
+// NewClientWrapper accepts a go2sky Tracer and returns a Client Wrapper
 func NewClientWrapper(sw *go2sky.Tracer, options ...ClientOption) client.Wrapper {
 	return func(c client.Client) client.Client {
 		co := &clientWrapper{
@@ -203,19 +159,14 @@ func NewClientWrapper(sw *go2sky.Tracer, options ...ClientOption) client.Wrapper
 	}
 }
 
-// NewCallWrapper accepts an skywalking Tracer and returns a Call Wrapper
-func NewCallWrapper(sw *go2sky.Tracer, options ...CallOption) client.CallWrapper {
+// NewCallWrapper accepts an go2sky Tracer and returns a Call Wrapper
+func NewCallWrapper(sw *go2sky.Tracer, reportTags ...string) client.CallWrapper {
 	return func(cf client.CallFunc) client.CallFunc {
 		return func(ctx context.Context, node *registry.Node, req client.Request, rsp interface{}, opts client.CallOptions) error {
 			if sw == nil {
-				return errors.New("tracer is nil")
+				return errTracerIsNil
 			}
-			cl := &callWrapper{
-				sw: sw,
-			}
-			for _, option := range options {
-				option(cl)
-			}
+
 			name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 			span, err := sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
 				mda, _ := metadata.FromContext(ctx)
@@ -227,13 +178,15 @@ func NewCallWrapper(sw *go2sky.Tracer, options ...CallOption) client.CallWrapper
 			if err != nil {
 				return err
 			}
+
+			span.SetComponent(componentIDGoMicroClient)
+			span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+
 			defer span.End()
-			for k := range cl.extraTags {
-				v, ok := metadata.Get(ctx, k)
-				if !ok {
-					log.Fatalf("set tag %s failed \n", k)
+			for _, k := range reportTags {
+				if v, ok := metadata.Get(ctx, k); ok {
+					span.Tag(go2sky.Tag(k), v)
 				}
-				span.Tag(go2sky.Tag(k), v)
 			}
 			if err = cf(ctx, node, req, rsp, opts); err != nil {
 				span.Error(time.Now(), err.Error())
@@ -243,20 +196,15 @@ func NewCallWrapper(sw *go2sky.Tracer, options ...CallOption) client.CallWrapper
 	}
 }
 
-// NewSubscriberWrapper accepts an skywalking Tracer and returns a Handler Wrapper
-func NewSubscriberWrapper(sw *go2sky.Tracer, options ...SubscriberOption) server.SubscriberWrapper {
+// NewSubscriberWrapper accepts a go2sky Tracer and returns a Handler Wrapper
+func NewSubscriberWrapper(sw *go2sky.Tracer, reportTags ...string) server.SubscriberWrapper {
 	return func(next server.SubscriberFunc) server.SubscriberFunc {
 		return func(ctx context.Context, msg server.Message) error {
-			so := &subscriberWrapper{
-				sw: sw,
-			}
-			for _, option := range options {
-				option(so)
-			}
-			name := "Sub from " + msg.Topic()
 			if sw == nil {
-				return errors.New("tracer is nil")
+				return errTracerIsNil
 			}
+
+			name := "Sub from " + msg.Topic()
 			span, err := sw.CreateExitSpan(ctx, name, msg.ContentType(), func(header string) error {
 				mda, _ := metadata.FromContext(ctx)
 				md := metadata.Copy(mda)
@@ -267,13 +215,15 @@ func NewSubscriberWrapper(sw *go2sky.Tracer, options ...SubscriberOption) server
 			if err != nil {
 				return err
 			}
+
+			span.SetComponent(componentIDGoMicroClient)
+			span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+
 			defer span.End()
-			for k := range so.extraTags {
-				v, ok := metadata.Get(ctx, k)
-				if !ok {
-					log.Fatalf("set tag %s failed \n", k)
+			for _, k := range reportTags {
+				if v, ok := metadata.Get(ctx, k); ok {
+					span.Tag(go2sky.Tag(k), v)
 				}
-				span.Tag(go2sky.Tag(k), v)
 			}
 			if err = next(ctx, msg); err != nil {
 				span.Error(time.Now(), err.Error())
@@ -283,16 +233,14 @@ func NewSubscriberWrapper(sw *go2sky.Tracer, options ...SubscriberOption) server
 	}
 }
 
-// NewHandlerWrapper accepts an skywalking Tracer and returns a Subscriber Wrapper
-func NewHandlerWrapper(sw *go2sky.Tracer, options ...HandlerOption) server.HandlerWrapper {
+// NewHandlerWrapper accepts a go2sky Tracer and returns a Subscriber Wrapper
+func NewHandlerWrapper(sw *go2sky.Tracer, reportTags ...string) server.HandlerWrapper {
 	return func(fn server.HandlerFunc) server.HandlerFunc {
 		return func(ctx context.Context, req server.Request, rsp interface{}) error {
-			co := &handlerWrapper{
-				sw: sw,
+			if sw == nil {
+				return errTracerIsNil
 			}
-			for _, option := range options {
-				option(co)
-			}
+
 			name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
 			span, ctx, err := sw.CreateEntrySpan(ctx, name, func() (string, error) {
 				str, _ := metadata.Get(ctx, strings.Title(propagation.Header))
@@ -301,13 +249,15 @@ func NewHandlerWrapper(sw *go2sky.Tracer, options ...HandlerOption) server.Handl
 			if err != nil {
 				return err
 			}
+
+			span.SetComponent(componentIDGoMicroServer)
+			span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+
 			defer span.End()
-			for k := range co.extraTags {
-				v, ok := metadata.Get(ctx, k)
-				if !ok {
-					log.Fatalf("set tag %s failed \n", k)
+			for _, k := range reportTags {
+				if v, ok := metadata.Get(ctx, k); ok {
+					span.Tag(go2sky.Tag(k), v)
 				}
-				span.Tag(go2sky.Tag(k), v)
 			}
 			if err = fn(ctx, req, rsp); err != nil {
 				span.Error(time.Now(), err.Error())

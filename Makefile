@@ -27,7 +27,7 @@ deps:
 
 LINTER := bin/golangci-lint
 $(LINTER):
-	curl -L https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.20.1
+	curl -L https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.31.0
 
 .PHONY: lint
 lint: $(LINTER)
