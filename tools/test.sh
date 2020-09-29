@@ -18,46 +18,32 @@
 
 GO111MODULE=on
 PLUGINS_HOME=$(cd "$(dirname "$0")";cd ..;pwd)
-PKGS=""
+
+LINTER=${PLUGINS_HOME}/bin/golangci-lint
+LINTER_CONFIG=${PLUGINS_HOME}/golangci.yml
 
 function test() {
-    for d in $(find * -name 'go.mod'); do
-        pushd $(dirname $d) >/dev/null
-        echo "🟢 testing `sed -n 1p go.mod|cut -d ' ' -f2`"
-        go mod download
-        go test -v ./...
-        popd >/dev/null
-    done
+  cd $1
+  echo "🟢 testing `sed -n 1p go.mod|cut -d ' ' -f2`"
+  go test -v ./...
 }
 
 function deps() {
-    for d in $(find * -name 'go.mod'); do
-        pushd $(dirname $d)
-        echo "🟢 download `sed -n 1p go.mod|cut -d ' ' -f2`"
-        go mod download
-        popd
-    done
+  cd $1
+  echo "🟢 download `sed -n 1p go.mod|cut -d ' ' -f2`"
+  go get -v -d ./...
 }
 
 function lint() {
-    LINTER=${PLUGINS_HOME}/bin/golangci-lint
-    LINTER_CONFIG=${PLUGINS_HOME}/golangci.yml
-    for d in $(find * -name 'go.mod'); do
-        pushd $(dirname $d)
-        echo "🟢 golangci lint `sed -n 1p go.mod|cut -d ' ' -f2`"
-        ${LINTER} run --timeout=10m --exclude-use-default=false --config=${LINTER_CONFIG}
-        popd
-    done
+  cd $1
+  echo "🟢 golangci lint `sed -n 1p go.mod|cut -d ' ' -f2`"
+  eval '${LINTER} run --timeout=10m --exclude-use-default=false --config=${LINTER_CONFIG}'
 }
 
 function fix() {
-    LINTER=${PLUGINS_HOME}/bin/golangci-lint
-    for d in $(find * -name 'go.mod'); do
-        pushd $(dirname $d)
-        echo "🟢 golangci fix `sed -n 1p go.mod|cut -d ' ' -f2`"
-        ${LINTER} run -v --fix ./...
-        popd
-    done
+  cd $1
+  echo "🟢 golangci fix `sed -n 1p go.mod|cut -d ' ' -f2`"
+  eval '${LINTER} run -v --fix ./...'
 }
 
 function print_help(){
@@ -66,16 +52,20 @@ function print_help(){
 
 case $1 in
   deps)
-    deps
+    shift
+    deps $@
     ;;
   test)
-    test
+    shift
+    test $@
     ;;
   lint)
-    lint
+    shift
+    lint $@
     ;;
   fix)
-    fix
+    shift
+    fix $@
     ;;
   *)
     print_help

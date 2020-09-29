@@ -27,23 +27,32 @@ jobs:
   build:
     name: Build & Test
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        case:
+          - { name: 'Gear', plugin_dir: 'gear', go_version: '1.12'}
+          - { name: 'Gin v2', plugin_dir: 'gin/v2', go_version: '1.12'}
+          - { name: 'Gin v3', plugin_dir: 'gin/v3', go_version: '1.12'}
+          - { name: 'Go micro', plugin_dir: 'micro', go_version: '1.13'}
+          - { name: 'Go resty', plugin_dir: 'resty', go_version: '1.12'}
     steps:
-      - name: Set up Go 1.13
+      - name: Set up Go ${{ matrix.case.go_version }}
         uses: actions/setup-go@v2
         with:
-          go-version: 1.13
+          go-version: ${{ matrix.case.go_version }}
         id: go
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
       - name: Get dependencies
-        run: make deps
+        run: make deps PLUGIN_DIR=${{ matrix.case.plugin_dir }}
 
       - name: Lint
-        run: make lint
+        run: make lint PLUGIN_DIR=${{ matrix.case.plugin_dir }}
 
       - name: Test
-        run: make test
+        run: make test PLUGIN_DIR=${{ matrix.case.plugin_dir }}
 
   license:
     name: Check License
