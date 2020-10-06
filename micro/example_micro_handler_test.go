@@ -38,7 +38,7 @@ func (g *Greeter) Hello(ctx context.Context, name *string, msg *string) error {
 
 func ExampleNewHandlerWrapper() {
 	//Use gRPC reporter for production
-	r, err := reporter.NewLogReporter()
+	r, err := reporter.NewGRPCReporter("skywalking-oap:11800")
 	if err != nil {
 		log.Fatalf("new reporter error %v \n", err)
 	}
@@ -82,8 +82,10 @@ func ExampleNewHandlerWrapper() {
 		c := cli.Client()
 		request := c.NewRequest("greeter", "Greeter.Hello", "john", client.WithContentType("application/json"))
 		var response string
-		if err := c.Call(context.TODO(), request, &response); err != nil {
-			log.Fatalf("call service err %v \n", err)
+		for i := 0; i < 100; i++ {
+			if err := c.Call(context.TODO(), request, &response); err != nil {
+				log.Fatalf("call service err %v \n", err)
+			}
 		}
 		log.Printf("reseponse: %v \n", response)
 	}()
