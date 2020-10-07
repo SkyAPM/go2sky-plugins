@@ -38,7 +38,7 @@ func (g *Greeter) Hello(ctx context.Context, name *string, msg *string) error {
 
 func ExampleNewHandlerWrapper() {
 	//Use gRPC reporter for production
-	r, err := reporter.NewGRPCReporter("skywalking-oap:11800")
+	r, err := reporter.NewLogReporter()
 	if err != nil {
 		log.Fatalf("new reporter error %v \n", err)
 	}
