@@ -22,6 +22,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -53,6 +55,15 @@ jobs:
 
       - name: Test
         run: make test PLUGIN_DIR=${{ matrix.case.plugin_dir }}
+
+  build-expected:
+    name: Build & Test All
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    needs: [build]
+    steps:
+      - name: Call me by your name
+        run: echo "Birds of a feather flock together"
 
   license:
     name: Check License
