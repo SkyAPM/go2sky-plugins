@@ -38,6 +38,7 @@ jobs:
           - { name: 'Gin v3', plugin_dir: 'gin/v3', go_version: '1.12'}
           - { name: 'Go micro', plugin_dir: 'micro', go_version: '1.13'}
           - { name: 'Go resty', plugin_dir: 'resty', go_version: '1.12'}
+          - { name: 'Go restful', plugin_dir: 'go-restful', go_version: '1.13'}
     steps:
       - name: Set up Go ${{ matrix.case.go_version }}
         uses: actions/setup-go@v2
