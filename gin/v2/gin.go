@@ -26,7 +26,6 @@ import (
 	"time"
 
 	"github.com/SkyAPM/go2sky"
-	"github.com/SkyAPM/go2sky/propagation"
 	v3 "github.com/SkyAPM/go2sky/reporter/grpc/language-agent"
 	"github.com/gin-gonic/gin"
 )
@@ -76,8 +75,8 @@ func Middleware(engine *gin.Engine, tracer *go2sky.Tracer) gin.HandlerFunc {
 		if operationName == "" {
 			operationName = c.Request.Method
 		}
-		span, ctx, err := tracer.CreateEntrySpan(c.Request.Context(), operationName, func() (string, error) {
-			return c.Request.Header.Get(propagation.Header), nil
+		span, ctx, err := tracer.CreateEntrySpan(c.Request.Context(), operationName, func(key string) (string, error) {
+			return c.Request.Header.Get(key), nil
 		})
 		if err != nil {
 			c.Next()

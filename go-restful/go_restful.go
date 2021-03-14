@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/SkyAPM/go2sky"
-	"github.com/SkyAPM/go2sky/propagation"
 	v3 "github.com/SkyAPM/go2sky/reporter/grpc/language-agent"
 	"github.com/emicklei/go-restful/v3"
 )
@@ -40,8 +39,8 @@ func NewTraceFilterFunction(tracer *go2sky.Tracer) restful.FilterFunction {
 
 	return func(request *restful.Request, response *restful.Response, chain *restful.FilterChain) {
 		span, ctx, err := tracer.CreateEntrySpan(request.Request.Context(),
-			fmt.Sprintf("/%s%s", request.Request.Method, request.SelectedRoutePath()), func() (string, error) {
-				return request.HeaderParameter(propagation.Header), nil
+			fmt.Sprintf("/%s%s", request.Request.Method, request.SelectedRoutePath()), func(key string) (string, error) {
+				return request.HeaderParameter(key), nil
 			})
 
 		if err != nil {

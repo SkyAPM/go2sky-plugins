@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/SkyAPM/go2sky"
-	"github.com/SkyAPM/go2sky/propagation"
 	v3 "github.com/SkyAPM/go2sky/reporter/grpc/language-agent"
 	"github.com/teambition/gear"
 )
@@ -37,8 +36,8 @@ func Middleware(tracer *go2sky.Tracer) gear.Middleware {
 			return nil
 		}
 
-		span, _, err := tracer.CreateEntrySpan(ctx, operationName(ctx), func() (string, error) {
-			return ctx.GetHeader(propagation.Header), nil
+		span, _, err := tracer.CreateEntrySpan(ctx, operationName(ctx), func(key string) (string, error) {
+			return ctx.GetHeader(key), nil
 		})
 		if err != nil {
 			return nil
