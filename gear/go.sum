@@ -1,8 +1,8 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/GitbookIO/mimedb v0.0.0-20180329142916-39fdfdb4def4/go.mod h1:0JA2lIXs/dl3RUgHP5ivwjl3f0g+X2BQz3zWnq8IJa4=
-github.com/SkyAPM/go2sky v0.6.0 h1:U6GBDzox3YCXjPXMruJbBi+n174xKtCjhKlHG7IFhNc=
-github.com/SkyAPM/go2sky v0.6.0/go.mod h1:TANzYw5EvIlTidGWvQxtvO87rM6C746HkM0xkWqnPQw=
+github.com/SkyAPM/go2sky v0.6.1-0.20210314152436-fc8f3a2560f9 h1:180vs2N2/I4UhnQpKSn5r0c6cJteI+p3djmyhqM8AEw=
+github.com/SkyAPM/go2sky v0.6.1-0.20210314152436-fc8f3a2560f9/go.mod h1:TANzYw5EvIlTidGWvQxtvO87rM6C746HkM0xkWqnPQw=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd/go.mod h1:sE/e/2PUdi/liOCUjSTXgM1o87ZssimdTWN964YiIeI=

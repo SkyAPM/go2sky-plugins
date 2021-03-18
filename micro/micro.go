@@ -25,7 +25,6 @@ import (
 	"time"
 
 	"github.com/SkyAPM/go2sky"
-	"github.com/SkyAPM/go2sky/propagation"
 	language_agent "github.com/SkyAPM/go2sky/reporter/grpc/language-agent"
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/metadata"
@@ -60,10 +59,10 @@ func WithClientWrapperReportTags(reportTags ...string) ClientOption {
 // Call is used for client calls
 func (s *clientWrapper) Call(ctx context.Context, req client.Request, rsp interface{}, opts ...client.CallOption) error {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
-	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
+	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(key, value string) error {
 		mda, _ := metadata.FromContext(ctx)
 		md := metadata.Copy(mda)
-		md[propagation.Header] = header
+		md[key] = value
 		ctx = metadata.NewContext(ctx, md)
 		return nil
 	})
@@ -89,10 +88,10 @@ func (s *clientWrapper) Call(ctx context.Context, req client.Request, rsp interf
 // Stream is used streaming
 func (s *clientWrapper) Stream(ctx context.Context, req client.Request, opts ...client.CallOption) (client.Stream, error) {
 	name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
-	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
+	span, err := s.sw.CreateExitSpan(ctx, name, req.Service(), func(key, value string) error {
 		mda, _ := metadata.FromContext(ctx)
 		md := metadata.Copy(mda)
-		md[propagation.Header] = header
+		md[key] = value
 		ctx = metadata.NewContext(ctx, md)
 		return nil
 	})
@@ -119,10 +118,10 @@ func (s *clientWrapper) Stream(ctx context.Context, req client.Request, opts ...
 // Publish is used publish message to subscriber
 func (s *clientWrapper) Publish(ctx context.Context, p client.Message, opts ...client.PublishOption) error {
 	name := fmt.Sprintf("Pub to %s", p.Topic())
-	span, err := s.sw.CreateExitSpan(ctx, name, p.ContentType(), func(header string) error {
+	span, err := s.sw.CreateExitSpan(ctx, name, p.ContentType(), func(key, value string) error {
 		mda, _ := metadata.FromContext(ctx)
 		md := metadata.Copy(mda)
-		md[propagation.Header] = header
+		md[key] = value
 		ctx = metadata.NewContext(ctx, md)
 		return nil
 	})
@@ -168,10 +167,10 @@ func NewCallWrapper(sw *go2sky.Tracer, reportTags ...string) client.CallWrapper 
 			}
 
 			name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
-			span, err := sw.CreateExitSpan(ctx, name, req.Service(), func(header string) error {
+			span, err := sw.CreateExitSpan(ctx, name, req.Service(), func(key, value string) error {
 				mda, _ := metadata.FromContext(ctx)
 				md := metadata.Copy(mda)
-				md[propagation.Header] = header
+				md[key] = value
 				ctx = metadata.NewContext(ctx, md)
 				return nil
 			})
@@ -205,10 +204,10 @@ func NewSubscriberWrapper(sw *go2sky.Tracer, reportTags ...string) server.Subscr
 			}
 
 			name := "Sub from " + msg.Topic()
-			span, err := sw.CreateExitSpan(ctx, name, msg.ContentType(), func(header string) error {
+			span, err := sw.CreateExitSpan(ctx, name, msg.ContentType(), func(key, value string) error {
 				mda, _ := metadata.FromContext(ctx)
 				md := metadata.Copy(mda)
-				md[propagation.Header] = header
+				md[key] = value
 				ctx = metadata.NewContext(ctx, md)
 				return nil
 			})
@@ -242,8 +241,8 @@ func NewHandlerWrapper(sw *go2sky.Tracer, reportTags ...string) server.HandlerWr
 			}
 
 			name := fmt.Sprintf("%s.%s", req.Service(), req.Endpoint())
-			span, ctx, err := sw.CreateEntrySpan(ctx, name, func() (string, error) {
-				str, _ := metadata.Get(ctx, strings.Title(propagation.Header))
+			span, ctx, err := sw.CreateEntrySpan(ctx, name, func(key string) (string, error) {
+				str, _ := metadata.Get(ctx, strings.Title(key))
 				return str, nil
 			})
 			if err != nil {
