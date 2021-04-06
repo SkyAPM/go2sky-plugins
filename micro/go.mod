@@ -1,6 +1,6 @@
 module github.com/SkyAPM/go2sky-plugins/micro
 
-go 1.13
+go 1.14
 
 require (
 	github.com/SkyAPM/go2sky v1.0.0
