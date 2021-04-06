@@ -57,7 +57,7 @@ func ExampleNewHandlerWrapper() {
 			//Use go2sky middleware with tracing
 			micro.WrapHandler(NewHandlerWrapper(tracer, "User-Agent")),
 		)
-		logger.DefaultLogger.Init(logger.WithLevel(logger.ErrorLevel))
+		_ = logger.DefaultLogger.Init(logger.WithLevel(logger.ErrorLevel))
 		// initialise command line
 		// set the handler
 		if err := micro.RegisterHandler(service.Server(), new(Greeter)); err != nil {
