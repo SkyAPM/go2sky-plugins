@@ -25,7 +25,7 @@ import (
 
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
-	"github.com/asim/go-micro/v3"
+	microv3 "github.com/asim/go-micro/v3"
 	"github.com/asim/go-micro/v3/client"
 	"github.com/asim/go-micro/v3/logger"
 )
@@ -52,15 +52,15 @@ func ExampleNewHandlerWrapper() {
 
 	go func() {
 		//create test server
-		service := micro.NewService(
-			micro.Name("greeter"),
+		service := microv3.NewService(
+			microv3.Name("greeter"),
 			//Use go2sky middleware with tracing
-			micro.WrapHandler(NewHandlerWrapper(tracer, "User-Agent")),
+			microv3.WrapHandler(NewHandlerWrapper(tracer, "User-Agent")),
 		)
 		_ = logger.DefaultLogger.Init(logger.WithLevel(logger.ErrorLevel))
 		// initialise command line
 		// set the handler
-		if err := micro.RegisterHandler(service.Server(), new(Greeter)); err != nil {
+		if err := microv3.RegisterHandler(service.Server(), new(Greeter)); err != nil {
 			log.Fatalf("Registe service error: %v \n", err)
 		}
 
@@ -76,10 +76,10 @@ func ExampleNewHandlerWrapper() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		cli := micro.NewService(
-			micro.Name("micro_client"),
+		cli := microv3.NewService(
+			microv3.Name("micro_client"),
 			//Use go2sky middleware with tracing
-			micro.WrapClient(NewClientWrapper(tracer, WithClientWrapperReportTags("Micro-From-Service"))),
+			microv3.WrapClient(NewClientWrapper(tracer, WithClientWrapperReportTags("Micro-From-Service"))),
 		)
 		c := cli.Client()
 		request := c.NewRequest("greeter", "Greeter.Hello", "john", client.WithContentType("application/json"))
