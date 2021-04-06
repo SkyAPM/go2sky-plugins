@@ -25,11 +25,11 @@ import (
 	"time"
 
 	"github.com/SkyAPM/go2sky"
-	language_agent "github.com/SkyAPM/go2sky/reporter/grpc/language-agent"
-	"github.com/micro/go-micro/client"
-	"github.com/micro/go-micro/metadata"
-	"github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/server"
+	"github.com/asim/go-micro/v3/client"
+	"github.com/asim/go-micro/v3/metadata"
+	"github.com/asim/go-micro/v3/registry"
+	"github.com/asim/go-micro/v3/server"
+	agentv3 "skywalking.apache.org/repo/goapi/collect/language/agent/v3"
 )
 
 const (
@@ -71,7 +71,7 @@ func (s *clientWrapper) Call(ctx context.Context, req client.Request, rsp interf
 	}
 
 	span.SetComponent(componentIDGoMicroClient)
-	span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+	span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
 
 	defer span.End()
 	for _, k := range s.reportTags {
@@ -100,7 +100,7 @@ func (s *clientWrapper) Stream(ctx context.Context, req client.Request, opts ...
 	}
 
 	span.SetComponent(componentIDGoMicroClient)
-	span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+	span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
 
 	defer span.End()
 	for _, k := range s.reportTags {
@@ -130,7 +130,7 @@ func (s *clientWrapper) Publish(ctx context.Context, p client.Message, opts ...c
 	}
 
 	span.SetComponent(componentIDGoMicroClient)
-	span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+	span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
 
 	defer span.End()
 	for _, k := range s.reportTags {
@@ -179,7 +179,7 @@ func NewCallWrapper(sw *go2sky.Tracer, reportTags ...string) client.CallWrapper 
 			}
 
 			span.SetComponent(componentIDGoMicroClient)
-			span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+			span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
 
 			defer span.End()
 			for _, k := range reportTags {
@@ -216,7 +216,7 @@ func NewSubscriberWrapper(sw *go2sky.Tracer, reportTags ...string) server.Subscr
 			}
 
 			span.SetComponent(componentIDGoMicroClient)
-			span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+			span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
 
 			defer span.End()
 			for _, k := range reportTags {
@@ -250,7 +250,7 @@ func NewHandlerWrapper(sw *go2sky.Tracer, reportTags ...string) server.HandlerWr
 			}
 
 			span.SetComponent(componentIDGoMicroServer)
-			span.SetSpanLayer(language_agent.SpanLayer_RPCFramework)
+			span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
 
 			defer span.End()
 			for _, k := range reportTags {

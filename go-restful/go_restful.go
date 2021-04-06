@@ -23,8 +23,8 @@ import (
 	"time"
 
 	"github.com/SkyAPM/go2sky"
-	v3 "github.com/SkyAPM/go2sky/reporter/grpc/language-agent"
 	"github.com/emicklei/go-restful/v3"
+	agentv3 "skywalking.apache.org/repo/goapi/collect/language/agent/v3"
 )
 
 const componentIDGOHttpServer = 5004
@@ -51,7 +51,7 @@ func NewTraceFilterFunction(tracer *go2sky.Tracer) restful.FilterFunction {
 		span.SetComponent(componentIDGOHttpServer)
 		span.Tag(go2sky.TagHTTPMethod, request.Request.Method)
 		span.Tag(go2sky.TagURL, request.Request.Host+request.Request.URL.Path)
-		span.SetSpanLayer(v3.SpanLayer_Http)
+		span.SetSpanLayer(agentv3.SpanLayer_Http)
 		request.Request = request.Request.WithContext(ctx)
 		defer func() {
 			code := response.StatusCode()
