@@ -26,8 +26,8 @@ import (
 	"time"
 
 	"github.com/SkyAPM/go2sky"
-	v3 "github.com/SkyAPM/go2sky/reporter/grpc/language-agent"
 	"github.com/gin-gonic/gin"
+	agentv3 "skywalking.apache.org/repo/goapi/collect/language/agent/v3"
 )
 
 const componentIDGINHttpServer = 5006
@@ -85,7 +85,7 @@ func Middleware(engine *gin.Engine, tracer *go2sky.Tracer) gin.HandlerFunc {
 		span.SetComponent(componentIDGINHttpServer)
 		span.Tag(go2sky.TagHTTPMethod, c.Request.Method)
 		span.Tag(go2sky.TagURL, c.Request.Host+c.Request.URL.Path)
-		span.SetSpanLayer(v3.SpanLayer_Http)
+		span.SetSpanLayer(agentv3.SpanLayer_Http)
 
 		c.Request = c.Request.WithContext(ctx)
 
