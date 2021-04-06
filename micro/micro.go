@@ -25,10 +25,10 @@ import (
 	"time"
 
 	"github.com/SkyAPM/go2sky"
-	"github.com/micro/go-micro/client"
-	"github.com/micro/go-micro/metadata"
-	"github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/server"
+	"github.com/asim/go-micro/v3/client"
+	"github.com/asim/go-micro/v3/metadata"
+	"github.com/asim/go-micro/v3/registry"
+	"github.com/asim/go-micro/v3/server"
 	agentv3 "skywalking.apache.org/repo/goapi/collect/language/agent/v3"
 )
 

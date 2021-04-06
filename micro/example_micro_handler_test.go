@@ -25,8 +25,9 @@ import (
 
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
-	"github.com/micro/go-micro"
-	"github.com/micro/go-micro/client"
+	"github.com/asim/go-micro/v3"
+	"github.com/asim/go-micro/v3/client"
+	"github.com/asim/go-micro/v3/logger"
 )
 
 type Greeter struct{}
@@ -56,6 +57,7 @@ func ExampleNewHandlerWrapper() {
 			//Use go2sky middleware with tracing
 			micro.WrapHandler(NewHandlerWrapper(tracer, "User-Agent")),
 		)
+		logger.DefaultLogger.Init(logger.WithLevel(logger.ErrorLevel))
 		// initialise command line
 		// set the handler
 		if err := micro.RegisterHandler(service.Server(), new(Greeter)); err != nil {
