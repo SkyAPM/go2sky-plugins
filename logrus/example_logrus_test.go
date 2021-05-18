@@ -37,18 +37,18 @@ func ExampleWrapFormat() {
 	}
 
 	// json format
-	logrus.SetFormatter(&WrapFormat{&logrus.JSONFormatter{
+	logrus.SetFormatter(Wrap(&logrus.JSONFormatter{
 		DisableTimestamp: true,
-	}, "TID"})
+	}, "SW_CTX"))
 	logrus.WithContext(context).Info("test1")
 
 	// test format
-	logrus.SetFormatter(&WrapFormat{&logrus.TextFormatter{
+	logrus.SetFormatter(Wrap(&logrus.TextFormatter{
 		DisableTimestamp: true,
-	}, "TID"})
+	}, "SW_CTX"))
 	logrus.WithContext(context).Info("test2")
 
 	// Output:
-	// {"TID":"N/A","level":"info","msg":"test1"}
-	// level=info msg=test2 TID=N/A
+	// {"SW_CTX":"[,,N/A,N/A,-1]","level":"info","msg":"test1"}
+	// level=info msg=test2 SW_CTX="[,,N/A,N/A,-1]"
 }

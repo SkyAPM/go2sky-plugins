@@ -18,8 +18,9 @@ import (
 )
 
 func main() {
-	// init format with custom traceId key
-	logrus.SetFormatter(&logrusplugin.WrapFormat{&logrus.JSONFormatter{}, "TID"})
+	// init format with custom trace context key
+	// SW_CTX format: [$serviceName,$instanceName,$traceId,$traceSegmentId,$spanId]
+	logrus.SetFormatter(logrusplugin.Wrap(&logrus.JSONFormatter{}, "SW_CTX"}))
 
 	// init tracer
 
