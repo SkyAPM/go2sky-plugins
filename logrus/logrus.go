@@ -28,6 +28,7 @@ type WrapFormat struct {
 	traceContextKey string
 }
 
+// Wrap original format
 func Wrap(base logrus.Formatter, contextKey string) *WrapFormat {
 	if contextKey == "" {
 		contextKey = "SW_CTX"
