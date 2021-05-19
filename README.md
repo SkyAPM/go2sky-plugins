@@ -4,11 +4,15 @@
 
 The plugins of [go2sky](https://github.com/SkyAPM/go2sky)
 
-### Plugin Summary
+## Plugin Summary
 
+### Trace Plugins
 1. [http server & client](http/README.md)
 1. [gin](gin/README.md)
 1. [gear](gear/README.md)
 1. [go-resty](resty/README.md)
 1. [go-micro](micro/README.md)
 1. [go-restful](go-restful/README.md)
+
+### Log Plugins
+1. [logrus](logrus/README.md)
