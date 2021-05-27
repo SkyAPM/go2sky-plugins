@@ -15,20 +15,29 @@
 // specific language governing permissions and limitations
 // under the License.
 
-package zap
+package zap_test
 
 import (
-	"github.com/SkyAPM/go2sky/log"
+	"context"
+
+	zapplugin "github.com/SkyAPM/go2sky-plugins/zap"
 	"go.uber.org/zap"
-	"golang.org/x/net/context"
 )
 
-// HeaderKeyCtx export zap field key name
-const HeaderKeyCtx = "SW_CTX"
+func ExampleTraceContext() {
+	ctx := context.Background()
 
-// TraceContext build all SkyWalking Trace Context to zap fields
-func TraceContext(ctx context.Context) []zap.Field {
-	return []zap.Field{
-		zap.String(HeaderKeyCtx, log.FromContext(ctx).String()),
-	}
+	logger := zap.NewExample()
+	logger.With(zapplugin.TraceContext(ctx)...).Info("test")
+	// Output:
+	// {"level":"info","msg":"test","SW_CTX":"[,,N/A,N/A,-1]"}
+}
+
+func ExampleWrapWithContext() {
+	ctx := context.Background()
+
+	logger := zapplugin.WrapWithContext(zap.NewExample())
+	logger.Info(ctx, "test")
+	// Output:
+	// {"level":"info","msg":"test","SW_CTX":"[,,N/A,N/A,-1]"}
 }

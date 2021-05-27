@@ -19,90 +19,95 @@ package zap
 
 import (
 	"context"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
+// WrapLogger is wrap the zap logger, also contains all method at zap logger, correlation the context before logging
 type WrapLogger struct {
 	base *zap.Logger
-	ctx  context.Context
 }
 
-// Ctx setting context to logger
-func (log *WrapLogger) Ctx(ctx context.Context) *WrapLogger {
-	return &WrapLogger{log.base, ctx}
+// WrapWithContext original zap logger(not sugar)
+func WrapWithContext(logger *zap.Logger) *WrapLogger {
+	return &WrapLogger{logger}
 }
 
-// Wrap original zap logger(not sugar)
-func Wrap(logger *zap.Logger) *WrapLogger {
-	return &WrapLogger{logger, nil}
-}
-
+// Named wrap the zap logging function
 func (log *WrapLogger) Named(s string) *WrapLogger {
-	return Wrap(log.base.Named(s))
+	return WrapWithContext(log.base.Named(s))
 }
 
+// WithOptions wrap the zap logging function
 func (log *WrapLogger) WithOptions(opts ...zap.Option) *WrapLogger {
-	return Wrap(log.base.WithOptions(opts...))
+	return WrapWithContext(log.base.WithOptions(opts...))
 }
 
+// With wrap the zap logging function
 func (log *WrapLogger) With(fields ...zap.Field) *WrapLogger {
-	return Wrap(log.base.With(fields...))
+	return WrapWithContext(log.base.With(fields...))
 }
 
+// Check wrap the zap logging function
 func (log *WrapLogger) Check(lvl zapcore.Level, msg string) *zapcore.CheckedEntry {
 	return log.base.Check(lvl, msg)
 }
 
+// Debug wrap the zap logging function and relate the context
 func (log *WrapLogger) Debug(ctx context.Context, msg string, fields ...zap.Field) {
-	fields = log.appendContextField(ctx, fields...)
+	log.appendContextField(ctx, &fields)
 	log.base.Debug(msg, fields...)
 }
 
+// Info wrap the zap logging function and relate the context
 func (log *WrapLogger) Info(ctx context.Context, msg string, fields ...zap.Field) {
-	fields = log.appendContextField(ctx, fields...)
+	log.appendContextField(ctx, &fields)
 	log.base.Info(msg, fields...)
 }
 
+// Warn wrap the zap logging function and relate the context
 func (log *WrapLogger) Warn(ctx context.Context, msg string, fields ...zap.Field) {
-	fields = log.appendContextField(ctx, fields...)
+	log.appendContextField(ctx, &fields)
 	log.base.Warn(msg, fields...)
 }
 
+// Error wrap the zap logging function and relate the context
 func (log *WrapLogger) Error(ctx context.Context, msg string, fields ...zap.Field) {
-	fields = log.appendContextField(ctx, fields...)
+	log.appendContextField(ctx, &fields)
 	log.base.Error(msg, fields...)
 }
 
+// DPanic wrap the zap logging function and relate the context
 func (log *WrapLogger) DPanic(ctx context.Context, msg string, fields ...zap.Field) {
-	fields = log.appendContextField(ctx, fields...)
+	log.appendContextField(ctx, &fields)
 	log.base.DPanic(msg, fields...)
 }
 
+// Panic wrap the zap logging function and relate the context
 func (log *WrapLogger) Panic(ctx context.Context, msg string, fields ...zap.Field) {
-	fields = log.appendContextField(ctx, fields...)
+	log.appendContextField(ctx, &fields)
 	log.base.Panic(msg, fields...)
 }
 
+// Fatal wrap the zap logging function and relate the context
 func (log *WrapLogger) Fatal(ctx context.Context, msg string, fields ...zap.Field) {
-	fields = log.appendContextField(ctx, fields...)
+	log.appendContextField(ctx, &fields)
 	log.base.Fatal(msg, fields...)
 }
 
+// Sync wrap the zap logging function
 func (log *WrapLogger) Sync() error {
 	return log.base.Sync()
 }
 
+// Core wrap the zap logging function
 func (log *WrapLogger) Core() zapcore.Core {
 	return log.base.Core()
 }
 
-func (log *WrapLogger) appendContextField(ctx context.Context, fields ...zap.Field) []zap.Field {
+func (log *WrapLogger) appendContextField(ctx context.Context, fields *[]zap.Field) {
 	if ctx != nil {
-		return append(fields, TraceContext(ctx)...)
+		*fields = append(*fields, TraceContext(ctx)...)
 	}
-	if log.ctx != nil {
-		return append(fields, TraceContext(ctx)...)
-	}
-	return fields
 }
