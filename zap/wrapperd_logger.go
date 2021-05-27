@@ -24,7 +24,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// WrapLogger is wrap the zap logger, also contains all method at zap logger, correlation the context before logging
+// WrapLogger is wrap the zap logger, also contains all method at zap logger, correlate the context before logging
 type WrapLogger struct {
 	base *zap.Logger
 }
