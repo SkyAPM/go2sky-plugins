@@ -16,3 +16,4 @@ The plugins of [go2sky](https://github.com/SkyAPM/go2sky)
 
 ### Log Plugins
 1. [logrus](logrus/README.md)
+1. [zap](zap/README.md)
