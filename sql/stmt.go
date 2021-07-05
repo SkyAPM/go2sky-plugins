@@ -9,8 +9,11 @@ import (
 
 // stmt is a tracing wrapper for driver.Stmt
 type stmt struct {
-	stmt driver.Stmt
+	stmt   driver.Stmt
 	tracer *go2sky.Tracer
+
+	// dsn defines the destination of sql server, format in host:port
+	dsn string
 }
 
 func (s stmt) Close() error {
