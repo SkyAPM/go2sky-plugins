@@ -13,14 +13,27 @@ type connector struct {
 
 	// addr defines the address of sql server, format in host:port
 	addr string
+	// dbType defines the sql server type
+	dbType DBType
 }
 
-func (c *connector) Connect(ctx context.Context) (driver.Conn, error) {
-	panic("implement me")
+func (ct *connector) Connect(ctx context.Context) (driver.Conn, error) {
+	span, err := ct.tracer.CreateExitSpan(ctx, genOpName(ct.dbType, "connect"), ct.addr, emptyInjectFunc)
+	if err != nil {
+		return nil, err
+	}
+	defer span.End()
+
+	c, err := ct.connector.Connect(ctx)
+	return &conn{
+		conn:   c,
+		tracer: ct.tracer,
+		addr:   ct.addr,
+	}, nil
 }
 
-func (c *connector) Driver() driver.Driver {
-	return c.connector.Driver()
+func (ct *connector) Driver() driver.Driver {
+	return ct.connector.Driver()
 }
 
 type fallbackConnector struct {
@@ -54,7 +67,7 @@ func (d *Driver) OpenConnector(name string) (driver.Connector, error) {
 		return &connector{
 			connector: c,
 			tracer:    d.tracer,
-			addr:      parseAddr(name, d.dbtype),
+			addr:      parseAddr(name, d.dbType),
 		}, nil
 	}
 
@@ -62,6 +75,6 @@ func (d *Driver) OpenConnector(name string) (driver.Connector, error) {
 	return &connector{
 		connector: nil,
 		tracer:    d.tracer,
-		addr:      parseAddr(name, d.dbtype),
+		addr:      parseAddr(name, d.dbType),
 	}, nil
 }

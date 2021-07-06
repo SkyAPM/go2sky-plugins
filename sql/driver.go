@@ -1,35 +1,41 @@
 package sql
 
 import (
+	"context"
 	"database/sql/driver"
-	"regexp"
 
 	"github.com/SkyAPM/go2sky"
 )
 
-type DBType int
+type DBType string
 
 const (
-	MYSQL DBType = iota
-	IPV4
+	MYSQL DBType = "mysql"
+	IPV4  DBType = "others"
 )
 
 type Driver struct {
 	driver driver.Driver
 	tracer *go2sky.Tracer
 
-	dbtype DBType
+	dbType DBType
 }
 
 func NewTracerDriver(driver driver.Driver, tracer *go2sky.Tracer, dbType DBType) driver.Driver {
 	return &Driver{
 		driver: driver,
 		tracer: tracer,
-		dbtype: dbType,
+		dbType: dbType,
 	}
 }
 
 func (d *Driver) Open(name string) (driver.Conn, error) {
+	addr := parseAddr(name, d.dbType)
+	s, err := d.tracer.CreateExitSpan(context.Background(), genOpName(d.dbType, "open"), addr, emptyInjectFunc)
+	if err != nil {
+		return nil, err
+	}
+	defer s.End()
 	c, err := d.driver.Open(name)
 	if err != nil {
 		return nil, err
@@ -37,25 +43,6 @@ func (d *Driver) Open(name string) (driver.Conn, error) {
 	return &conn{
 		conn:   c,
 		tracer: d.tracer,
-		addr:   parseAddr(name, d.dbtype),
+		addr:   addr,
 	}, nil
-}
-
-// emptyInjectFunc defines a empty injector for propagation.Injector function
-func emptyInjectFunc(key, value string) error { return nil }
-
-// parseAddr parse dsn to a endpoint addr string (host:port)
-func parseAddr(dsn string, dbType DBType) (addr string) {
-	switch dbType {
-	case MYSQL:
-		// [user[:password]@][net[(addr)]]/dbname[?param1=value1&paramN=valueN]
-		re := regexp.MustCompile(`\(.+\)`)
-		addr = re.FindString(dsn)
-		addr = addr[1 : len(addr)-1]
-	case IPV4:
-		// ipv4 addr
-		re := regexp.MustCompile(`((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}:\d{1,5}`)
-		addr = re.FindString(dsn)
-	}
-	return
 }
