@@ -23,7 +23,7 @@ func TestDriver(t *testing.T) {
 	tracer, err := go2sky.NewTracer("test-driver", go2sky.WithReporter(re))
 	assert.NoError(t, err)
 
-	sql.Register("skywalking-sql", NewTracerDriver(mysqlDriver, tracer))
+	sql.Register("skywalking-sql", NewTracerDriver(mysqlDriver, tracer, MYSQL))
 	db, err := sql.Open("skywalking-sql", "user:password@tcp(127.0.0.1:3306)/testdb")
 	assert.NoError(t, err)
 

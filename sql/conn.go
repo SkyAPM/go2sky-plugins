@@ -13,13 +13,13 @@ type conn struct {
 	conn   driver.Conn
 	tracer *go2sky.Tracer
 
-	// dsn defines the destination of sql server, format in host:port
-	dsn string
+	// addr defines the address of sql server, format in host:port
+	addr string
 }
 
 func (c *conn) Ping(ctx context.Context) error {
 	if pinger, ok := c.conn.(driver.Pinger); ok {
-		s, err := c.tracer.CreateExitSpan(ctx, "go2sky/sql/ping", c.dsn, emptyInjectFunc)
+		s, err := c.tracer.CreateExitSpan(ctx, "go2sky/sql/ping", c.addr, emptyInjectFunc)
 		if err != nil {
 			return err
 		}
