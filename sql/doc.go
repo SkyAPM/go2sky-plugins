@@ -15,30 +15,5 @@
 // specific language governing permissions and limitations
 // under the License.
 
+// Package sql is a plugin that can be used to trace database/sql.
 package sql
-
-import (
-	"database/sql/driver"
-
-	"github.com/SkyAPM/go2sky"
-)
-
-// tx is a wrapper for driver.Tx
-type tx struct {
-	tx   driver.Tx
-	span go2sky.Span
-}
-
-func (t *tx) Commit() error {
-	if t.span != nil {
-		defer t.span.End()
-	}
-	return t.tx.Commit()
-}
-
-func (t *tx) Rollback() error {
-	if t.span != nil {
-		defer t.span.End()
-	}
-	return t.tx.Rollback()
-}
