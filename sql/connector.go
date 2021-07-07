@@ -75,7 +75,7 @@ func (fc *fallbackConnector) Driver() driver.Driver {
 }
 
 // OpenConnector implements driver.DriverContext OpenConnector
-func (d *swDriver) OpenConnector(name string) (driver.Connector, error) {
+func (d *swSQLDriver) OpenConnector(name string) (driver.Connector, error) {
 	if dc, ok := d.driver.(driver.DriverContext); ok {
 		c, err := dc.OpenConnector(name)
 		if err != nil {
@@ -90,8 +90,11 @@ func (d *swDriver) OpenConnector(name string) (driver.Connector, error) {
 
 	// given driver does not implement driver.DriverContext interface
 	return &connector{
-		connector: nil,
-		tracer:    d.tracer,
-		addr:      parseAddr(name, d.dbType),
+		connector: &fallbackConnector{
+			driver: d.driver,
+			name:   name,
+		},
+		tracer: d.tracer,
+		addr:   parseAddr(name, d.dbType),
 	}, nil
 }

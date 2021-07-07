@@ -31,8 +31,8 @@ const (
 	IPV4  DBType = "others"
 )
 
-// swDriver is a tracing wrapper for driver.Driver
-type swDriver struct {
+// swSQLDriver is a tracing wrapper for driver.Driver
+type swSQLDriver struct {
 	driver driver.Driver
 	tracer *go2sky.Tracer
 
@@ -40,14 +40,14 @@ type swDriver struct {
 }
 
 func NewTracerDriver(driver driver.Driver, tracer *go2sky.Tracer, dbType DBType) driver.Driver {
-	return &swDriver{
+	return &swSQLDriver{
 		driver: driver,
 		tracer: tracer,
 		dbType: dbType,
 	}
 }
 
-func (d *swDriver) Open(name string) (driver.Conn, error) {
+func (d *swSQLDriver) Open(name string) (driver.Conn, error) {
 	addr := parseAddr(name, d.dbType)
 	s, err := d.tracer.CreateExitSpan(context.Background(), genOpName(d.dbType, "open"), addr, emptyInjectFunc)
 	if err != nil {
