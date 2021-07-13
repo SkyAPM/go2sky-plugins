@@ -28,24 +28,24 @@ type connector struct {
 	connector driver.Connector
 	tracer    *go2sky.Tracer
 
-	// addr defines the address of sql server, format in host:port
-	addr string
-	// dbType defines the sql server type
-	dbType DBType
+	// attr include some attributes need to report to OAP server
+	attr attribute
 }
 
 func (ct *connector) Connect(ctx context.Context) (driver.Conn, error) {
-	span, err := ct.tracer.CreateExitSpan(ctx, genOpName(ct.dbType, "connect"), ct.addr, emptyInjectFunc)
+	span, err := createSpan(ctx, ct.tracer, ct.attr, "connect")
 	if err != nil {
 		return nil, err
 	}
 	defer span.End()
+	span.Tag(tagDbType, string(ct.attr.dbType))
+	span.Tag(tagDbInstance, ct.attr.peer)
 
 	c, err := ct.connector.Connect(ctx)
 	return &conn{
 		conn:   c,
 		tracer: ct.tracer,
-		addr:   ct.addr,
+		attr:   ct.attr,
 	}, nil
 }
 
@@ -56,6 +56,7 @@ func (ct *connector) Driver() driver.Driver {
 type fallbackConnector struct {
 	driver driver.Driver
 	name   string
+	attr   attribute
 }
 
 func (fc *fallbackConnector) Connect(ctx context.Context) (driver.Conn, error) {
@@ -76,6 +77,7 @@ func (fc *fallbackConnector) Driver() driver.Driver {
 
 // OpenConnector implements driver.DriverContext OpenConnector
 func (d *swSQLDriver) OpenConnector(name string) (driver.Connector, error) {
+	attr := newAttribute(name, d.dbType)
 	if dc, ok := d.driver.(driver.DriverContext); ok {
 		c, err := dc.OpenConnector(name)
 		if err != nil {
@@ -84,7 +86,7 @@ func (d *swSQLDriver) OpenConnector(name string) (driver.Connector, error) {
 		return &connector{
 			connector: c,
 			tracer:    d.tracer,
-			addr:      parseAddr(name, d.dbType),
+			attr:      attr,
 		}, nil
 	}
 
@@ -93,8 +95,9 @@ func (d *swSQLDriver) OpenConnector(name string) (driver.Connector, error) {
 		connector: &fallbackConnector{
 			driver: d.driver,
 			name:   name,
+			attr:   attr,
 		},
 		tracer: d.tracer,
-		addr:   parseAddr(name, d.dbType),
+		attr:   attr,
 	}, nil
 }

@@ -48,12 +48,15 @@ func NewTracerDriver(driver driver.Driver, tracer *go2sky.Tracer, dbType DBType)
 }
 
 func (d *swSQLDriver) Open(name string) (driver.Conn, error) {
-	addr := parseAddr(name, d.dbType)
-	s, err := d.tracer.CreateExitSpan(context.Background(), genOpName(d.dbType, "open"), addr, emptyInjectFunc)
+	attr := newAttribute(name, d.dbType)
+	span, err := createSpan(context.Background(), d.tracer, attr, "open")
 	if err != nil {
 		return nil, err
 	}
-	defer s.End()
+	defer span.End()
+	span.Tag(tagDbType, string(attr.dbType))
+	span.Tag(tagDbInstance, attr.peer)
+
 	c, err := d.driver.Open(name)
 	if err != nil {
 		return nil, err
@@ -61,6 +64,6 @@ func (d *swSQLDriver) Open(name string) (driver.Conn, error) {
 	return &conn{
 		conn:   c,
 		tracer: d.tracer,
-		addr:   addr,
+		attr:   attr,
 	}, nil
 }

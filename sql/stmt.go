@@ -31,10 +31,8 @@ type stmt struct {
 
 	// query defines the statement query
 	query string
-	// addr defines the address of sql server, format in host:port
-	addr string
-	// dbType defines the sql server type
-	dbType DBType
+	// attr include some attributes need to report to OAP server
+	attr attribute
 }
 
 func (s *stmt) Close() error {
@@ -49,15 +47,19 @@ func (s *stmt) Exec(args []driver.Value) (driver.Result, error) {
 	return s.stmt.Exec(args)
 }
 
+// ExecContext implements driver.StmtExecContext ExecContext
+// If the underlying Stmt does not implements
+// driver.StmtExecContext interface, this method
+// will use Exec instead.
 func (s *stmt) ExecContext(ctx context.Context, args []driver.NamedValue) (driver.Result, error) {
-	span, err := s.tracer.CreateExitSpan(ctx, genOpName(s.dbType, "exec"), s.addr, emptyInjectFunc)
+	span, err := createSpan(ctx, s.tracer, s.attr, "execute")
 	if err != nil {
 		return nil, err
 	}
 	defer span.End()
-	span.Tag(TagDbType, string(s.dbType))
-	span.Tag(TagDbInstance, s.addr)
-	span.Tag(TagDbStatement, s.query)
+	span.Tag(tagDbType, string(s.attr.dbType))
+	span.Tag(tagDbInstance, s.attr.peer)
+	span.Tag(tagDbStatement, s.query)
 
 	if execerContext, ok := s.stmt.(driver.StmtExecContext); ok {
 		return execerContext.ExecContext(ctx, args)
@@ -74,15 +76,19 @@ func (s *stmt) Query(args []driver.Value) (driver.Rows, error) {
 	return s.stmt.Query(args)
 }
 
+// QueryContext implements driver.StmtQueryContext QueryContext
+// If the underlying Stmt does not implements
+// driver.StmtQueryContext interface, this method
+// will use Query instead.
 func (s *stmt) QueryContext(ctx context.Context, args []driver.NamedValue) (driver.Rows, error) {
-	span, err := s.tracer.CreateExitSpan(ctx, genOpName(s.dbType, "query"), s.addr, emptyInjectFunc)
+	span, err := createSpan(ctx, s.tracer, s.attr, "query")
 	if err != nil {
 		return nil, err
 	}
 	defer span.End()
-	span.Tag(TagDbType, string(s.dbType))
-	span.Tag(TagDbInstance, s.addr)
-	span.Tag(TagDbStatement, s.query)
+	span.Tag(tagDbType, string(s.attr.dbType))
+	span.Tag(tagDbInstance, s.attr.peer)
+	span.Tag(tagDbStatement, s.query)
 
 	if queryer, ok := s.stmt.(driver.StmtQueryContext); ok {
 		return queryer.QueryContext(ctx, args)
