@@ -22,7 +22,6 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/SkyAPM/go2sky"
@@ -42,61 +41,10 @@ const (
 	tagDbSqlParameters = "db.sql.parameters"
 )
 
-type attribute struct {
-	dbType      DBType
-	peer        string
-	componentID int32
-}
-
 var ErrUnsupportedOp = errors.New("operation unsupported by the underlying driver")
 
 // emptyInjectFunc defines a empty injector for propagation.Injector function
 func emptyInjectFunc(key, value string) error { return nil }
-
-func newAttribute(name string, dbType DBType) attribute {
-	a := attribute{
-		dbType: dbType,
-	}
-	a.setPeer(name)
-	a.setComponentID()
-	return a
-}
-
-// setPeer parse dsn to a endpoint addr string (host:port)
-func (a attribute) setPeer(dsn string) {
-	var addr string
-	switch a.dbType {
-	case MYSQL:
-		// [user[:password]@][net[(addr)]]/dbname[?param1=value1&paramN=valueN]
-		re := regexp.MustCompile(`\(.+\)`)
-		addr = re.FindString(dsn)
-		addr = addr[1 : len(addr)-1]
-	case IPV4:
-		// ipv4 addr
-		re := regexp.MustCompile(`((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}:\d{1,5}`)
-		addr = re.FindString(dsn)
-	}
-	a.peer = addr
-	return
-}
-
-func (a attribute) getOpName(op string) string {
-	switch a.dbType {
-	case MYSQL:
-		return "Mysql/Go2Sky/" + op
-	default:
-		return "Sql/Go2Sky/" + op
-	}
-}
-
-func (a attribute) setComponentID() {
-	switch a.dbType {
-	case MYSQL:
-		a.componentID = componentIDMysql
-	default:
-		a.componentID = componentIDUnknown
-	}
-}
 
 // namedValueToValueString converts driver arguments of NamedValue format to Value string format.
 func namedValueToValueString(named []driver.NamedValue) string {
@@ -120,16 +68,16 @@ func namedValueToValue(named []driver.NamedValue) ([]driver.Value, error) {
 	return dargs, nil
 }
 
-func createSpan(ctx context.Context, tracer *go2sky.Tracer, attr attribute, operation string) (go2sky.Span, error) {
+func createSpan(ctx context.Context, tracer *go2sky.Tracer, opts *options, operation string) (go2sky.Span, error) {
 	s, _, err := tracer.CreateLocalSpan(ctx,
 		go2sky.WithSpanType(go2sky.SpanTypeExit),
-		go2sky.WithOperationName(attr.getOpName(operation)),
+		go2sky.WithOperationName(opts.getOpName(operation)),
 	)
 	if err != nil {
 		return nil, err
 	}
-	s.SetPeer(attr.peer)
-	s.SetComponent(attr.componentID)
+	s.SetPeer(opts.peer)
+	s.SetComponent(opts.componentID)
 	s.SetSpanLayer(agentv3.SpanLayer_Database)
 	return s, nil
 }

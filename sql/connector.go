@@ -28,24 +28,26 @@ type connector struct {
 	connector driver.Connector
 	tracer    *go2sky.Tracer
 
-	// attr include some attributes need to report to OAP server
-	attr attribute
+	opts *options
 }
 
 func (ct *connector) Connect(ctx context.Context) (driver.Conn, error) {
-	span, err := createSpan(ctx, ct.tracer, ct.attr, "connect")
+	span, err := createSpan(ctx, ct.tracer, ct.opts, "connect")
 	if err != nil {
 		return nil, err
 	}
 	defer span.End()
-	span.Tag(tagDbType, string(ct.attr.dbType))
-	span.Tag(tagDbInstance, ct.attr.peer)
+	span.Tag(tagDbType, string(ct.opts.dbType))
+	span.Tag(tagDbInstance, ct.opts.peer)
 
 	c, err := ct.connector.Connect(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return &conn{
 		conn:   c,
 		tracer: ct.tracer,
-		attr:   ct.attr,
+		opts:   ct.opts,
 	}, nil
 }
 
@@ -56,7 +58,8 @@ func (ct *connector) Driver() driver.Driver {
 type fallbackConnector struct {
 	driver driver.Driver
 	name   string
-	attr   attribute
+
+	opts *options
 }
 
 func (fc *fallbackConnector) Connect(ctx context.Context) (driver.Conn, error) {
@@ -76,8 +79,10 @@ func (fc *fallbackConnector) Driver() driver.Driver {
 }
 
 // OpenConnector implements driver.DriverContext OpenConnector
-func (d *swSQLDriver) OpenConnector(name string) (driver.Connector, error) {
-	attr := newAttribute(name, d.dbType)
+func (d *go2SkySQLDriver) OpenConnector(name string) (driver.Connector, error) {
+	if d.opts.peer == "" {
+		d.opts.setPeerWithDsn(name)
+	}
 	if dc, ok := d.driver.(driver.DriverContext); ok {
 		c, err := dc.OpenConnector(name)
 		if err != nil {
@@ -86,7 +91,7 @@ func (d *swSQLDriver) OpenConnector(name string) (driver.Connector, error) {
 		return &connector{
 			connector: c,
 			tracer:    d.tracer,
-			attr:      attr,
+			opts:      d.opts,
 		}, nil
 	}
 
@@ -95,9 +100,9 @@ func (d *swSQLDriver) OpenConnector(name string) (driver.Connector, error) {
 		connector: &fallbackConnector{
 			driver: d.driver,
 			name:   name,
-			attr:   attr,
+			opts:   d.opts,
 		},
 		tracer: d.tracer,
-		attr:   attr,
+		opts:   d.opts,
 	}, nil
 }

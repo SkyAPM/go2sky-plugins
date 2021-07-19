@@ -29,10 +29,9 @@ type stmt struct {
 	stmt   driver.Stmt
 	tracer *go2sky.Tracer
 
+	opts *options
 	// query defines the statement query
 	query string
-	// attr include some attributes need to report to OAP server
-	attr attribute
 }
 
 func (s *stmt) Close() error {
@@ -52,13 +51,13 @@ func (s *stmt) Exec(args []driver.Value) (driver.Result, error) {
 // driver.StmtExecContext interface, this method
 // will use Exec instead.
 func (s *stmt) ExecContext(ctx context.Context, args []driver.NamedValue) (driver.Result, error) {
-	span, err := createSpan(ctx, s.tracer, s.attr, "execute")
+	span, err := createSpan(ctx, s.tracer, s.opts, "execute")
 	if err != nil {
 		return nil, err
 	}
 	defer span.End()
-	span.Tag(tagDbType, string(s.attr.dbType))
-	span.Tag(tagDbInstance, s.attr.peer)
+	span.Tag(tagDbType, string(s.opts.dbType))
+	span.Tag(tagDbInstance, s.opts.peer)
 	span.Tag(tagDbStatement, s.query)
 
 	if execerContext, ok := s.stmt.(driver.StmtExecContext); ok {
@@ -81,13 +80,13 @@ func (s *stmt) Query(args []driver.Value) (driver.Rows, error) {
 // driver.StmtQueryContext interface, this method
 // will use Query instead.
 func (s *stmt) QueryContext(ctx context.Context, args []driver.NamedValue) (driver.Rows, error) {
-	span, err := createSpan(ctx, s.tracer, s.attr, "query")
+	span, err := createSpan(ctx, s.tracer, s.opts, "query")
 	if err != nil {
 		return nil, err
 	}
 	defer span.End()
-	span.Tag(tagDbType, string(s.attr.dbType))
-	span.Tag(tagDbInstance, s.attr.peer)
+	span.Tag(tagDbType, string(s.opts.dbType))
+	span.Tag(tagDbInstance, s.opts.peer)
 	span.Tag(tagDbStatement, s.query)
 
 	if queryer, ok := s.stmt.(driver.StmtQueryContext); ok {

@@ -29,8 +29,7 @@ type conn struct {
 	conn   driver.Conn
 	tracer *go2sky.Tracer
 
-	// attr include some attributes need to report to OAP server
-	attr attribute
+	opts *options
 }
 
 // Ping implements driver.Pinger interface.
@@ -38,7 +37,7 @@ type conn struct {
 // Ping will return a ErrUnsupportedOp error
 func (c *conn) Ping(ctx context.Context) error {
 	if pinger, ok := c.conn.(driver.Pinger); ok {
-		span, err := createSpan(ctx, c.tracer, c.attr, "ping")
+		span, err := createSpan(ctx, c.tracer, c.opts, "ping")
 		if err != nil {
 			return err
 		}
@@ -57,7 +56,7 @@ func (c *conn) Prepare(query string) (driver.Stmt, error) {
 		stmt:   st,
 		tracer: c.tracer,
 		query:  query,
-		attr:   c.attr,
+		opts:   c.opts,
 	}, nil
 }
 
@@ -75,7 +74,7 @@ func (c *conn) PrepareContext(ctx context.Context, query string) (driver.Stmt, e
 			stmt:   st,
 			tracer: c.tracer,
 			query:  query,
-			attr:   c.attr,
+			opts:   c.opts,
 		}, nil
 	}
 	return c.Prepare(query)
@@ -102,7 +101,7 @@ func (c *conn) Begin() (driver.Tx, error) {
 // driver.ConnBeginTx interface, this method
 // will use Begin instead.
 func (c *conn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, error) {
-	span, err := createSpan(ctx, c.tracer, c.attr, "beginTransaction")
+	span, err := createSpan(ctx, c.tracer, c.opts, "beginTransaction")
 	if err != nil {
 		return nil, err
 	}
@@ -132,13 +131,13 @@ func (c *conn) Exec(query string, args []driver.Value) (driver.Result, error) {
 // driver.ExecerContext interface, this method
 // will use Exec instead.
 func (c *conn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
-	span, err := createSpan(ctx, c.tracer, c.attr, "execute")
+	span, err := createSpan(ctx, c.tracer, c.opts, "execute")
 	if err != nil {
 		return nil, err
 	}
 	defer span.End()
-	span.Tag(tagDbType, string(c.attr.dbType))
-	span.Tag(tagDbInstance, c.attr.peer)
+	span.Tag(tagDbType, string(c.opts.dbType))
+	span.Tag(tagDbInstance, c.opts.peer)
 	span.Tag(tagDbStatement, query)
 
 	if execerContext, ok := c.conn.(driver.ExecerContext); ok {
@@ -165,13 +164,13 @@ func (c *conn) Query(query string, args []driver.Value) (driver.Rows, error) {
 // driver.QueryerContext interface, this method
 // will use Query instead.
 func (c *conn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Rows, error) {
-	span, err := createSpan(ctx, c.tracer, c.attr, "query")
+	span, err := createSpan(ctx, c.tracer, c.opts, "query")
 	if err != nil {
 		return nil, err
 	}
 	defer span.End()
-	span.Tag(tagDbType, string(c.attr.dbType))
-	span.Tag(tagDbInstance, c.attr.peer)
+	span.Tag(tagDbType, string(c.opts.dbType))
+	span.Tag(tagDbInstance, c.opts.peer)
 	span.Tag(tagDbStatement, query)
 
 	if queryerContext, ok := c.conn.(driver.QueryerContext); ok {

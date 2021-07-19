@@ -1,0 +1,9 @@
+
+setup:
+  env: compose
+  file: docker-compose.yml
+  timeout: 1200
+
+cleanup:
+  # always never success failure
+  on: always

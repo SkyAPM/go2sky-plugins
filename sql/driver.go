@@ -24,38 +24,42 @@ import (
 	"github.com/SkyAPM/go2sky"
 )
 
-type DBType string
-
-const (
-	MYSQL DBType = "mysql"
-	IPV4  DBType = "others"
-)
-
-// swSQLDriver is a tracing wrapper for driver.Driver
-type swSQLDriver struct {
+// go2SkySQLDriver is a tracing wrapper for driver.Driver
+type go2SkySQLDriver struct {
 	driver driver.Driver
 	tracer *go2sky.Tracer
 
-	dbType DBType
+	opts *options
 }
 
-func NewTracerDriver(driver driver.Driver, tracer *go2sky.Tracer, dbType DBType) driver.Driver {
-	return &swSQLDriver{
+func NewTracerDriver(driver driver.Driver, tracer *go2sky.Tracer, opts ...Option) driver.Driver {
+	options := &options{
+		dbType: IPV4,
+	}
+	for _, o := range opts {
+		o(options)
+	}
+	if options.componentID == 0 {
+		options.setComponentID()
+	}
+	return &go2SkySQLDriver{
 		driver: driver,
 		tracer: tracer,
-		dbType: dbType,
+		opts:   options,
 	}
 }
 
-func (d *swSQLDriver) Open(name string) (driver.Conn, error) {
-	attr := newAttribute(name, d.dbType)
-	span, err := createSpan(context.Background(), d.tracer, attr, "open")
+func (d *go2SkySQLDriver) Open(name string) (driver.Conn, error) {
+	if d.opts.peer == "" {
+		d.opts.setPeerWithDsn(name)
+	}
+	span, err := createSpan(context.Background(), d.tracer, d.opts, "open")
 	if err != nil {
 		return nil, err
 	}
 	defer span.End()
-	span.Tag(tagDbType, string(attr.dbType))
-	span.Tag(tagDbInstance, attr.peer)
+	span.Tag(tagDbType, string(d.opts.dbType))
+	span.Tag(tagDbInstance, d.opts.peer)
 
 	c, err := d.driver.Open(name)
 	if err != nil {
@@ -64,6 +68,6 @@ func (d *swSQLDriver) Open(name string) (driver.Conn, error) {
 	return &conn{
 		conn:   c,
 		tracer: d.tracer,
-		attr:   attr,
+		opts:   d.opts,
 	}, nil
 }
