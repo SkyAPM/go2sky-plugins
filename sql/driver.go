@@ -32,6 +32,8 @@ type go2SkySQLDriver struct {
 	opts *options
 }
 
+// NewTracerDriver return a driver wrapper with go2sky tracer,
+// Options include: WithSqlDBType, WithPeerAddr, WithQueryReport, WithParamReport
 func NewTracerDriver(driver driver.Driver, tracer *go2sky.Tracer, opts ...Option) driver.Driver {
 	options := &options{
 		dbType: IPV4,

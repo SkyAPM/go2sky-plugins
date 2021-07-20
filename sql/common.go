@@ -48,11 +48,11 @@ func emptyInjectFunc(key, value string) error { return nil }
 
 // namedValueToValueString converts driver arguments of NamedValue format to Value string format.
 func namedValueToValueString(named []driver.NamedValue) string {
-	b := strings.Builder{}
+	b := make([]string, 0, len(named))
 	for _, param := range named {
-		b.WriteString(fmt.Sprintf("%v,", param.Value))
+		b = append(b, fmt.Sprintf("%v", param.Value))
 	}
-	return b.String()
+	return strings.Join(b, ",")
 }
 
 // namedValueToValue converts driver arguments of NamedValue format to Value format.

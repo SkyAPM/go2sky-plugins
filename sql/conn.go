@@ -138,7 +138,12 @@ func (c *conn) ExecContext(ctx context.Context, query string, args []driver.Name
 	defer span.End()
 	span.Tag(tagDbType, string(c.opts.dbType))
 	span.Tag(tagDbInstance, c.opts.peer)
-	span.Tag(tagDbStatement, query)
+	if c.opts.reportQuery {
+		span.Tag(tagDbStatement, query)
+	}
+	if c.opts.reportParam {
+		span.Tag(tagDbSqlParameters, namedValueToValueString(args))
+	}
 
 	if execerContext, ok := c.conn.(driver.ExecerContext); ok {
 		return execerContext.ExecContext(ctx, query, args)
@@ -171,7 +176,12 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 	defer span.End()
 	span.Tag(tagDbType, string(c.opts.dbType))
 	span.Tag(tagDbInstance, c.opts.peer)
-	span.Tag(tagDbStatement, query)
+	if c.opts.reportQuery {
+		span.Tag(tagDbStatement, query)
+	}
+	if c.opts.reportParam {
+		span.Tag(tagDbSqlParameters, namedValueToValueString(args))
+	}
 
 	if queryerContext, ok := c.conn.(driver.QueryerContext); ok {
 		return queryerContext.QueryContext(ctx, query, args)
