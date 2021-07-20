@@ -1,0 +1,57 @@
+version: '2.1'
+
+services:
+  mockoap:
+    image: ghcr.io/apache/skywalking-agent-test-tool/mock-collector:b01d4137fed862338d78a73b23435ccf425f9962
+    expose:
+      - 19876
+      - 12800
+    ports:
+      - 19876
+      - 12800
+    networks:
+      - e2e
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD", "curl", "http://127.0.0.1:12800/healthCheck" ]
+      interval: 5s
+      timeout: 60s
+      retries: 120
+  mysql:
+    image: mysql:8.0
+    networks:
+      - e2e
+    expose:
+      - 3306
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "password"
+      MYSQL_DATABASE: "database"
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+  client:
+    build:
+      context: ../
+      dockerfile: ./test/Dockerfile.client
+    networks:
+      - e2e
+    expose:
+      - 8080
+    ports:
+      - 8080
+    healthcheck:
+      test: ["CMD", "curl", "http://127.0.0.1:8080/healthCheck"]
+      interval: 5s
+      timeout: 20s
+      retries: 10
+    depends_on:
+      mockoap:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+
+networks:
+  e2e:

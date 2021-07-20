@@ -1,0 +1,10 @@
+FROM golang:1.16
+
+ADD . /go2sky
+WORKDIR /go2sky
+
+EXPOSE 8080
+
+ENTRYPOINT ["go"]
+
+CMD ["run", "test/client.go"]

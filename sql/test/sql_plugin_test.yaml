@@ -7,3 +7,17 @@ setup:
 cleanup:
   # always never success failure
   on: always
+
+trigger:
+  action:
+
+verify:
+  # verify with retry strategy
+  retry:
+    # max retry count
+    count: 10
+    # the interval between two retries, in millisecond.
+    interval: 10000
+  cases:
+    - query: curl http://127.0.0.1:${mockoap_12800}/receiveData
+      expected: expected.data.yml
