@@ -105,6 +105,9 @@ func (c *conn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, e
 	if err != nil {
 		return nil, err
 	}
+	span.Tag(tagDbType, string(c.opts.dbType))
+	span.Tag(tagDbInstance, c.opts.peer)
+
 	if connBeginTx, ok := c.conn.(driver.ConnBeginTx); ok {
 		t, err := connBeginTx.BeginTx(ctx, opts)
 		if err != nil {
@@ -115,7 +118,16 @@ func (c *conn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, e
 			span: span,
 		}, nil
 	}
-	return c.Begin()
+
+	t, err := c.Begin()
+	if err != nil {
+		return nil, err
+	}
+
+	return &tx{
+		tx:   t,
+		span: span,
+	}, nil
 }
 
 // Exec implements driver.Execer Exec

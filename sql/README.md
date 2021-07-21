@@ -14,7 +14,7 @@ import (
 
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
-	swsql "github.com/SkyAPM/go2sky-plugins/sql"
+	sqlPlugin "github.com/SkyAPM/go2sky-plugins/sql"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -26,7 +26,7 @@ defer re.Close()
 tracer, err := go2sky.NewTracer("service-name", go2sky.WithReporter(re))
 
 // register go2sky sql wrapper
-sql.Register("skywalking-sql", swsql.NewTracerDriver(&mysql.MySQLDriver{}, tracer, swsql.WithSqlDBType(swsql.MYSQL), swsql.WithQueryReport()))
+sql.Register("skywalking-sql", sqlPlugin.NewTracerDriver(&mysql.MySQLDriver{}, tracer, sqlPlugin.WithSqlDBType(sqlPlugin.MYSQL), sqlPlugin.WithQueryReport()))
 db, err := sql.Open("skywalking-sql", "user:password@tcp(127.0.0.1:3306)/dbname")
 
 // use db handle as usual.

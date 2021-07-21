@@ -31,6 +31,7 @@ type tx struct {
 
 func (t *tx) Commit() error {
 	if t.span != nil {
+		t.span.Tag(tagDbStatement, "commit")
 		defer t.span.End()
 	}
 	return t.tx.Commit()
@@ -38,6 +39,7 @@ func (t *tx) Commit() error {
 
 func (t *tx) Rollback() error {
 	if t.span != nil {
+		t.span.Tag(tagDbStatement, "rollback")
 		defer t.span.End()
 	}
 	return t.tx.Rollback()
