@@ -61,5 +61,5 @@ func Middleware(tracer *go2sky.Tracer) gear.Middleware {
 }
 
 func operationName(ctx *gear.Context) string {
-	return fmt.Sprintf("%s/%s", ctx.Method, ctx.Path)
+	return fmt.Sprintf("/%s%s", ctx.Method, ctx.Path)
 }

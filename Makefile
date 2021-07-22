@@ -38,7 +38,3 @@ lint: $(LINTER)
 fix: $(LINTER)
 	${TEST_SHELL} fix ${PLUGIN_DIR}
 
-.PHONY: license
-license:
-	python3 tools/check-license-header.py
-
