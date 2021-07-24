@@ -34,4 +34,4 @@ jobs:
       - uses: actions/checkout@v2
       - uses: apache/skywalking-infra-e2e@main
         with:
-          e2e-file: ${{ .matrix.case.e2e_file }}
+          e2e-file: ${{ matrix.case.e2e_file }}
