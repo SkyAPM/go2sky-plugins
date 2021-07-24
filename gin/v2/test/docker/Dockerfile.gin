@@ -16,8 +16,8 @@
 
 FROM golang:1.12
 
-ADD ./gear /gear
-WORKDIR /gear
+ADD ./gin/v2 /gin/v2
+WORKDIR /gin/v2
 
 EXPOSE 8080
 

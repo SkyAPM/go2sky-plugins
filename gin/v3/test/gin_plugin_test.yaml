@@ -14,13 +14,29 @@
 # limitations under the License.
 #
 
-FROM golang:1.12
+setup:
+  env: compose
+  file: docker-compose.yml
+  timeout: 1200
 
-ADD ./gear /gear
-WORKDIR /gear
+cleanup:
+  # always never success failure
+  on: always
 
-EXPOSE 8080
+trigger:
+  action: http
+  interval: 3s
+  times: 5
+  url: http://127.0.0.1:${gin_8080}/user/World
+  method: GET
 
-ENTRYPOINT ["go"]
-
-CMD ["run", "test/server/server.go"]
+verify:
+  # verify with retry strategy
+  retry:
+    # max retry count
+    count: 10
+    # the interval between two retries, in millisecond.
+    interval: 10000
+  cases:
+    - query: curl http://127.0.0.1:${mockoap_12800}/receiveData
+      expected: expected.data.yml

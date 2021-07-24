@@ -5,6 +5,8 @@ github.com/SkyAPM/go2sky v0.6.1-0.20210314152436-fc8f3a2560f9 h1:180vs2N2/I4UhnQ
 github.com/SkyAPM/go2sky v0.6.1-0.20210314152436-fc8f3a2560f9/go.mod h1:TANzYw5EvIlTidGWvQxtvO87rM6C746HkM0xkWqnPQw=
 github.com/SkyAPM/go2sky v1.0.0 h1:kSc4EeiQRX54FBLOGhLbvMw5ks0bAccw6UuxYUZYjOg=
 github.com/SkyAPM/go2sky v1.0.0/go.mod h1:LzuySkt/TsQL8FMANZu4BX/6Rn0UfGu5KS/r9TwG/dc=
+github.com/SkyAPM/go2sky v1.1.0 h1:XT8aiCvf0qZnQz2gPfb8ROzymoog9yGNbE9wBBLny+o=
+github.com/SkyAPM/go2sky v1.1.0/go.mod h1:LzuySkt/TsQL8FMANZu4BX/6Rn0UfGu5KS/r9TwG/dc=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
 github.com/agnivade/levenshtein v1.0.3/go.mod h1:4SFRZbbXWLF4MU1T9Qg0pGgH3Pjs+t6ie5efyrwRJXs=
 github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883/go.mod h1:rCTlJbsFo29Kk6CurOXKm700vrz8f0KW0JNfpkRJY/8=
