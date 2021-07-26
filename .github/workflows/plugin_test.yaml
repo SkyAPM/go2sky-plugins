@@ -32,6 +32,7 @@ jobs:
           - { name: 'Gear', e2e_file: 'gear/test/gear_plugin_test.yaml' }
           - { name: 'Gin v2', e2e_file: 'gin/v2/test/gin_plugin_test.yaml' }
           - { name: 'Gin v3', e2e_file: 'gin/v3/test/gin_plugin_test.yaml' }
+          - { name: 'Go Restful', e2e_file: 'go-restful/test/go_restful_plugin_test.yaml' }
     steps:
       - uses: actions/checkout@v2
       - uses: apache/skywalking-infra-e2e@main
