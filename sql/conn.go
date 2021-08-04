@@ -40,8 +40,11 @@ func (c *conn) Ping(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		defer span.End()
-		return pinger.Ping(ctx)
+		err = pinger.Ping(ctx)
+		if err == nil {
+			span.End()
+		}
+		return err
 	}
 	return ErrUnsupportedOp
 }
@@ -146,7 +149,6 @@ func (c *conn) ExecContext(ctx context.Context, query string, args []driver.Name
 	if err != nil {
 		return nil, err
 	}
-	defer span.End()
 	span.Tag(tagDbType, string(c.opts.dbType))
 	span.Tag(tagDbInstance, c.opts.peer)
 	if c.opts.reportQuery {
@@ -157,14 +159,22 @@ func (c *conn) ExecContext(ctx context.Context, query string, args []driver.Name
 	}
 
 	if execerContext, ok := c.conn.(driver.ExecerContext); ok {
-		return execerContext.ExecContext(ctx, query, args)
+		res, err := execerContext.ExecContext(ctx, query, args)
+		if err == nil {
+			span.End()
+		}
+		return res, err
 	}
 
 	values, err := namedValueToValue(args)
 	if err != nil {
 		return nil, err
 	}
-	return c.Exec(query, values)
+	res, err := c.Exec(query, values)
+	if err == nil {
+		span.End()
+	}
+	return res, err
 }
 
 // Query implements driver.Queryer Query
@@ -184,7 +194,6 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 	if err != nil {
 		return nil, err
 	}
-	defer span.End()
 	span.Tag(tagDbType, string(c.opts.dbType))
 	span.Tag(tagDbInstance, c.opts.peer)
 	if c.opts.reportQuery {
@@ -195,12 +204,20 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 	}
 
 	if queryerContext, ok := c.conn.(driver.QueryerContext); ok {
-		return queryerContext.QueryContext(ctx, query, args)
+		row, err := queryerContext.QueryContext(ctx, query, args)
+		if err == nil {
+			span.End()
+		}
+		return row, err
 	}
 
 	values, err := namedValueToValue(args)
 	if err != nil {
 		return nil, err
 	}
-	return c.Query(query, values)
+	row, err := c.Query(query, values)
+	if err == nil {
+		span.End()
+	}
+	return row, err
 }

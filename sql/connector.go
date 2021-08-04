@@ -35,7 +35,6 @@ func (ct *connector) Connect(ctx context.Context) (driver.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer span.End()
 	span.Tag(tagDbType, string(ct.opts.dbType))
 	span.Tag(tagDbInstance, ct.opts.peer)
 
@@ -43,6 +42,7 @@ func (ct *connector) Connect(ctx context.Context) (driver.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
+	span.End()
 	return &conn{
 		conn:   c,
 		tracer: ct.tracer,
