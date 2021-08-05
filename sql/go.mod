@@ -1,4 +1,4 @@
-module sql
+module github.com/SkyAPM/go2sky-plugins/sql
 
 go 1.16
 
