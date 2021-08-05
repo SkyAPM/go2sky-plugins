@@ -22,8 +22,6 @@ import (
 
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
-	"github.com/asim/go-micro/v3/logger"
-
 	microv3 "github.com/asim/go-micro/v3"
 
 	microv3plugin "github.com/SkyAPM/go2sky-plugins/micro"
@@ -34,8 +32,10 @@ const (
 	serviceName = "micro-server"
 )
 
+// Greeter example
 type Greeter struct{}
 
+// Hello example
 func (g *Greeter) Hello(ctx context.Context, name *string, msg *string) error {
 	*msg = "Hello " + *name
 	return nil
@@ -56,8 +56,6 @@ func main() {
 		microv3.Name("greeter"),
 		microv3.WrapHandler(microv3plugin.NewHandlerWrapper(tracer, "User-Agent")),
 		microv3.Address(":8081"))
-
-	_ = logger.DefaultLogger.Init(logger.WithLevel(logger.ErrorLevel))
 
 	if err = microv3.RegisterHandler(service.Server(), new(Greeter)); err != nil {
 		log.Fatalf("Register service error: %v \n", err)
