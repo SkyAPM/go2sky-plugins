@@ -18,9 +18,11 @@ package kratos
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/SkyAPM/go2sky"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/metadata"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
@@ -32,57 +34,44 @@ const (
 	componentIDGoKratosClient = 5011
 )
 
-func Server(tracer go2sky.Tracer) middleware.Middleware {
-	return func(handler middleware.Handler) middleware.Handler {
-		return func(ctx context.Context, req interface{}) (interface{}, error) {
-			if tr, ok := transport.FromServerContext(ctx); ok {
-				if md, ok := metadata.FromServerContext(ctx); ok {
-					span, _, err := tracer.CreateEntrySpan(ctx, tr.Operation(), func(key string) (string, error) {
-						return md.Get(key), nil
-					})
+type Option func(*options)
 
-					if err != nil {
-						return nil, err
-					}
+type options struct {
+	reportTags []string
+}
 
-					defer func() { span.End() }()
-
-					span.SetComponent(componentIDGoKratosServer)
-					span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
-
-					reply, err := handler(ctx, req)
-					if err != nil {
-						span.Error(time.Now(), err.Error())
-					}
-					return reply, err
-				}
-			}
-			return handler(ctx, req)
-		}
+func WithReportTags(tags ...string) Option {
+	return func(o *options) {
+		o.reportTags = append(o.reportTags, tags...)
 	}
 }
 
-func Client(tracer go2sky.Tracer) middleware.Middleware {
+func Server(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
+	options := &options{
+		reportTags: []string{},
+	}
+	for _, o := range opts {
+		o(options)
+	}
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
 			if tr, ok := transport.FromServerContext(ctx); ok {
-				md, ok := metadata.FromClientContext(ctx)
-				if !ok { // if no metadata, create it
-					ctx = metadata.NewClientContext(ctx, md)
-				}
-				span, err := tracer.CreateExitSpan(ctx, tr.Operation(), tr.Endpoint(), func(key, value string) error {
-					md.Set(key, value)
-					return nil
+				span, ctx, err := tracer.CreateEntrySpan(ctx, tr.Operation(), func(key string) (string, error) {
+					return tr.RequestHeader().Get(key), nil
 				})
-
 				if err != nil {
 					return nil, err
 				}
-
 				defer func() { span.End() }()
 
-				span.SetComponent(componentIDGoKratosClient)
+				span.SetComponent(componentIDGoKratosServer)
 				span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
+
+				if md, ok := metadata.FromServerContext(ctx); ok {
+					for _, k := range options.reportTags {
+						span.Tag(go2sky.Tag(k), md.Get(k))
+					}
+				}
 
 				reply, err := handler(ctx, req)
 				if err != nil {
@@ -92,5 +81,72 @@ func Client(tracer go2sky.Tracer) middleware.Middleware {
 			}
 			return handler(ctx, req)
 		}
+	}
+}
+
+func Client(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
+	options := &options{
+		reportTags: []string{},
+	}
+	for _, o := range opts {
+		o(options)
+	}
+	return func(handler middleware.Handler) middleware.Handler {
+		return func(ctx context.Context, req interface{}) (interface{}, error) {
+			if tr, ok := transport.FromClientContext(ctx); ok {
+				span, err := tracer.CreateExitSpan(ctx, tr.Operation(), tr.Endpoint(), func(key, value string) error {
+					tr.RequestHeader().Set(key, value)
+					ctx = context.WithValue(ctx, key, value)
+					return nil
+				})
+				if err != nil {
+					return nil, err
+				}
+				defer func() { span.End() }()
+
+				span.SetComponent(componentIDGoKratosClient)
+				span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
+
+				if md, ok := metadata.FromClientContext(ctx); ok {
+					for _, k := range options.reportTags {
+						span.Tag(go2sky.Tag(k), md.Get(k))
+					}
+				}
+
+				reply, err := handler(ctx, req)
+				if err != nil {
+					span.Error(time.Now(), err.Error())
+				}
+				return reply, err
+			}
+			return handler(ctx, req)
+		}
+	}
+}
+
+func TraceID() log.Valuer {
+	return func(ctx context.Context) interface{} {
+		if id := go2sky.TraceID(ctx); id != go2sky.EmptyTraceID {
+			return id
+		}
+		return ""
+	}
+}
+
+func SpanID() log.Valuer {
+	return func(ctx context.Context) interface{} {
+		if id := go2sky.SpanID(ctx); id != go2sky.EmptySpanID {
+			return fmt.Sprintf("%d", id)
+		}
+		return ""
+	}
+}
+
+func TraceSegmentID() log.Valuer {
+	return func(ctx context.Context) interface{} {
+		if id := go2sky.TraceSegmentID(ctx); id != go2sky.EmptyTraceSegmentID {
+			return id
+		}
+		return ""
 	}
 }
