@@ -14,33 +14,17 @@
 # limitations under the License.
 #
 
-version: '2.1'
-
 services:
   mockoap:
-    extends:
-      file: ../../test/base-compose.yml
-      service: mockoap
-    ports:
+    image: ghcr.io/apache/skywalking-agent-test-tool/mock-collector:b01d4137fed862338d78a73b23435ccf425f9962
+    expose:
+      - 19876
       - 12800
-  gear:
-    build:
-      context: ../../
-      dockerfile: ./gear/test/docker/Dockerfile.gear
     networks:
       - e2e
-    expose:
-      - 8080
-    ports:
-      - 8080
+    restart: on-failure
     healthcheck:
-      test: [ "CMD", "curl", "http://127.0.0.1:8080/healthCheck" ]
+      test: [ "CMD", "curl", "http://127.0.0.1:12800/healthCheck" ]
       interval: 5s
       timeout: 60s
       retries: 120
-    depends_on:
-      mockoap:
-        condition: service_healthy
-
-networks:
-  e2e:
