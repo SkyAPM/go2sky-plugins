@@ -171,8 +171,9 @@ github.com/go-kratos/kratos/v2 v2.0.0-rc3/go.mod h1:b3YbddNSpAUPbO84XkMTt2llIuDR
 github.com/go-kratos/kratos/v2 v2.0.0-rc7/go.mod h1:/2bGobqE+/F9kKOe4Re0OO5X2NWNGt+7n2e8Y5DHFRc=
 github.com/go-kratos/kratos/v2 v2.0.0/go.mod h1:USzTcAP7LS1rHVITQ/x/5JvlkUpG17pnfbqYV4j7SWc=
 github.com/go-kratos/kratos/v2 v2.0.1/go.mod h1:Jz6fuJFF2SLczQ7Y8ocKieVGgstQKa+R9NX09bCHekU=
-github.com/go-kratos/kratos/v2 v2.0.3 h1:Q8kGPSMnxdMrZ1dBD6He+3Dr54qsN3MVYMPHdiy4+tM=
 github.com/go-kratos/kratos/v2 v2.0.3/go.mod h1:Hgl0YPry9YyLtwTTfwLfowPKg+YS0dgZ06O5NHqz5hE=
+github.com/go-kratos/kratos/v2 v2.0.4-0.20210806031717-e5ae8dc3f1f4 h1:KWgpXidJ124ASr8iV/VwF+OM2+xWy31FUOY/WGpDBls=
+github.com/go-kratos/kratos/v2 v2.0.4-0.20210806031717-e5ae8dc3f1f4/go.mod h1:mB3H+jkEsL5mdkSB0wrRIG+PyVIzBb9ncJRc0+LatJM=
 github.com/go-kratos/nacos v0.1.0/go.mod h1:qhVsyp6RyDDEKLtT0/iTMaN3D7SheRMrYb2bV0jYqjw=
 github.com/go-kratos/prometheus v0.0.0-20210522055322-137e29e7cf47/go.mod h1:e3D0pnFDX5SG+ZGmGONd83WvrbmFWCdx5l4Hkl3I1eY=
 github.com/go-kratos/swagger-api v0.1.8/go.mod h1:HMI1NY/OWbjbkZF2z//tEKoL1XpZOzyxOedtBddEyZE=
@@ -644,7 +645,6 @@ go.opentelemetry.io/otel/oteltest v0.20.0/go.mod h1:L7bgKf9ZB7qCwT9Up7i9/pn0PWIa
 go.opentelemetry.io/otel/oteltest v1.0.0-RC1/go.mod h1:+eoIG0gdEOaPNftuy1YScLr1Gb4mL/9lpDkZ0JjMRq4=
 go.opentelemetry.io/otel/sdk v0.20.0/go.mod h1:g/IcepuwNsoiX5Byy2nNV0ySUF1em498m7hBWC279Yc=
 go.opentelemetry.io/otel/sdk v1.0.0-RC1/go.mod h1:kj6yPn7Pgt5ByRuwesbaWcRLA+V7BSDg3Hf8xRvsvf8=
-go.opentelemetry.io/otel/sdk v1.0.0-RC2 h1:ROuteeSCBaZNjiT9JcFzZepmInDvLktR28Y6qKo8bCs=
 go.opentelemetry.io/otel/sdk v1.0.0-RC2/go.mod h1:fgwHyiDn4e5k40TD9VX243rOxXR+jzsWBZYA2P5jpEw=
 go.opentelemetry.io/otel/trace v0.17.0/go.mod h1:bIujpqg6ZL6xUTubIUgziI1jSaUPthmabA/ygf/6Cfg=
 go.opentelemetry.io/otel/trace v0.18.0/go.mod h1:FzdUu3BPwZSZebfQ1vl5/tAa8LyMLXSJN57AXIt/iDk=
@@ -1005,8 +1005,6 @@ google.golang.org/genproto v0.0.0-20210611144927-798beca9d670/go.mod h1:UODoCrxH
 google.golang.org/genproto v0.0.0-20210617175327-b9e0b3197ced/go.mod h1:SzzZ/N+nwJDaO1kznhnlzqS8ocJICar6hYhVyhi++24=
 google.golang.org/genproto v0.0.0-20210629200056-84d6f6074151/go.mod h1:yiaVoXHpRzHGyxV3o4DktVWY4mSUErTKaeEOq6C3t3U=
 google.golang.org/genproto v0.0.0-20210701191553-46259e63a0a9/go.mod h1:yiaVoXHpRzHGyxV3o4DktVWY4mSUErTKaeEOq6C3t3U=
-google.golang.org/genproto v0.0.0-20210804223703-f1db76f3300d h1:Y9fT4WNRxuD0qofEPeWJwNC5kYLBcSXx0m91zyCMzYY=
-google.golang.org/genproto v0.0.0-20210804223703-f1db76f3300d/go.mod h1:ob2IJxKrgPT52GcgX759i1sleT07tiKowYBGbczaW48=
 google.golang.org/genproto v0.0.0-20210805201207-89edb61ffb67 h1:VmMSf20ssFK0+u1dscyTH9bU4/M4y+X/xNfkvD6kGtM=
 google.golang.org/genproto v0.0.0-20210805201207-89edb61ffb67/go.mod h1:ob2IJxKrgPT52GcgX759i1sleT07tiKowYBGbczaW48=
 google.golang.org/grpc v1.17.0/go.mod h1:6QZJwpn2B+Zp71q/5VxRsJ6NXXVCE5NRUHRo+f3cWCs=

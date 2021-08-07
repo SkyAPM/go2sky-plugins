@@ -40,12 +40,14 @@ type options struct {
 	reportTags []string
 }
 
+// WithReportTags will set tags that need to report in metadata
 func WithReportTags(tags ...string) Option {
 	return func(o *options) {
 		o.reportTags = append(o.reportTags, tags...)
 	}
 }
 
+// Server go2sky middleware for kratos server
 func Server(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 	options := &options{
 		reportTags: []string{},
@@ -84,6 +86,7 @@ func Server(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 	}
 }
 
+// Client go2sky middleware for kratos client
 func Client(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 	options := &options{
 		reportTags: []string{},
@@ -96,7 +99,6 @@ func Client(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 			if tr, ok := transport.FromClientContext(ctx); ok {
 				span, err := tracer.CreateExitSpan(ctx, tr.Operation(), tr.Endpoint(), func(key, value string) error {
 					tr.RequestHeader().Set(key, value)
-					ctx = context.WithValue(ctx, key, value)
 					return nil
 				})
 				if err != nil {
@@ -142,7 +144,7 @@ func SpanID() log.Valuer {
 	}
 }
 
-func TraceSegmentID() log.Valuer {
+func SegmentID() log.Valuer {
 	return func(ctx context.Context) interface{} {
 		if id := go2sky.TraceSegmentID(ctx); id != go2sky.EmptyTraceSegmentID {
 			return id

@@ -55,7 +55,7 @@ func Test(t *testing.T) {
 	defer r.Close()
 
 	logger := log.NewStdLogger(os.Stdout)
-	logger = log.With(logger, "segment_id", TraceSegmentID())
+	logger = log.With(logger, "segment_id", SegmentID())
 	logger = log.With(logger, "trace_id", TraceID())
 	logger = log.With(logger, "span_id", SpanID())
 
@@ -165,7 +165,7 @@ func ExampleServer() {
 	defer r.Close()
 
 	logger := log.NewStdLogger(os.Stdout)
-	logger = log.With(logger, "segment_id", TraceSegmentID())
+	logger = log.With(logger, "segment_id", SegmentID())
 	logger = log.With(logger, "trace_id", TraceID())
 	logger = log.With(logger, "span_id", SpanID())
 
@@ -219,7 +219,7 @@ func ExampleClient() {
 	defer r.Close()
 
 	logger := log.NewStdLogger(os.Stdout)
-	logger = log.With(logger, "segment_id", TraceSegmentID())
+	logger = log.With(logger, "segment_id", SegmentID())
 	logger = log.With(logger, "trace_id", TraceID())
 	logger = log.With(logger, "span_id", SpanID())
 
@@ -235,7 +235,7 @@ func ExampleClient() {
 			Client(tracer),
 			logging.Client(logger),
 		),
-		http.WithEndpoint("127.0.0.1:8000"),
+		http.WithEndpoint("localhost:8000"),
 	)
 	if err != nil {
 		panic(err)
@@ -248,7 +248,7 @@ func ExampleClient() {
 			Client(tracer),
 			logging.Client(logger),
 		),
-		grpc.WithEndpoint("127.0.0.1:9000"),
+		grpc.WithEndpoint("localhost:9000"),
 	)
 	if err != nil {
 		panic(err)
