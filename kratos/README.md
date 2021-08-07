@@ -17,7 +17,7 @@ Server:
 	defer r.Close()
 
 	logger := log.NewStdLogger(os.Stdout)
-	logger = log.With(logger, "segment_id", TraceSegmentID())
+	logger = log.With(logger, "segment_id", SegmentID())
 	logger = log.With(logger, "trace_id", TraceID())
 	logger = log.With(logger, "span_id", SpanID())
 
@@ -72,7 +72,7 @@ Client:
 	defer r.Close()
 
 	logger := log.NewStdLogger(os.Stdout)
-	logger = log.With(logger, "segment_id", TraceSegmentID())
+	logger = log.With(logger, "segment_id", SegmentID())
 	logger = log.With(logger, "trace_id", TraceID())
 	logger = log.With(logger, "span_id", SpanID())
 
