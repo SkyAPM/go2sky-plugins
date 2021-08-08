@@ -40,7 +40,7 @@ segmentItems:
           tags:
             - { key: User-Agent, value: Go-http-client/1.1 }
           refs:
-            - parentEndpoint: /helloworld.Greeter/SayHello
+            - parentEndpoint: /hello
               networkAddress: 'kratosserver:8000'
               refType: CrossProcess
               parentSpanId: 1
@@ -51,7 +51,7 @@ segmentItems:
           {{- end}}
           {{- if eq (index .refs 0).networkAddress "kratosserver:9000" }}
           refs:
-            - parentEndpoint: /helloworld.Greeter/SayHello
+            - parentEndpoint: /hello
               networkAddress: 'kratosserver:9000'
               refType: CrossProcess
               parentSpanId: 2
@@ -99,7 +99,7 @@ segmentItems:
           peer: 'kratosserver:9000'
           skipAnalysis: false
         {{- end}}
-        {{ - if eq .operationName "/healthCheck" }}
+        {{- if eq .operationName "/healthCheck" }}
         - operationName: /healthCheck
           operationId: 0
           parentSpanId: -1
@@ -108,12 +108,12 @@ segmentItems:
           startTime: {{ gt .startTime 0 }}
           endTime: {{ gt .endTime 0 }}
           componentId: 5010
-          isError: false,
+          isError: false
           spanType: Entry
           peer: ''
           skipAnalysis: false
-        {{ - end }}
-        {{ - if eq .operationName "/hello" }}
+        {{- end }}
+        {{- if eq .operationName "/hello" }}
         - operationName: /hello
           operationId: 0
           parentSpanId: -1
@@ -122,11 +122,11 @@ segmentItems:
           startTime: {{ gt .startTime 0 }}
           endTime: {{ gt .endTime 0 }}
           componentId: 5010
-          isError: false,
+          isError: false
           spanType: Entry
           peer: ''
           skipAnalysis: false
-        {{ - end }}
+        {{- end }}
         {{- end }}
       {{- end }}
     {{- end }}
