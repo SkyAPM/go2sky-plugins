@@ -80,6 +80,8 @@ func Server(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 					span.Error(time.Now(), err.Error())
 				}
 				return reply, err
+			} else {
+				fmt.Printf("%+v, %+v", ctx, req)
 			}
 			return handler(ctx, req)
 		}
@@ -97,7 +99,7 @@ func Client(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (interface{}, error) {
 			if tr, ok := transport.FromClientContext(ctx); ok {
-				span, err := tracer.CreateExitSpan(ctx, tr.Operation(), tr.Endpoint(), func(key, value string) error {
+				span, ctx, err := tracer.CreateExitSpanWithContext(ctx, tr.Operation(), tr.Endpoint(), func(key, value string) error {
 					tr.RequestHeader().Set(key, value)
 					return nil
 				})
