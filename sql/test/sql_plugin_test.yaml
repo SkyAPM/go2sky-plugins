@@ -25,6 +25,8 @@ cleanup:
 
 trigger:
   action: http
+  interval: 3s
+  times: 5
   url: http://127.0.0.1:${client_8080}/execute
   method: GET
 

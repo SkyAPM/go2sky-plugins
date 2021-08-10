@@ -19,6 +19,7 @@ package sql
 import (
 	"context"
 	"database/sql/driver"
+	"time"
 
 	"github.com/SkyAPM/go2sky"
 )
@@ -37,13 +38,15 @@ type conn struct {
 func (c *conn) Ping(ctx context.Context) error {
 	if pinger, ok := c.conn.(driver.Pinger); ok {
 		span, err := createSpan(ctx, c.tracer, c.opts, "ping")
+		defer span.End()
 		if err != nil {
 			return err
 		}
 		err = pinger.Ping(ctx)
-		if err == nil {
-			span.End()
+		if err != nil {
+			span.Error(time.Now(), err.Error())
 		}
+
 		return err
 	}
 	return ErrUnsupportedOp
@@ -113,6 +116,8 @@ func (c *conn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, e
 	if connBeginTx, ok := c.conn.(driver.ConnBeginTx); ok {
 		t, err := connBeginTx.BeginTx(ctx, opts)
 		if err != nil {
+			span.Error(time.Now(), err.Error())
+			span.End()
 			return nil, err
 		}
 		return &tx{
@@ -123,6 +128,8 @@ func (c *conn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, e
 
 	t, err := c.Begin()
 	if err != nil {
+		span.Error(time.Now(), err.Error())
+		span.End()
 		return nil, err
 	}
 
@@ -160,20 +167,18 @@ func (c *conn) ExecContext(ctx context.Context, query string, args []driver.Name
 
 	if execerContext, ok := c.conn.(driver.ExecerContext); ok {
 		res, err := execerContext.ExecContext(ctx, query, args)
-		if err == nil {
-			span.End()
-		}
+		closeSpan(span, err)
 		return res, err
 	}
 
 	values, err := namedValueToValue(args)
 	if err != nil {
+		span.Error(time.Now(), err.Error())
+		span.End()
 		return nil, err
 	}
 	res, err := c.Exec(query, values)
-	if err == nil {
-		span.End()
-	}
+	closeSpan(span, err)
 	return res, err
 }
 
@@ -205,19 +210,17 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 
 	if queryerContext, ok := c.conn.(driver.QueryerContext); ok {
 		row, err := queryerContext.QueryContext(ctx, query, args)
-		if err == nil {
-			span.End()
-		}
+		closeSpan(span, err)
 		return row, err
 	}
 
 	values, err := namedValueToValue(args)
 	if err != nil {
+		span.Error(time.Now(), err.Error())
+		span.End()
 		return nil, err
 	}
 	row, err := c.Query(query, values)
-	if err == nil {
-		span.End()
-	}
+	closeSpan(span, err)
 	return row, err
 }

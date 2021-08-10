@@ -22,6 +22,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/SkyAPM/go2sky"
 	agentv3 "skywalking.apache.org/repo/goapi/collect/language/agent/v3"
@@ -29,8 +30,7 @@ import (
 
 const (
 	componentIDUnknown = 0
-	componentIDMysql   = 5010
-	componentIDSqlite  = 5011
+	componentIDMysql   = 5012
 )
 
 const (
@@ -41,9 +41,6 @@ const (
 )
 
 var ErrUnsupportedOp = errors.New("operation unsupported by the underlying driver")
-
-// emptyInjectFunc defines a empty injector for propagation.Injector function
-func emptyInjectFunc(key, value string) error { return nil }
 
 // namedValueToValueString converts driver arguments of NamedValue format to Value string format.
 func namedValueToValueString(named []driver.NamedValue) string {
@@ -79,4 +76,14 @@ func createSpan(ctx context.Context, tracer *go2sky.Tracer, opts *options, opera
 	s.SetComponent(opts.componentID)
 	s.SetSpanLayer(agentv3.SpanLayer_Database)
 	return s, nil
+}
+
+func closeSpan(span go2sky.Span, err error) {
+	if err == driver.ErrSkip {
+		return
+	}
+	if err != nil {
+		span.Error(time.Now(), err.Error())
+	}
+	span.End()
 }

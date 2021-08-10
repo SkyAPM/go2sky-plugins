@@ -19,6 +19,7 @@ package sql
 import (
 	"context"
 	"database/sql/driver"
+	"time"
 
 	"github.com/SkyAPM/go2sky"
 )
@@ -35,14 +36,16 @@ func (ct *connector) Connect(ctx context.Context) (driver.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer span.End()
+
 	span.Tag(tagDbType, string(ct.opts.dbType))
 	span.Tag(tagDbInstance, ct.opts.peer)
 
 	c, err := ct.connector.Connect(ctx)
 	if err != nil {
+		span.Error(time.Now(), err.Error())
 		return nil, err
 	}
-	span.End()
 	return &conn{
 		conn:   c,
 		tracer: ct.tracer,

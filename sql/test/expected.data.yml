@@ -16,13 +16,14 @@
 
 segmentItems:
   {{- range .segmentItems }}
+  {{- if eq .serviceName "sql-client"}}
   - serviceName: sql-client
-    segmentSize: {{ gt .segmentSize 0 }
+    segmentSize: {{ gt .segmentSize 0 }}
     segments:
       {{- range .segments }}
-      - segmentId: {{ notEmpty .segmentId }
+      - segmentId: {{ notEmpty .segmentId }}
         spans:
-          {{- range spans }}
+          {{- range .spans }}
           {{- if eq .operationName "Mysql/Go2Sky/connect" }}
           - operationName: Mysql/Go2Sky/connect
             operationId: 0
@@ -31,7 +32,7 @@ segmentItems:
             spanLayer: Database
             startTime: {{ gt .startTime 0 }}
             endTime: {{ gt .endTime 0 }}
-            componentId: 5010
+            componentId: 5012
             isError: false
             spanType: Exit
             peer: mysql:3306
@@ -48,7 +49,7 @@ segmentItems:
             spanLayer: Database
             startTime: {{ gt .startTime 0 }}
             endTime: {{ gt .endTime 0 }}
-            componentId: 5010
+            componentId: 5012
             isError: false
             spanType: Exit
             peer: 'mysql:3306'
@@ -58,11 +59,11 @@ segmentItems:
           - operationName: Mysql/Go2Sky/execute
             operationId: 0
             parentSpanId: 0
-            spanId: {{ notEmpty .spanId }}
+            spanId: {{ gt .spanId 0 }}
             spanLayer: Database
             startTime: {{ gt .startTime 0 }}
             endTime: {{ gt .endTime 0 }}
-            componentId: 5010
+            componentId: 5012
             isError: false
             spanType: Exit
             peer: mysql:3306
@@ -76,11 +77,11 @@ segmentItems:
           - operationName: Mysql/Go2Sky/query
             operationId: 0
             parentSpanId: 0
-            spanId: {{ notEmpty .spanId }}
+            spanId: {{ gt .spanId 0 }}
             spanLayer: Database
             startTime: {{ gt .startTime 0 }}
             endTime: {{ gt .endTime 0 }}
-            componentId: 5010
+            componentId: 5012
             isError: false
             spanType: Exit
             peer: mysql:3306
@@ -94,11 +95,11 @@ segmentItems:
           - operationName: Mysql/Go2Sky/beginTransaction
             operationId: 0
             parentSpanId: 0
-            spanId: {{ notEmpty .spanId }}
+            spanId: {{ gt .spanId 0 }}
             spanLayer: Database
             startTime: {{ gt .startTime 0 }}
             endTime: {{ gt .endTime 0 }}
-            componentId: 5010
+            componentId: 5012
             isError: false
             spanType: Exit
             peer: mysql:3306
@@ -110,5 +111,6 @@ segmentItems:
           {{- end }}
           {{- end }}
       {{- end }}
+  {{- end }}
   {{- end }}
 meterItems: []

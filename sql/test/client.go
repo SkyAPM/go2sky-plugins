@@ -23,7 +23,7 @@ import (
 	"log"
 	"net/http"
 
-	sqlPlugin "sql"
+	sqlPlugin "github.com/SkyAPM/go2sky-plugins/sql"
 
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
@@ -35,7 +35,7 @@ type testFunc func(context.Context, *sql.DB) error
 const (
 	oap     = "mockoap:19876"
 	service = "sql-client"
-	dsn     = "user:password@tcp(mysql:3306)/database"
+	dsn     = "user:password@tcp(127.0.0.1:3306)/database"
 	addr    = ":8080"
 )
 
@@ -45,6 +45,7 @@ func main() {
 
 	// init tracer
 	re, err := reporter.NewGRPCReporter(oap)
+	//re, err := reporter.NewLogReporter()
 	if err != nil {
 		log.Fatalf("create grpc reporter error: %v \n", err)
 	}
@@ -58,6 +59,7 @@ func main() {
 		sqlPlugin.WithSqlDBType(sqlPlugin.MYSQL),
 		sqlPlugin.WithQueryReport(),
 		sqlPlugin.WithParamReport()))
+
 	db, err := sql.Open("skywalking-sql", dsn)
 	if err != nil {
 		log.Fatalf("open db error: %v \n", err)
@@ -65,7 +67,7 @@ func main() {
 
 	route := http.NewServeMux()
 	route.HandleFunc("/healthCheck", func(res http.ResponseWriter, req *http.Request) {
-		_, _ = res.Write([]byte("Success"))
+		_, _ = res.Write([]byte("success"))
 	})
 	route.HandleFunc("/execute", func(res http.ResponseWriter, req *http.Request) {
 		tests := []struct {
@@ -85,11 +87,12 @@ func main() {
 		defer span.End()
 
 		for _, test := range tests {
+			log.Printf("excute test case %s", test.name)
 			if err := test.fn(ctx, db); err != nil {
 				log.Fatalf("test case %s failed: %v", test.name, err)
 			}
 		}
-		_, _ = res.Write([]byte("Execute sql success"))
+		_, _ = res.Write([]byte("execute sql success"))
 	})
 
 	log.Println("start client")

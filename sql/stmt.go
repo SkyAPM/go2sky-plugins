@@ -19,6 +19,7 @@ package sql
 import (
 	"context"
 	"database/sql/driver"
+	"time"
 
 	"github.com/SkyAPM/go2sky"
 )
@@ -55,6 +56,7 @@ func (s *stmt) ExecContext(ctx context.Context, args []driver.NamedValue) (drive
 		return nil, err
 	}
 	defer span.End()
+
 	span.Tag(tagDbType, string(s.opts.dbType))
 	span.Tag(tagDbInstance, s.opts.peer)
 	if s.opts.reportQuery {
@@ -65,14 +67,25 @@ func (s *stmt) ExecContext(ctx context.Context, args []driver.NamedValue) (drive
 	}
 
 	if execerContext, ok := s.stmt.(driver.StmtExecContext); ok {
-		return execerContext.ExecContext(ctx, args)
+		res, err := execerContext.ExecContext(ctx, args)
+		if err != nil {
+			span.Error(time.Now(), err.Error())
+		}
+		return res, err
 	}
 
 	values, err := namedValueToValue(args)
 	if err != nil {
+		span.Error(time.Now(), err.Error())
+		span.End()
 		return nil, err
 	}
-	return s.Exec(values)
+	res, err := s.Exec(values)
+	if err != nil {
+		span.Error(time.Now(), err.Error())
+		return res, err
+	}
+	return res, err
 }
 
 func (s *stmt) Query(args []driver.Value) (driver.Rows, error) {
@@ -89,6 +102,7 @@ func (s *stmt) QueryContext(ctx context.Context, args []driver.NamedValue) (driv
 		return nil, err
 	}
 	defer span.End()
+
 	span.Tag(tagDbType, string(s.opts.dbType))
 	span.Tag(tagDbInstance, s.opts.peer)
 	if s.opts.reportQuery {
@@ -99,12 +113,20 @@ func (s *stmt) QueryContext(ctx context.Context, args []driver.NamedValue) (driv
 	}
 
 	if queryer, ok := s.stmt.(driver.StmtQueryContext); ok {
-		return queryer.QueryContext(ctx, args)
+		rows, err := queryer.QueryContext(ctx, args)
+		if err != nil {
+			span.Error(time.Now(), err.Error())
+		}
+		return rows, err
 	}
 
 	values, err := namedValueToValue(args)
 	if err != nil {
 		return nil, err
 	}
-	return s.Query(values)
+	rows, err := s.Query(values)
+	if err != nil {
+		span.Error(time.Now(), err.Error())
+	}
+	return rows, err
 }
