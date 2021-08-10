@@ -35,6 +35,7 @@ jobs:
           - { name: 'Go Restful', e2e_file: 'go-restful/test/go_restful_plugin_test.yaml' }
           - { name: 'Go Micro', e2e_file: 'micro/test/go_micro_plugin_test.yaml' }
           - { name: 'Go Resty', e2e_file: 'resty/test/go_resty_plugin_test.yaml' }
+          - { name: 'Go Kratos', e2e_file: 'kratos/test/go_kratos_plugin_test.yaml'}
     steps:
       - uses: actions/checkout@v2
       - uses: apache/skywalking-infra-e2e@main
