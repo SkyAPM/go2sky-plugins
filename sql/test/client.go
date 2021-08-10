@@ -51,7 +51,12 @@ func main() {
 		log.Fatalf("crate tracer error: %v \n", err)
 	}
 
-	db, err := sqlPlugin.Open("mysql", dsn, tracer)
+	db, err := sqlPlugin.Open("mysql", dsn, tracer,
+		sqlPlugin.WithSqlDBType(sqlPlugin.MYSQL),
+		sqlPlugin.WithQueryReport(),
+		sqlPlugin.WithParamReport(),
+		sqlPlugin.WithPeerAddr("127.0.0.1:3306"),
+	)
 	if err != nil {
 		log.Fatalf("open db error: %v \n", err)
 	}

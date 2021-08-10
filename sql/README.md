@@ -10,12 +10,11 @@ go get -u github.com/SkyAPM/go2sky-plugins/sql
 
 ```go
 import (
-    "database/sql"
+	sqlPlugin "github.com/SkyAPM/go2sky-plugins/sql"
 
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
-	sqlPlugin "github.com/SkyAPM/go2sky-plugins/sql"
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // init reporter
@@ -24,10 +23,20 @@ defer re.Close()
 
 // init tracer
 tracer, err := go2sky.NewTracer("service-name", go2sky.WithReporter(re))
+if err != nil {
+    log.Fatalf("init tracer error: %v", err)
+}
 
-// register go2sky sql wrapper
-sql.Register("skywalking-sql", sqlPlugin.NewTracerDriver(&mysql.MySQLDriver{}, tracer, sqlPlugin.WithSqlDBType(sqlPlugin.MYSQL), sqlPlugin.WithQueryReport()))
-db, err := sql.Open("skywalking-sql", "user:password@tcp(127.0.0.1:3306)/dbname")
+// use sql plugin to open db with tracer
+db, err := sqlPlugin.Open("mysql", dsn, tracer,
+    sqlPlugin.WithSqlDBType(sqlPlugin.MYSQL),
+    sqlPlugin.WithQueryReport(),
+    sqlPlugin.WithParamReport(),
+    sqlPlugin.WithPeerAddr("127.0.0.1:3306"),
+)
+if err != nil {
+	log.Fatalf("open db error: %v \n", err)
+}
 
-// use db handle as usual.
+// use db handler as usual.
 ```
