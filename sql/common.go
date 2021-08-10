@@ -63,8 +63,12 @@ func namedValueToValue(named []driver.NamedValue) ([]driver.Value, error) {
 	return dargs, nil
 }
 
-func argsToString(args ...interface{}) string {
-	return ""
+func argsToString(args []interface{}) string {
+	sb := strings.Builder{}
+	for _, arg := range args {
+		sb.WriteString(fmt.Sprintf("%v, ", arg))
+	}
+	return sb.String()
 }
 
 func createSpan(ctx context.Context, tracer *go2sky.Tracer, opts *options, operation string) (go2sky.Span, error) {

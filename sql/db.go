@@ -113,7 +113,7 @@ func (db *DB) ExecContext(ctx context.Context, query string, args ...interface{}
 		span.Tag(tagDbSqlParameters, argsToString(args))
 	}
 
-	res, err := db.DB.ExecContext(ctx, query, args)
+	res, err := db.DB.ExecContext(ctx, query, args...)
 	if err != nil {
 		span.Error(time.Now(), err.Error())
 	}
@@ -134,7 +134,7 @@ func (db *DB) QueryContext(ctx context.Context, query string, args ...interface{
 		span.Tag(tagDbSqlParameters, argsToString(args))
 	}
 
-	rows, err := db.DB.QueryContext(ctx, query, args)
+	rows, err := db.DB.QueryContext(ctx, query, args...)
 	if err != nil {
 		span.Error(time.Now(), err.Error())
 	}
@@ -155,7 +155,7 @@ func (db *DB) QueryRowContext(ctx context.Context, query string, args ...interfa
 		span.Tag(tagDbSqlParameters, argsToString(args))
 	}
 
-	return db.DB.QueryRowContext(ctx, query, args)
+	return db.DB.QueryRowContext(ctx, query, args...)
 }
 
 func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {

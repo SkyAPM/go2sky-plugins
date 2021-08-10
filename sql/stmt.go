@@ -43,7 +43,7 @@ func (s *Stmt) ExecContext(ctx context.Context, args ...interface{}) (sql.Result
 		span.Tag(tagDbSqlParameters, argsToString(args))
 	}
 
-	res, err := s.Stmt.ExecContext(ctx, args)
+	res, err := s.Stmt.ExecContext(ctx, args...)
 	if err != nil {
 		span.Error(time.Now(), err.Error())
 	}
@@ -64,7 +64,7 @@ func (s *Stmt) QueryContext(ctx context.Context, args ...interface{}) (*sql.Rows
 		span.Tag(tagDbSqlParameters, argsToString(args))
 	}
 
-	rows, err := s.Stmt.QueryContext(ctx, args)
+	rows, err := s.Stmt.QueryContext(ctx, args...)
 	if err != nil {
 		span.Error(time.Now(), err.Error())
 	}
@@ -85,5 +85,5 @@ func (s *Stmt) QueryRowContext(ctx context.Context, args ...interface{}) *sql.Ro
 		span.Tag(tagDbSqlParameters, argsToString(args))
 	}
 
-	return s.Stmt.QueryRowContext(ctx, args)
+	return s.Stmt.QueryRowContext(ctx, args...)
 }

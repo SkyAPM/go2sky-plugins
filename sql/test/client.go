@@ -34,7 +34,7 @@ type testFunc func(context.Context, *sqlPlugin.DB) error
 const (
 	oap     = "mockoap:19876"
 	service = "sql-client"
-	dsn     = "user:password@tcp(127.0.0.1:3306)/database"
+	dsn     = "user:password@tcp(mysql:3306)/database"
 	addr    = ":8080"
 )
 
