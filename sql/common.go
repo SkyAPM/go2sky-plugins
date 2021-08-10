@@ -22,7 +22,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/SkyAPM/go2sky"
 	agentv3 "skywalking.apache.org/repo/goapi/collect/language/agent/v3"
@@ -64,6 +63,10 @@ func namedValueToValue(named []driver.NamedValue) ([]driver.Value, error) {
 	return dargs, nil
 }
 
+func argsToString(args ...interface{}) string {
+	return ""
+}
+
 func createSpan(ctx context.Context, tracer *go2sky.Tracer, opts *options, operation string) (go2sky.Span, error) {
 	s, _, err := tracer.CreateLocalSpan(ctx,
 		go2sky.WithSpanType(go2sky.SpanTypeExit),
@@ -75,15 +78,7 @@ func createSpan(ctx context.Context, tracer *go2sky.Tracer, opts *options, opera
 	s.SetPeer(opts.peer)
 	s.SetComponent(opts.componentID)
 	s.SetSpanLayer(agentv3.SpanLayer_Database)
+	s.Tag(tagDbType, string(opts.dbType))
+	s.Tag(tagDbInstance, opts.peer)
 	return s, nil
-}
-
-func closeSpan(span go2sky.Span, err error) {
-	if err == driver.ErrSkip {
-		return
-	}
-	if err != nil {
-		span.Error(time.Now(), err.Error())
-	}
-	span.End()
 }

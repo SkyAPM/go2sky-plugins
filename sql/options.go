@@ -23,8 +23,9 @@ import (
 type DBType string
 
 const (
-	MYSQL DBType = "mysql"
-	IPV4  DBType = "others"
+	UNKNOWN DBType = "unknown"
+	MYSQL   DBType = "mysql"
+	IPV4    DBType = "others"
 )
 
 type Option func(*options)

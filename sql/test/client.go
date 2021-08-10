@@ -18,7 +18,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -27,10 +26,10 @@ import (
 
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-type testFunc func(context.Context, *sql.DB) error
+type testFunc func(context.Context, *sqlPlugin.DB) error
 
 const (
 	oap     = "mockoap:19876"
@@ -40,9 +39,6 @@ const (
 )
 
 func main() {
-	// init driver
-	mysqlDriver := &mysql.MySQLDriver{}
-
 	// init tracer
 	re, err := reporter.NewGRPCReporter(oap)
 	//re, err := reporter.NewLogReporter()
@@ -55,12 +51,7 @@ func main() {
 		log.Fatalf("crate tracer error: %v \n", err)
 	}
 
-	sql.Register("skywalking-sql", sqlPlugin.NewTracerDriver(mysqlDriver, tracer,
-		sqlPlugin.WithSqlDBType(sqlPlugin.MYSQL),
-		sqlPlugin.WithQueryReport(),
-		sqlPlugin.WithParamReport()))
-
-	db, err := sql.Open("skywalking-sql", dsn)
+	db, err := sqlPlugin.Open("mysql", dsn, tracer)
 	if err != nil {
 		log.Fatalf("open db error: %v \n", err)
 	}
@@ -102,7 +93,7 @@ func main() {
 	}
 }
 
-func TestExec(ctx context.Context, db *sql.DB) error {
+func TestExec(ctx context.Context, db *sqlPlugin.DB) error {
 	if err := db.PingContext(ctx); err != nil {
 		return err
 	}
@@ -129,7 +120,7 @@ func TestExec(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-func TestStmt(ctx context.Context, db *sql.DB) error {
+func TestStmt(ctx context.Context, db *sqlPlugin.DB) error {
 	stmt, err := db.PrepareContext(ctx, `INSERT INTO users (id, name, age) VALUE ( ?, ?, ?)`)
 	if err != nil {
 		return err
@@ -144,7 +135,7 @@ func TestStmt(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-func TestCommitTx(ctx context.Context, db *sql.DB) error {
+func TestCommitTx(ctx context.Context, db *sqlPlugin.DB) error {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin tx error: %v \n", err)
@@ -160,7 +151,7 @@ func TestCommitTx(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-func TestRollbackTx(ctx context.Context, db *sql.DB) error {
+func TestRollbackTx(ctx context.Context, db *sqlPlugin.DB) error {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin tx error: %v \n", err)
