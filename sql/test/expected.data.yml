@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#.
+#
 
 segmentItems:
   {{- range .segmentItems }}
@@ -24,8 +24,8 @@ segmentItems:
       - segmentId: {{ notEmpty .segmentId }}
         spans:
           {{- range .spans }}
-          {{- if eq .operationName "Mysql/Go2Sky/connect" }}
-          - operationName: Mysql/Go2Sky/connect
+          {{- if eq .operationName "Mysql/Go2Sky/ping" }}
+          - operationName: Mysql/Go2Sky/ping
             operationId: 0
             parentSpanId: 0
             spanId: 1
@@ -35,25 +35,11 @@ segmentItems:
             componentId: 5012
             isError: false
             spanType: Exit
-            peer: mysql:3306
+            peer: 'mysql:3306'
             skipAnalysis: false
             tags:
               - {key: db.type, value: mysql}
               - {key: db.instance, value: 'mysql:3306'}
-          {{- end }}
-          {{- if eq .operationName "Mysql/Go2Sky/ping" }}
-          - operationName: Mysql/Go2Sky/ping
-            operationId: 0
-            parentSpanId: 0
-            spanId: 2,
-            spanLayer: Database
-            startTime: {{ gt .startTime 0 }}
-            endTime: {{ gt .endTime 0 }}
-            componentId: 5012
-            isError: false
-            spanType: Exit
-            peer: 'mysql:3306'
-            skipAnalysis: false
           {{- end }}
           {{- if eq .operationName "Mysql/Go2Sky/execute" }}
           - operationName: Mysql/Go2Sky/execute
@@ -71,9 +57,10 @@ segmentItems:
             tags:
               - {key: db.type, value: mysql}
               - {key: db.instance, value: 'mysql:3306'}
-              - {key: db.statement, value: {{ notEmpty (index .tags 2).value}}}
+              - key: db.statement
+                value: {{ notEmpty (index .tags 2).value }}
           {{- end }}
-          {{- if eq .operationName "Mysql/Go2Sky/query"}}
+          {{- if eq .operationName "Mysql/Go2Sky/query" }}
           - operationName: Mysql/Go2Sky/query
             operationId: 0
             parentSpanId: 0
@@ -89,10 +76,11 @@ segmentItems:
             tags:
               - {key: db.type, value: mysql}
               - {key: db.instance, value: 'mysql:3306'}
-              - {key: db.statement, value: {{ notEmpty (index .tags 2).value}}}
+              - key: db.statement
+                value: {{ notEmpty (index .tags 2).value }}
           {{- end }}
-          {{- if eq .operationName "Mysql/Go2Sky/beginTransaction" }}
-          - operationName: Mysql/Go2Sky/beginTransaction
+          {{- if eq .operationName "Mysql/Go2Sky/transaction" }}
+          - operationName: Mysql/Go2Sky/transaction
             operationId: 0
             parentSpanId: 0
             spanId: {{ gt .spanId 0 }}
@@ -107,7 +95,22 @@ segmentItems:
             tags:
               - {key: db.type, value: mysql}
               - {key: db.instance, value: 'mysql:3306'}
-              - {key: db.statement, value: {{ notEmpty (index .tags 2).value}}}
+              - key: db.statement
+                value: {{ notEmpty (index .tags 2).value }}
+          {{- end }}
+          {{- if eq .operationName "execute" }}
+          - operationName: execute
+            operationId: 0
+            parentSpanId: -1
+            spanId: 0
+            spanLayer: Unknown
+            startTime: {{ gt .startTime 0 }}
+            endTime: {{ gt .endTime 0 }}
+            componentId: 0
+            isError: false
+            spanType: Local
+            peer: ''
+            skipAnalysis: false
           {{- end }}
           {{- end }}
       {{- end }}

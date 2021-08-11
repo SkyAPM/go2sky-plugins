@@ -69,7 +69,7 @@ func (tx *Tx) StmtContext(ctx context.Context, stmt *Stmt) *Stmt {
 }
 
 func (tx *Tx) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
-	span, err := createSpan(ctx, tx.db.tracer, tx.db.opts, "exec")
+	span, err := createSpan(ctx, tx.db.tracer, tx.db.opts, "execute")
 	if err != nil {
 		return nil, err
 	}

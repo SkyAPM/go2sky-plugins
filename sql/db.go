@@ -68,6 +68,10 @@ func Open(driverName, dataSourceName string, tracer *go2sky.Tracer, opts ...Opti
 		o(options)
 	}
 
+	if options.peer == "" {
+		options.peer = parseDsn(options.dbType, dataSourceName)
+	}
+
 	return &DB{
 		DB:     db,
 		tracer: tracer,
@@ -95,12 +99,13 @@ func (db *DB) PrepareContext(ctx context.Context, query string) (*Stmt, error) {
 	}
 	return &Stmt{
 		Stmt:  stmt,
+		db:    db,
 		query: query,
 	}, nil
 }
 
 func (db *DB) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
-	span, err := createSpan(ctx, db.tracer, db.opts, "exec")
+	span, err := createSpan(ctx, db.tracer, db.opts, "execute")
 	if err != nil {
 		return nil, err
 	}

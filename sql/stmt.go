@@ -30,7 +30,7 @@ type Stmt struct {
 }
 
 func (s *Stmt) ExecContext(ctx context.Context, args ...interface{}) (sql.Result, error) {
-	span, err := createSpan(ctx, s.db.tracer, s.db.opts, "exec")
+	span, err := createSpan(ctx, s.db.tracer, s.db.opts, "execute")
 	if err != nil {
 		return nil, err
 	}

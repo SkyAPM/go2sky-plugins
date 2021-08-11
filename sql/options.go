@@ -16,10 +16,6 @@
 
 package sql
 
-import (
-	"regexp"
-)
-
 type DBType string
 
 const (
@@ -46,6 +42,7 @@ type options struct {
 func WithSqlDBType(t DBType) Option {
 	return func(o *options) {
 		o.dbType = t
+		o.setComponentID()
 	}
 }
 
@@ -75,23 +72,6 @@ func (o options) getOpName(op string) string {
 	default:
 		return "Sql/Go2Sky/" + op
 	}
-}
-
-// setPeerWithDsn parse dsn to a endpoint addr string (host:port)
-func (o *options) setPeerWithDsn(dsn string) {
-	var addr string
-	switch o.dbType {
-	case MYSQL:
-		// [user[:password]@][net[(addr)]]/dbname[?param1=value1&paramN=valueN]
-		re := regexp.MustCompile(`\(.+\)`)
-		addr = re.FindString(dsn)
-		addr = addr[1 : len(addr)-1]
-	case IPV4:
-		// ipv4 addr
-		re := regexp.MustCompile(`((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}:\d{1,5}`)
-		addr = re.FindString(dsn)
-	}
-	o.peer = addr
 }
 
 func (o *options) setComponentID() {

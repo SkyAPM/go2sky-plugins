@@ -54,8 +54,6 @@ func main() {
 	db, err := sqlPlugin.Open("mysql", dsn, tracer,
 		sqlPlugin.WithSqlDBType(sqlPlugin.MYSQL),
 		sqlPlugin.WithQueryReport(),
-		sqlPlugin.WithParamReport(),
-		sqlPlugin.WithPeerAddr("127.0.0.1:3306"),
 	)
 	if err != nil {
 		log.Fatalf("open db error: %v \n", err)
@@ -76,7 +74,10 @@ func main() {
 			{"rollbackTx", TestRollbackTx},
 		}
 
-		span, ctx, err := tracer.CreateLocalSpan(context.Background())
+		span, ctx, err := tracer.CreateLocalSpan(
+			context.Background(),
+			go2sky.WithOperationName("execute"),
+		)
 		if err != nil {
 			log.Fatalf("create span error: %v \n", err)
 		}

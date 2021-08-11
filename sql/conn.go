@@ -42,7 +42,7 @@ func (c *Conn) PingContext(ctx context.Context) error {
 }
 
 func (c *Conn) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
-	span, err := createSpan(ctx, c.db.tracer, c.db.opts, "exec")
+	span, err := createSpan(ctx, c.db.tracer, c.db.opts, "execute")
 	if err != nil {
 		return nil, err
 	}
@@ -124,6 +124,7 @@ func (c *Conn) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
 
 	return &Tx{
 		Tx:   tx,
+		db:   c.db,
 		span: span,
 	}, nil
 

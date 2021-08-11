@@ -21,6 +21,7 @@ import (
 	"database/sql/driver"
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/SkyAPM/go2sky"
@@ -85,4 +86,21 @@ func createSpan(ctx context.Context, tracer *go2sky.Tracer, opts *options, opera
 	s.Tag(tagDbType, string(opts.dbType))
 	s.Tag(tagDbInstance, opts.peer)
 	return s, nil
+}
+
+// parseDsn parse dsn to a endpoint addr string (host:port)
+func parseDsn(dbType DBType, dsn string) string {
+	var addr string
+	switch dbType {
+	case MYSQL:
+		// [user[:password]@][net[(addr)]]/dbname[?param1=value1&paramN=valueN]
+		re := regexp.MustCompile(`\(.+\)`)
+		addr = re.FindString(dsn)
+		addr = addr[1 : len(addr)-1]
+	case IPV4:
+		// ipv4 addr
+		re := regexp.MustCompile(`((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}:\d{1,5}`)
+		addr = re.FindString(dsn)
+	}
+	return addr
 }
