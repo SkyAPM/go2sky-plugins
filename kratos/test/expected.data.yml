@@ -79,7 +79,7 @@ segmentItems:
           spanLayer: RPCFramework
           startTime: {{ gt .startTime 0 }}
           endTime: {{ gt .endTime 0 }}
-          componentId: 5011
+          componentId: 5010
           isError: false
           spanType: Exit
           peer: 'kratosserver:8000'
@@ -93,7 +93,7 @@ segmentItems:
           spanLayer: RPCFramework
           startTime: {{ gt .startTime 0 }}
           endTime: {{ gt .endTime 0 }}
-          componentId: 5011
+          componentId: 5010
           isError: false
           spanType: Exit
           peer: 'kratosserver:9000'
