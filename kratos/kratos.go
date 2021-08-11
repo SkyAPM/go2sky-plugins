@@ -30,8 +30,7 @@ import (
 )
 
 const (
-	componentIDGoKratosServer = 5010
-	componentIDGoKratosClient = 5011
+	componentIDKratos = 5010
 )
 
 type Option func(*options)
@@ -66,7 +65,7 @@ func Server(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 				}
 				defer func() { span.End() }()
 
-				span.SetComponent(componentIDGoKratosServer)
+				span.SetComponent(componentIDKratos)
 				span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
 
 				if md, ok := metadata.FromServerContext(ctx); ok {
@@ -108,7 +107,7 @@ func Client(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 				}
 				defer func() { span.End() }()
 
-				span.SetComponent(componentIDGoKratosClient)
+				span.SetComponent(componentIDKratos)
 				span.SetSpanLayer(agentv3.SpanLayer_RPCFramework)
 
 				if md, ok := metadata.FromClientContext(ctx); ok {
