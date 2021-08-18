@@ -29,6 +29,7 @@ type Tx struct {
 
 	db   *DB
 	span go2sky.Span
+	ctx  context.Context
 }
 
 func (tx *Tx) Commit() error {
@@ -45,6 +46,18 @@ func (tx *Tx) Rollback() error {
 		defer tx.span.End()
 	}
 	return tx.Tx.Rollback()
+}
+
+func (tx *Tx) Prepare(query string) (*Stmt, error) {
+	stmt, err := tx.Tx.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+	return &Stmt{
+		Stmt:  stmt,
+		db:    tx.db,
+		query: query,
+	}, nil
 }
 
 func (tx *Tx) PrepareContext(ctx context.Context, query string) (*Stmt, error) {
@@ -68,7 +81,15 @@ func (tx *Tx) StmtContext(ctx context.Context, stmt *Stmt) *Stmt {
 	}
 }
 
+func (tx *Tx) Exec(query string, args ...interface{}) (sql.Result, error) {
+	return tx.ExecContext(tx.ctx, query, args)
+}
+
 func (tx *Tx) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
+	if id := go2sky.SpanID(ctx); id == go2sky.EmptySpanID {
+		// if ctx do not contain parent span, use transaction ctx instead
+		ctx = tx.ctx
+	}
 	span, err := createSpan(ctx, tx.db.tracer, tx.db.opts, "execute")
 	if err != nil {
 		return nil, err
@@ -89,7 +110,15 @@ func (tx *Tx) ExecContext(ctx context.Context, query string, args ...interface{}
 	return res, err
 }
 
+func (tx *Tx) Query(query string, args ...interface{}) (*sql.Rows, error) {
+	return tx.QueryContext(tx.ctx, query, args)
+}
+
 func (tx *Tx) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
+	if id := go2sky.SpanID(ctx); id == go2sky.EmptySpanID {
+		// if ctx do not contain parent span, use transaction ctx instead
+		ctx = tx.ctx
+	}
 	span, err := createSpan(ctx, tx.db.tracer, tx.db.opts, "query")
 	if err != nil {
 		return nil, err
@@ -110,7 +139,15 @@ func (tx *Tx) QueryContext(ctx context.Context, query string, args ...interface{
 	return rows, err
 }
 
+func (tx *Tx) QueryRow(query string, args ...interface{}) *sql.Row {
+	return tx.QueryRowContext(tx.ctx, query, args)
+}
+
 func (tx *Tx) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
+	if id := go2sky.SpanID(ctx); id == go2sky.EmptySpanID {
+		// if ctx do not contain parent span, use transaction ctx instead
+		ctx = tx.ctx
+	}
 	span, err := createSpan(ctx, tx.db.tracer, tx.db.opts, "query")
 	if err != nil {
 		return nil

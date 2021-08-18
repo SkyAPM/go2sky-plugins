@@ -110,7 +110,7 @@ func (c *Conn) PrepareContext(ctx context.Context, query string) (*Stmt, error) 
 }
 
 func (c *Conn) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
-	span, err := createSpan(ctx, c.db.tracer, c.db.opts, "transaction")
+	span, nCtx, err := createLocalSpan(ctx, c.db.tracer, c.db.opts, "transaction")
 	if err != nil {
 		return nil, err
 	}
@@ -126,6 +126,7 @@ func (c *Conn) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
 		Tx:   tx,
 		db:   c.db,
 		span: span,
+		ctx:  nCtx,
 	}, nil
 
 }

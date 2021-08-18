@@ -164,7 +164,7 @@ func (db *DB) QueryRowContext(ctx context.Context, query string, args ...interfa
 }
 
 func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
-	span, err := createSpan(ctx, db.tracer, db.opts, "transaction")
+	span, nCtx, err := createLocalSpan(ctx, db.tracer, db.opts, "transaction")
 	if err != nil {
 		return nil, err
 	}
@@ -179,6 +179,7 @@ func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
 		Tx:   tx,
 		db:   db,
 		span: span,
+		ctx:  nCtx,
 	}, nil
 }
 
