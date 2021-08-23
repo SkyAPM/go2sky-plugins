@@ -46,6 +46,7 @@ jobs:
   PluginsTest:
     name: Plugin
     needs: Changes
+    if: ${{ needs.Changes.outputs.e2e_file != '[]' && needs.Changes.outputs.e2e_file != '' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
