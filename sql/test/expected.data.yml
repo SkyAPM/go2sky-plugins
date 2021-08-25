@@ -44,7 +44,7 @@ segmentItems:
           {{- if eq .operationName "Mysql/Go2Sky/execute" }}
           - operationName: Mysql/Go2Sky/execute
             operationId: 0
-            parentSpanId: 0
+            parentSpanId: {{ gt .parentSpanId -1 }}
             spanId: {{ gt .spanId 0 }}
             spanLayer: Database
             startTime: {{ gt .startTime 0 }}

@@ -147,6 +147,10 @@ func TestCommitTx(ctx context.Context, db *sqlPlugin.DB) error {
 		return fmt.Errorf("begin tx error: %v \n", err)
 	}
 
+	if _, err := tx.Exec(`INSERT INTO users (id, name, age) VALUE ( ?, ?, ? )`, "2", "foobar", 24); err != nil {
+		return err
+	}
+
 	if _, err := tx.ExecContext(ctx, `UPDATE users SET name = ? WHERE id = ?`, "foobar", "0"); err != nil {
 		return err
 	}
@@ -161,6 +165,10 @@ func TestRollbackTx(ctx context.Context, db *sqlPlugin.DB) error {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin tx error: %v \n", err)
+	}
+
+	if _, err := tx.Exec(`UPDATE users SET age = ? WHERE id = ?`, 48, "2"); err != nil {
+		return err
 	}
 
 	if _, err := tx.ExecContext(ctx, `UPDATE users SET name = ? WHERE id = ?`, "foobar", "1"); err != nil {

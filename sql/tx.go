@@ -82,7 +82,7 @@ func (tx *Tx) StmtContext(ctx context.Context, stmt *Stmt) *Stmt {
 }
 
 func (tx *Tx) Exec(query string, args ...interface{}) (sql.Result, error) {
-	return tx.ExecContext(tx.ctx, query, args)
+	return tx.ExecContext(tx.ctx, query, args...)
 }
 
 func (tx *Tx) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
