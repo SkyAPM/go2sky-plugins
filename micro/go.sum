@@ -41,8 +41,8 @@ github.com/Microsoft/hcsshim v0.8.7-0.20191101173118-65519b62243c/go.mod h1:7xhj
 github.com/OpenDNS/vegadns2client v0.0.0-20180418235048-a3fa4a771d87/go.mod h1:iGLljf5n9GjT6kc0HBvyI1nOKnGQbNB66VzSNbK5iks=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
-github.com/SkyAPM/go2sky v1.1.0 h1:XT8aiCvf0qZnQz2gPfb8ROzymoog9yGNbE9wBBLny+o=
-github.com/SkyAPM/go2sky v1.1.0/go.mod h1:LzuySkt/TsQL8FMANZu4BX/6Rn0UfGu5KS/r9TwG/dc=
+github.com/SkyAPM/go2sky v1.2.0 h1:DTkNf16MVZ/IHC6Bj9kFIoPKodgyXTPLHYca8qMgKbw=
+github.com/SkyAPM/go2sky v1.2.0/go.mod h1:LzuySkt/TsQL8FMANZu4BX/6Rn0UfGu5KS/r9TwG/dc=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
 github.com/agnivade/levenshtein v1.0.3/go.mod h1:4SFRZbbXWLF4MU1T9Qg0pGgH3Pjs+t6ie5efyrwRJXs=
 github.com/akamai/AkamaiOPEN-edgegrid-golang v0.9.0/go.mod h1:zpDJeKyp9ScW4NNrbdr+Eyxvry3ilGPewKoXw3XGN1k=
