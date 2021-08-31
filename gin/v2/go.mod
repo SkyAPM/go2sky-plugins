@@ -3,7 +3,7 @@ module github.com/SkyAPM/go2sky-plugins/gin/v2
 go 1.12
 
 require (
-	github.com/SkyAPM/go2sky v1.1.0
+	github.com/SkyAPM/go2sky v1.2.0
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.3.0
 	github.com/json-iterator/go v1.1.10 // indirect

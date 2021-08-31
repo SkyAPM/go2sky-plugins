@@ -42,8 +42,8 @@ github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
-github.com/SkyAPM/go2sky v1.1.1-0.20210808075144-b16c9f07fef6 h1:EloGRRVy/Ooui361ifggSXU/8J4F3aXiD86X9YwzXEE=
-github.com/SkyAPM/go2sky v1.1.1-0.20210808075144-b16c9f07fef6/go.mod h1:LzuySkt/TsQL8FMANZu4BX/6Rn0UfGu5KS/r9TwG/dc=
+github.com/SkyAPM/go2sky v1.2.0 h1:DTkNf16MVZ/IHC6Bj9kFIoPKodgyXTPLHYca8qMgKbw=
+github.com/SkyAPM/go2sky v1.2.0/go.mod h1:LzuySkt/TsQL8FMANZu4BX/6Rn0UfGu5KS/r9TwG/dc=
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
