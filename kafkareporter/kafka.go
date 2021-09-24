@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-package sarama
+package kafkareporter
 
 import (
 	"context"
@@ -25,7 +25,7 @@ import (
 
 	"github.com/Shopify/sarama"
 	"github.com/SkyAPM/go2sky"
-	"github.com/SkyAPM/go2sky-plugins/sarama/internal/tool"
+	"github.com/SkyAPM/go2sky-plugins/kafkareporter/internal/tool"
 	"google.golang.org/protobuf/proto"
 	commonv3 "skywalking.apache.org/repo/goapi/collect/common/v3"
 	agentv3 "skywalking.apache.org/repo/goapi/collect/language/agent/v3"
@@ -58,8 +58,8 @@ type kafkaReporter struct {
 	// cdsClient        configuration.ConfigurationDiscoveryServiceClient
 }
 
-// NewKafkaReporter create a new reporter to send data to kafka.
-func NewKafkaReporter(addrs []string, opts ...KafkaReporterOption) (go2sky.Reporter, error) {
+// New create a new reporter to send data to kafka.
+func New(addrs []string, opts ...KafkaReporterOption) (go2sky.Reporter, error) {
 	r := &kafkaReporter{
 		logger:          log.New(os.Stderr, defaultKafkaLogPrefix, log.LstdFlags),
 		checkInterval:   defaultCheckInterval,
@@ -89,46 +89,46 @@ func NewKafkaReporter(addrs []string, opts ...KafkaReporterOption) (go2sky.Repor
 }
 
 // KafkaReporterOption allows for functional options to adjust behaviour
-// of a kafka reporter to be created by NewKafkaReporter
+// of a kafka reporter to be created by New
 type KafkaReporterOption func(r *kafkaReporter)
 
-// WithLogger setup logger for gRPC reporter
-func WithKafkaConfig(c *sarama.Config) KafkaReporterOption {
+// WithConfig setup sarama.Config for kafka reporter
+func WithConfig(c *sarama.Config) KafkaReporterOption {
 	return func(r *kafkaReporter) {
 		r.c = c
 	}
 }
 
-// WithKafkaCheckInterval setup service and endpoint registry check interval
-func WithKafkaCheckInterval(interval time.Duration) KafkaReporterOption {
+// WithCheckInterval setup service and endpoint registry check interval
+func WithCheckInterval(interval time.Duration) KafkaReporterOption {
 	return func(r *kafkaReporter) {
 		r.checkInterval = interval
 	}
 }
 
 // WithInstanceProps setup service instance properties eg: org=SkyAPM
-func WithKafkaInstanceProps(props map[string]string) KafkaReporterOption {
+func WithInstanceProps(props map[string]string) KafkaReporterOption {
 	return func(r *kafkaReporter) {
 		r.instanceProps = props
 	}
 }
 
-// WithKafkaLogger setup logger for kafka reporter
-func WithKafkaLogger(logger *log.Logger) KafkaReporterOption {
+// WithLogger setup logger for kafka reporter
+func WithLogger(logger *log.Logger) KafkaReporterOption {
 	return func(r *kafkaReporter) {
 		r.logger = logger
 	}
 }
 
-// WithKafkaTopicManagement setup service management topic
-func WithKafkaTopicManagement(topicManagement string) KafkaReporterOption {
+// WithTopicManagement setup service management topic
+func WithTopicManagement(topicManagement string) KafkaReporterOption {
 	return func(r *kafkaReporter) {
 		r.topicManagement = topicManagement
 	}
 }
 
-// WithKafkaTopicSegment setup service segment topic
-func WithKafkaTopicSegment(topicSegment string) KafkaReporterOption {
+// WithTopicSegment setup service segment topic
+func WithTopicSegment(topicSegment string) KafkaReporterOption {
 	return func(r *kafkaReporter) {
 		r.topicSegment = topicSegment
 	}

@@ -37,7 +37,7 @@ services:
         condition: service_healthy
 
   kafka:
-    image: wurstmeister/kafka:2.12
+    image: wurstmeister/kafka:2.12-2.4.1
     networks:
       - e2e
     expose:
@@ -50,10 +50,10 @@ services:
       timeout: 2s
       retries: 15
 
-  sarama:
+  kafkareporter:
     build:
       context: ../
-      dockerfile: ./test/docker/Dockerfile.sarama
+      dockerfile: ./test/docker/Dockerfile.kafkareporter
     networks:
       - e2e
     expose:

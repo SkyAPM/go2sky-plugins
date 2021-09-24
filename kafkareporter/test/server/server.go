@@ -22,19 +22,18 @@ import (
 	"net/http"
 
 	"github.com/SkyAPM/go2sky"
-	"github.com/SkyAPM/go2sky-plugins/sarama"
+	"github.com/SkyAPM/go2sky-plugins/kafkareporter"
 )
 
-var kafka = []string{"kafka:9092"}
-
 const (
+	broker  = "kafka:9092"
 	service = "kafka-reporter"
 	addr    = ":8081"
 )
 
 func main() {
 	// init tracer
-	re, err := sarama.NewKafkaReporter(kafka)
+	re, err := kafkareporter.New([]string{broker})
 	if err != nil {
 		log.Fatalf("create kafka reporter error: %v \n", err)
 	}

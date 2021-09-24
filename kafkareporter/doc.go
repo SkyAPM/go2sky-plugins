@@ -15,4 +15,4 @@
 //
 
 // Package sarama is a plugin that can be one kafka reporter as go2sky.Reporter.
-package sarama
+package kafkareporter

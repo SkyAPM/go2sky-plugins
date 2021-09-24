@@ -40,7 +40,7 @@ trigger:
   action: http
   interval: 3s
   times: 5
-  url: http://127.0.0.1:${sarama_8081}/info
+  url: http://127.0.0.1:${kafkareporter_8081}/info
   method: GET
 
 verify:

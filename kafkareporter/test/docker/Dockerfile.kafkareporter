@@ -16,8 +16,8 @@
 
 FROM golang:1.16
 
-ADD ./sarama /sarama
-WORKDIR /sarama
+ADD ./kafkareporter /kafkareporter
+WORKDIR /kafkareporter
 
 EXPOSE 8081
 

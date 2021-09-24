@@ -1,4 +1,4 @@
-module github.com/SkyAPM/go2sky-plugins/sarama
+module github.com/SkyAPM/go2sky-plugins/kafkareporter
 
 go 1.16
 

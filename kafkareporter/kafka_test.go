@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-package sarama
+package kafkareporter
 
 import (
 	"context"
@@ -162,7 +162,7 @@ func TestKafkaReporterOption(t *testing.T) {
 	}{
 		{
 			name:   "with kafka config",
-			option: WithKafkaConfig(c),
+			option: WithConfig(c),
 			verifyFunc: func(t *testing.T, reporter *kafkaReporter) {
 				if reporter.c != c {
 					t.Error("error are not set WithKafkaConfig")
@@ -171,7 +171,7 @@ func TestKafkaReporterOption(t *testing.T) {
 		},
 		{
 			name:   "with check interval",
-			option: WithKafkaCheckInterval(time.Second),
+			option: WithCheckInterval(time.Second),
 			verifyFunc: func(t *testing.T, reporter *kafkaReporter) {
 				if reporter.checkInterval != time.Second {
 					t.Error("error are not set checkInterval")
@@ -180,7 +180,7 @@ func TestKafkaReporterOption(t *testing.T) {
 		},
 		{
 			name:   "with serviceInstance props",
-			option: WithKafkaInstanceProps(instanceProps),
+			option: WithInstanceProps(instanceProps),
 			verifyFunc: func(t *testing.T, reporter *kafkaReporter) {
 				var value string
 				var ok bool
@@ -194,7 +194,7 @@ func TestKafkaReporterOption(t *testing.T) {
 		},
 		{
 			name:   "with logger",
-			option: WithKafkaLogger(logger),
+			option: WithLogger(logger),
 			verifyFunc: func(t *testing.T, reporter *kafkaReporter) {
 				if reporter.logger != logger {
 					t.Error("error are not set logger")
@@ -203,7 +203,7 @@ func TestKafkaReporterOption(t *testing.T) {
 		},
 		{
 			name:   "with topic management",
-			option: WithKafkaTopicManagement("test_management"),
+			option: WithTopicManagement("test_management"),
 			verifyFunc: func(t *testing.T, reporter *kafkaReporter) {
 				if reporter.topicManagement != "test_management" {
 					t.Error("error are not set WithKafkaTopicManagement")
@@ -212,7 +212,7 @@ func TestKafkaReporterOption(t *testing.T) {
 		},
 		{
 			name:   "with topic segment",
-			option: WithKafkaTopicSegment("test_segment"),
+			option: WithTopicSegment("test_segment"),
 			verifyFunc: func(t *testing.T, reporter *kafkaReporter) {
 				if reporter.topicSegment != "test_segment" {
 					t.Error("error are not set WithKafkaTopicSegment")

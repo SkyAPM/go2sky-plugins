@@ -1,15 +1,15 @@
-# Go2sky with sarama reporter
+# Go2sky with kafka reporter
 
 ## Installation
 
 ```go
-go get -u github.com/SkyAPM/go2sky-plugins/sarama
+go get -u github.com/SkyAPM/go2sky-plugins/kafkareporter
 ```
 
 ## Usage
 
 ```go
-r, err := sarama.NewKafkaReporter([]string{"localhost:9092"})
+r, err := kafkareporter.New([]string{"localhost:9092"})
 if err != nil {
     log.Fatalf("new kafka reporter error %v \n", err)
 }

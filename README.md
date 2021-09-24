@@ -8,7 +8,7 @@ The plugins of [go2sky](https://github.com/SkyAPM/go2sky)
 
 ### Reporter Plugins
 
-1. Kafka: [sarama](sarama/README.md)
+1. [kafkareporter](kafkareporter/README.md)
 
 ### Trace Plugins
 
