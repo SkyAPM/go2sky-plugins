@@ -61,6 +61,7 @@ type kafkaReporter struct {
 // New create a new reporter to send data to kafka.
 func New(addrs []string, opts ...KafkaReporterOption) (go2sky.Reporter, error) {
 	r := &kafkaReporter{
+		c:               sarama.NewConfig(),
 		logger:          log.New(os.Stderr, defaultKafkaLogPrefix, log.LstdFlags),
 		checkInterval:   defaultCheckInterval,
 		topicManagement: defaultTopicManagement,

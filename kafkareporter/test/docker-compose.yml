@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-version: '2.1'
+version: "2.1"
 
 services:
   oap:
@@ -32,9 +32,13 @@ services:
       interval: 5s
       timeout: 60s
       retries: 120
-    depends_on:
-      kafka:
-        condition: service_healthy
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    networks:
+      - e2e
+    ports:
+      - "2181:2181"
 
   kafka:
     image: wurstmeister/kafka:2.12-2.4.1
@@ -44,11 +48,10 @@ services:
       - 9092
     ports:
       - 9092:9092
-    healthcheck:
-      test: ["CMD", "nc", "-vz", "localhost", "9092"]
-      interval: 2s
-      timeout: 2s
-      retries: 15
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
   kafkareporter:
     build:
@@ -67,8 +70,6 @@ services:
       retries: 10
     depends_on:
       oap:
-        condition: service_healthy
-      kafka:
         condition: service_healthy
 
 networks:
