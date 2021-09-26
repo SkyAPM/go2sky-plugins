@@ -60,8 +60,6 @@ services:
       - 8081
     ports:
       - 8081:8081
-    environment:
-      GOPROXY: "https://goproxy.io"
     healthcheck:
       test: ["CMD", "curl", "http://127.0.0.1:8081/healthCheck"]
       interval: 5s
