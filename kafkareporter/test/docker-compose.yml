@@ -52,8 +52,8 @@ services:
 
   kafkareporter:
     build:
-      context: ../
-      dockerfile: ./test/docker/Dockerfile.kafkareporter
+      context: ../../
+      dockerfile: ./kafkareporter/test/docker/Dockerfile.kafkareporter
     networks:
       - e2e
     expose:
