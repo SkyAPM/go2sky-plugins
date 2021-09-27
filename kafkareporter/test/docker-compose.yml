@@ -19,11 +19,13 @@ version: "2.1"
 services:
   oap:
     image: ghcr.io/apache/skywalking/oap:1730f2c84bbd4da999ec2c74d1c26db31d5a0d24
+    networks:
+      - e2e
     expose:
       - 11800
       - 12800
-    networks:
-      - e2e
+    ports:
+      - 12800
     restart: on-failure
     environment:
       SW_KAFKA_FETCHER_SERVERS: kafka:9092
@@ -38,7 +40,7 @@ services:
     networks:
       - e2e
     ports:
-      - "2181:2181"
+      - 2181
 
   kafka:
     image: wurstmeister/kafka:2.12-2.4.1
@@ -47,7 +49,7 @@ services:
     expose:
       - 9092
     ports:
-      - 9092:9092
+      - 9092
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
@@ -62,7 +64,7 @@ services:
     expose:
       - 8081
     ports:
-      - 8081:8081
+      - 8081
     healthcheck:
       test: ["CMD", "curl", "http://127.0.0.1:8081/healthCheck"]
       interval: 5s
