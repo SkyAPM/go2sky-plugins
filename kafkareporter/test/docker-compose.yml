@@ -30,11 +30,6 @@ services:
     environment:
       SW_KAFKA_FETCHER: default
       SW_KAFKA_FETCHER_SERVERS: kafka:9092
-    healthcheck:
-      test: ["CMD", "sh", "-c", "nc -zn 127.0.0.1 11800"]
-      interval: 5s
-      timeout: 60s
-      retries: 120
 
   zookeeper:
     image: wurstmeister/zookeeper
@@ -71,9 +66,6 @@ services:
       interval: 5s
       timeout: 20s
       retries: 10
-    depends_on:
-      oap:
-        condition: service_healthy
 
 networks:
   e2e:
