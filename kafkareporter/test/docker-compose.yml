@@ -28,6 +28,7 @@ services:
       - 12800
     restart: on-failure
     environment:
+      SW_KAFKA_FETCHER: default
       SW_KAFKA_FETCHER_SERVERS: kafka:9092
     healthcheck:
       test: ["CMD", "sh", "-c", "nc -zn 127.0.0.1 11800"]
