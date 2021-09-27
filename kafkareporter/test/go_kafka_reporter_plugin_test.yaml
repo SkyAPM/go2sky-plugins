@@ -56,7 +56,7 @@ verify:
       expected: expected/service.yml
 
     # native management: service instance list
-    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance list --service-name=e2e-service-provider
+    - query: swctl --display yaml --base-url=http://${oap_host}:${oap_12800}/graphql instance list --service-name=kafka-reporter
       expected: expected/service-instance.yml
 
     # native tracing: trace detail
