@@ -21,15 +21,16 @@ spans:
     spanid: 0
     parentspanid: -1
     refs: []
-    servicecode: {{ notEmpty .servicecode }}
-    serviceinstancename: {{ notEmpty .serviceinstancename }}
+    servicecode: kafka-reporter
+    serviceinstancename: ""
     starttime: {{ gt .starttime 0 }}
     endtime: {{ gt .endtime 0 }}
-    type: Local
+    endpointname: /info
+    type: Entry
     peer: ""
-    component: ""
+    component: Unknown
     iserror: false
-    layer: ""
+    layer: Unknown
     tags: []
     logs: []
   {{- end }}

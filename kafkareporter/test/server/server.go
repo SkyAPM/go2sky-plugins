@@ -56,14 +56,6 @@ func main() {
 			log.Fatalf("create span error: %v \n", err)
 		}
 		defer span.End()
-		span, _, err = tracer.CreateLocalSpan(
-			ctx,
-			go2sky.WithOperationName("info"),
-		)
-		if err != nil {
-			log.Fatalf("create span error: %v \n", err)
-		}
-		defer span.End()
 
 		_, _ = res.Write([]byte("info success"))
 	})
