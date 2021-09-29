@@ -48,8 +48,16 @@ func main() {
 		_, _ = res.Write([]byte("success"))
 	})
 	route.HandleFunc("/info", func(res http.ResponseWriter, req *http.Request) {
-		span, _, err := tracer.CreateLocalSpan(
-			context.Background(),
+		ctx := context.Background()
+		span, ctx, err := tracer.CreateEntrySpan(ctx, "/info", func(key string) (s string, e error) {
+			return "", nil
+		})
+		if err != nil {
+			log.Fatalf("create span error: %v \n", err)
+		}
+		defer span.End()
+		span, _, err = tracer.CreateLocalSpan(
+			ctx,
 			go2sky.WithOperationName("info"),
 		)
 		if err != nil {
