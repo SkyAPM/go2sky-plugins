@@ -29,7 +29,7 @@
   {{- end }}
   {{- if eq .name "Process No." }}
   - name: Process No.
-    value: {{ notEmpty .value }}
+    value: "{{ notEmpty .value }}"
   {{- end }}
   {{- if eq .name "ipv4s" }}
   - name: ipv4s
