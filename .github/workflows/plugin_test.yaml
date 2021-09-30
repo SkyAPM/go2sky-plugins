@@ -42,6 +42,7 @@ jobs:
             resty/test/go_resty_plugin_test.yaml: resty/**
             kratos/test/go_kratos_plugin_test.yaml: kratos/**
             sql/test/sql_plugin_test.yaml: sql/**
+            dubbo-go/test/dubbo_plugin_test.yaml: dubbo-go/**
 
   PluginsTest:
     name: Plugin
