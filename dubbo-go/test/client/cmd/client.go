@@ -48,7 +48,7 @@ func init() {
 }
 
 const (
-	oap         = "127.0.0.1:19876"
+	oap         = "mockoap:19876"
 	serviceName = "dubbo-go-client"
 )
 
