@@ -69,9 +69,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("set tracer error: %v \n", err)
 	}
-	dubbo_go.SetClientExtraTags("extra-tags", "server")
-	dubbo_go.SetClientReportTags("release")
-	dubbo_go.SetClientReportTags("organization")
+	dubbo_go.SetServerExtraTags("extra-tags", "server")
+	dubbo_go.SetServerReportTags("release")
+	dubbo_go.SetServerReportTags("organization")
 
 	initSignal()
 }
