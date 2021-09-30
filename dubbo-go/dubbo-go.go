@@ -134,6 +134,7 @@ func (cf tracingFilter) Invoke(ctx context.Context, invoker protocol.Invoker, in
 
 		span.SetComponent(componentIDGo2SkyServer)
 	}
+	defer span.End()
 
 	// add extra tags
 	for k, v := range cf.extraTags {
@@ -166,7 +167,6 @@ func (cf tracingFilter) Invoke(ctx context.Context, invoker protocol.Invoker, in
 		span.Error(time.Now(), result.Error().Error())
 	}
 
-	defer span.End()
 	//time.Sleep(1 * time.Second)
 
 	return result

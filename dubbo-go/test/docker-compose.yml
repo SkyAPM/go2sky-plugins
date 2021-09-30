@@ -38,15 +38,13 @@ services:
   dubbogoserver:
     build:
       context: ../../
-      dockerfile: ./micro/test/docker/Dockerfile.server
+      dockerfile: ./dubbo-go/test/docker/Dockerfile.server
     networks:
       - e2e
     expose:
       - 20000
     ports:
       - 20000
-    #environment:
-      #GOPROXY: "https://goproxy.cn"
     healthcheck:
       test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8081"]
       interval: 5s
@@ -60,15 +58,13 @@ services:
   dubbogoclient:
     build:
       context: ../../
-      dockerfile: ./micro/test/docker/Dockerfile.client
+      dockerfile: ./dubbo-go/test/docker/Dockerfile.client
     expose:
       - 8080
     ports:
       - 8080
     networks:
       - e2e
-    #environment:
-      #GOPROXY: "https://goproxy.cn"
     healthcheck:
       test: [ "CMD", "curl", "http://127.0.0.1:8080/healthCheck" ]
       interval: 5s
