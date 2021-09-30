@@ -38,7 +38,7 @@ services:
   dubbogoserver:
     build:
       context: ../../
-      dockerfile: ./micro/test/docker/Dockerfile.server
+      dockerfile: ./dubbo-go/test/docker/Dockerfile.server
     networks:
       - e2e
     expose:
