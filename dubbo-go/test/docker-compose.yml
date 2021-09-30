@@ -60,7 +60,7 @@ services:
   dubbogoclient:
     build:
       context: ../../
-      dockerfile: ./micro/test/docker/Dockerfile.client
+      dockerfile: ./dubbo-go/test/docker/Dockerfile.client
     expose:
       - 8080
     ports:
