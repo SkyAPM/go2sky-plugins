@@ -77,7 +77,7 @@ func main() {
 
 	route.HandleFunc("/hello", func(writer http.ResponseWriter, req *http.Request) {
 		user := &pkg.User{}
-		err := userProvider.GetUser(context.TODO(), []interface{}{"A001"}, user)
+		err := userProvider.GetUser(req.Context(), []interface{}{"A001"}, user)
 		if err != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
 			_, _ = writer.Write([]byte(fmt.Sprintf("call service err %v \n", err)))
