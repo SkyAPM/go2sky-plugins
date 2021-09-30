@@ -21,7 +21,7 @@
   {{- range .attributes }}
   {{- if eq .name "OS Name" }}
   - name: OS Name
-    value: Linux
+    value: linux
   {{- end }}
   {{- if eq .name "hostname" }}
   - name: hostname
@@ -29,13 +29,13 @@
   {{- end }}
   {{- if eq .name "Process No." }}
   - name: Process No.
-    value: "1"
+    value: {{ notEmpty .value }}
   {{- end }}
   {{- if eq .name "ipv4s" }}
   - name: ipv4s
     value: {{ notEmpty .value }}
   {{- end }}
   {{- end}}
-  language: go
+  language: GO
   instanceuuid: {{ b64enc "kafka-reporter" }}.1_{{ b64enc "provider1" }}
 {{- end}}
