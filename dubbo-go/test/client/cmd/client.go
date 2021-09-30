@@ -37,6 +37,7 @@ import (
 
 	dubbo_go "github.com/SkyAPM/go2sky-plugins/dubbo-go"
 	"github.com/SkyAPM/go2sky-plugins/dubbo-go/test/client/pkg"
+	httpplugin "github.com/SkyAPM/go2sky/plugins/http"
 )
 
 var userProvider = new(pkg.UserProvider)
