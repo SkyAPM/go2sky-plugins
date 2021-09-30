@@ -46,7 +46,7 @@ services:
     ports:
       - 20000
     healthcheck:
-      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8081"]
+      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/20000"]
       interval: 5s
       timeout: 60s
       retries: 120
