@@ -72,6 +72,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("set tracer error: %v \n", err)
 	}
+	dubbo_go.SetClientExtraTags("extra-tags", "client")
+	dubbo_go.SetClientReportTags("release")
+	dubbo_go.SetClientReportTags("organization")
 
 	route := http.NewServeMux()
 
