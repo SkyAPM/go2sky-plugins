@@ -90,11 +90,11 @@ func main() {
 		_, _ = writer.Write([]byte("Success"))
 	})
 
-	sm, err := httpplugin.NewServerMiddleware(tracer)
-	if err != nil {
-		log.Fatalf("create client error %v \n", err)
-	}
-	err = http.ListenAndServe(":8080", sm(route))
+	//sm, err := httpplugin.NewServerMiddleware(tracer)
+	//if err != nil {
+	//	log.Fatalf("create client error %v \n", err)
+	//}
+	err = http.ListenAndServe(":8080", route)
 	if err != nil {
 		log.Fatal(err)
 	}

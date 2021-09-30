@@ -45,8 +45,8 @@ services:
       - 20000
     ports:
       - 20000
-    environment:
-      GOPROXY: "https://goproxy.cn"
+    #environment:
+      #GOPROXY: "https://goproxy.cn"
     healthcheck:
       test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8081"]
       interval: 5s
@@ -67,8 +67,8 @@ services:
       - 8080
     networks:
       - e2e
-    environment:
-      GOPROXY: "https://goproxy.cn"
+    #environment:
+      #GOPROXY: "https://goproxy.cn"
     healthcheck:
       test: [ "CMD", "curl", "http://127.0.0.1:8080/healthCheck" ]
       interval: 5s
