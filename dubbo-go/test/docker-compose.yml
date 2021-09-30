@@ -30,6 +30,11 @@ services:
     ports:
       - 2181:2181
     restart: on-failure
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -nz 127.0.0.1 2181"]
+      interval: 5s
+      timeout: 60s
+      retries: 120
   dubbogoserver:
     build:
       context: ../../
