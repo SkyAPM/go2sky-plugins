@@ -65,6 +65,7 @@ services:
       - 8080
     networks:
       - e2e
+    restart: "on-failure"
     healthcheck:
       test: [ "CMD", "curl", "http://127.0.0.1:8080/healthCheck" ]
       interval: 5s
