@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+
 segmentItems:
   {{- range .segmentItems }}
     {{- if eq .serviceName "dubbo-go-server" }}

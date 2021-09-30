@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+
+
 FROM golang:1.14
 
 ADD ./dubbo-go /dubbo-go
