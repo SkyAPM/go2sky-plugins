@@ -34,7 +34,7 @@ registries :
   "demoZk":
     protocol: "zookeeper"
     timeout	: "3s"
-    address: "127.0.0.1:2181"
+    address: "zookeeper:2181"
     username: ""
     password: ""
 
