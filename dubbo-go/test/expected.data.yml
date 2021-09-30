@@ -25,6 +25,7 @@ segmentItems:
       - segmentId: {{ notEmpty .segmentId }}
         spans:
         {{- range .spans}}
+        {{- if eq .operationName "org.apache.dubbo.UserProvider#GetUser" }}
         - operationName: org.apache.dubbo.UserProvider#GetUser
           operationId: 0
           parentSpanId: -1
@@ -41,6 +42,16 @@ segmentItems:
             - {key: extra-tags, value: server}
             - {key: release, value: dubbo-golang-3.0.0}
             - {key: organization, value: dubbo.io}
+          refs:
+            - parentEndpoint: org.apache.dubbo.UserProvider#GetUser
+              networkAddress: {{ notEmpty .networkAddress }}
+              refType: CrossProcess
+              parentSpanId: {{ ge .parentSpanId 0 }}
+              parentTraceSegmentId: {{ notEmpty (index .refs 0).parentTraceSegmentId }}
+              parentServiceInstance: {{ notEmpty (index .refs 0).parentServiceInstance }}
+              parentService: dubbo-go-client
+              traceId: {{ notEmpty (index .refs 0).traceId }}
+        {{- end}}
         {{- end}}
       {{- end}}
     {{- end}}
@@ -52,24 +63,26 @@ segmentItems:
       - segmentId: {{ notEmpty .segmentId }}
         spans:
         {{- range .spans}}
+        {{- if eq .operationName "org.apache.dubbo.UserProvider#GetUser" }}
         - operationName: org.apache.dubbo.UserProvider#GetUser
           operationId: 0
-          parentSpanId: 0
-          spanId: 1
+          parentSpanId: -1
+          spanId: 0
           spanLayer: RPCFramework
           startTime: {{ gt .startTime 0 }}
           endTime: {{ gt .endTime 0 }}
           componentId: 5013
           isError: false
           spanType: Exit
-          peer: org.apache.dubbo.UserProvider
+          peer: {{ notEmpty .peer }}
           skipAnalysis: false
           tags:
             - {key: extra-tags, value: client}
             - {key: release, value: dubbo-golang-3.0.0}
             - {key: organization, value: dubbo.io}
         {{- end }}
+        {{- end }}
       {{- end }}
     {{- end }}
-    {{- end }}
+  {{- end }}
 meterItems: []
