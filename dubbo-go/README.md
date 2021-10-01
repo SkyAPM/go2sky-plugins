@@ -49,8 +49,8 @@ if err != nil {
     log.Fatalf("set tracer error: %v \n", err)
 }
 // set extra tags and report tags
-dubbo_go.SetClientExtraTags("extra-tags", "server")
-dubbo_go.SetClientReportTags("release")
+dubbo_go.SetServerExtraTags("extra-tags", "server")
+dubbo_go.SetServerReportTags("release")
 ```
 
 Client:
