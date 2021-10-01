@@ -44,9 +44,9 @@ segmentItems:
             - {key: organization, value: dubbo.io}
           refs:
             - parentEndpoint: org.apache.dubbo.UserProvider#GetUser
-              networkAddress: {{ notEmpty .networkAddress }}
+              networkAddress: {{ notEmpty (index .refs 0).networkAddress }}
               refType: CrossProcess
-              parentSpanId: {{ ge .parentSpanId 0 }}
+              parentSpanId: {{ ge (index .refs 0).parentSpanId 0 }}
               parentTraceSegmentId: {{ notEmpty (index .refs 0).parentTraceSegmentId }}
               parentServiceInstance: {{ notEmpty (index .refs 0).parentServiceInstance }}
               parentService: dubbo-go-client
