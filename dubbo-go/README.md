@@ -76,10 +76,10 @@ import (
 
 // set dubbogo configs ...
 
-// setup reporter
-report, err := reporter.NewGRPCReporter(oap)
+// setup reporter, use gRPC reporter for production
+report, err := reporter.NewLogReporter()
 if err != nil {
-    log.Fatalf("crate grpc reporter error: %v \n", err)
+    log.Fatalf("new reporter error: %v \n", err)
 }
 
 // setup tracer
@@ -93,6 +93,7 @@ err = dubbo_go.SetClientTracer(tracer)
 if err != nil {
     log.Fatalf("set tracer error: %v \n", err)
 }
+
 // set extra tags and report tags
 dubbo_go.SetClientExtraTags("extra-tags", "client")
 dubbo_go.SetClientReportTags("release")
