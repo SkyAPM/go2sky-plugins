@@ -165,9 +165,6 @@ func (cf tracingFilter) Invoke(ctx context.Context, invoker protocol.Invoker, in
 		// tag error
 		span.Error(time.Now(), result.Error().Error())
 	}
-
-	//time.Sleep(1 * time.Second)
-
 	return result
 }
 
