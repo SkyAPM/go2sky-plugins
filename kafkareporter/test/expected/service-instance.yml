@@ -33,7 +33,7 @@
   {{- end }}
   {{- if eq .name "ipv4s" }}
   - name: ipv4s
-    value: "{{ notEmpty .value }}"
+    value: {{ notEmpty .value }}
   {{- end }}
   {{- end}}
   language: GO

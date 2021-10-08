@@ -22,7 +22,7 @@ spans:
     parentspanid: -1
     refs: []
     servicecode: kafka-reporter
-    serviceinstancename: ""
+    serviceinstancename: provider1
     starttime: {{ gt .starttime 0 }}
     endtime: {{ gt .endtime 0 }}
     endpointname: /info
