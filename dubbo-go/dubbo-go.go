@@ -31,8 +31,7 @@ import (
 
 const (
 	// need add to component library
-	componentIDGo2SkyClient = 5013
-	componentIDGo2SkyServer = 5014
+	componentID = 3
 )
 
 var (

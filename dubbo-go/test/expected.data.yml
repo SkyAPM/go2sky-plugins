@@ -16,15 +16,15 @@
 
 
 segmentItems:
-  {{- range .segmentItems }}
+  {{- contains .segmentItems }}
     {{- if eq .serviceName "dubbo-go-server" }}
     - serviceName: dubbo-go-server
       segmentSize: {{ gt .segmentSize 0 }}
       segments:
-      {{- range .segments }}
+      {{- contains .segments }}
       - segmentId: {{ notEmpty .segmentId }}
         spans:
-        {{- range .spans}}
+        {{- contains .spans}}
         {{- if eq .operationName "org.apache.dubbo.UserProvider#GetUser" }}
         - operationName: org.apache.dubbo.UserProvider#GetUser
           operationId: 0
@@ -59,10 +59,10 @@ segmentItems:
     - serviceName: dubbo-go-client
       segmentSize: {{ gt .segmentSize 0 }}
       segments:
-      {{- range .segments }}
+      {{- contains .segments }}
       - segmentId: {{ notEmpty .segmentId }}
         spans:
-        {{- range .spans}}
+        {{- contains .spans}}
         {{- if eq .operationName "org.apache.dubbo.UserProvider#GetUser" }}
         - operationName: org.apache.dubbo.UserProvider#GetUser
           operationId: 0
