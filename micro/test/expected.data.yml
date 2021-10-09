@@ -39,14 +39,16 @@ segmentItems:
             - key: User-Agent
               value: 'Go-http-client/1.1'
           refs:
+            {{- contains .refs }}
             - parentEndpoint: /GET/hello
               networkAddress: greeter
               refType: CrossProcess
               parentSpanId: 1
-              parentTraceSegmentId: {{ notEmpty (index .refs 0).parentTraceSegmentId }}
-              parentServiceInstance: {{ notEmpty (index .refs 0).parentServiceInstance }}
+              parentTraceSegmentId: {{ notEmpty .parentTraceSegmentId }}
+              parentServiceInstance: {{ notEmpty .parentServiceInstance }}
               parentService: micro-client
-              traceId: {{ notEmpty (index .refs 0).traceId }}
+              traceId: {{ notEmpty .traceId }}
+            {{- end }}
         {{- end}}
       {{- end}}
     - serviceName: micro-client
