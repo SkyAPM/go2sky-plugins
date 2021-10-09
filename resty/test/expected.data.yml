@@ -15,37 +15,14 @@
 #
 
 segmentItems:
-  {{- range .segmentItems }}
-    {{- if eq .serviceName "go-resty" }}
+  {{- contains .segmentItems }}
     - serviceName: go-resty
       segmentSize: {{ gt .segmentSize 0 }}
       segments:
-      {{- range .segments }}
+      {{- contains .segments }}
       - segmentId: {{ notEmpty .segmentId }}
         spans:
-        {{- range .spans}}
-        {{- if eq .operationName "/GET/healthCheck" }}
-        - operationName: /GET/healthCheck
-          operationId: 0
-          parentSpanId: -1
-          spanId: 0
-          spanLayer: Http
-          startTime: {{ gt .startTime 0 }}
-          endTime: {{ gt .endTime 0 }}
-          componentId: 5004
-          isError: false
-          spanType: Entry
-          peer: ''
-          skipAnalysis: false
-          tags:
-            - key: http.method
-              value: GET
-            - key: url
-              value: '127.0.0.1:8080/healthCheck'
-            - key: status_code
-              value: '200'
-        {{- end}}
-        {{- if and (eq .operationName "/GET/hello") (eq .spanType "Exit") }}
+        {{- contains .spans}}
         - operationName: /GET/hello
           operationId: 0
           parentSpanId: 0
@@ -65,8 +42,6 @@ segmentItems:
               value: 'http://httpserver:8080/hello'
             - key: status_code
               value: '200'
-        {{- end}}
-        {{- if and (eq .operationName "/GET/hello") (eq .spanType "Entry") }}
         - operationName: /GET/hello
           operationId: 0
           parentSpanId: -1
@@ -87,39 +62,14 @@ segmentItems:
             - key: status_code
               value: '200'
         {{- end}}
-        {{- end}}
       {{- end}}
-    {{- end}}
-    {{- if eq .serviceName "http-server" }}
     - serviceName: http-server
       segmentSize: {{ gt .segmentSize 0 }}
       segments:
-      {{- range .segments }}
+      {{- contains .segments }}
       - segmentId: {{ notEmpty .segmentId }}
         spans:
-        {{- range .spans}}
-        {{- if eq .operationName "/GET/healthCheck" }}
-        - operationName: /GET/healthCheck
-          operationId: 0
-          parentSpanId: -1
-          spanId: 0
-          spanLayer: Http
-          startTime: {{ gt .startTime 0 }}
-          endTime: {{ gt .endTime 0 }}
-          componentId: 5004
-          isError: false
-          spanType: Entry
-          peer: ''
-          skipAnalysis: false
-          tags:
-            - key: http.method
-              value: GET
-            - key: url
-              value: '127.0.0.1:8080/healthCheck'
-            - key: status_code
-              value: '200'
-        {{- end }}
-        {{- if eq .operationName "/GET/hello" }}
+        {{- contains .spans}}
         - operationName: /GET/hello
           operationId: 0
           parentSpanId: -1
@@ -149,8 +99,6 @@ segmentItems:
               parentService: go-resty
               traceId: {{ notEmpty (index .refs 0).traceId }}
         {{- end }}
-        {{- end }}
       {{- end }}
-    {{- end }}
     {{- end }}
 meterItems: []

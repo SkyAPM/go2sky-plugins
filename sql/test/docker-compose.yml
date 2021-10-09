@@ -18,21 +18,11 @@ version: '2.1'
 
 services:
   mockoap:
-    image: ghcr.io/apache/skywalking-agent-test-tool/mock-collector:b01d4137fed862338d78a73b23435ccf425f9962
-    expose:
-      - 19876
-      - 12800
+    extends:
+      file: ../../test/base-compose.yml
+      service: mockoap
     ports:
-      - 19876:19876
-      - 12800:12800
-    networks:
-      - e2e
-    restart: on-failure
-    healthcheck:
-      test: [ "CMD", "curl", "http://127.0.0.1:12800/healthCheck" ]
-      interval: 5s
-      timeout: 20s
-      retries: 10
+      - 12800
   mysql:
     image: mysql:8.0
     networks:
@@ -61,9 +51,9 @@ services:
     ports:
       - 8080:8080
     environment:
-      GOPROXY: "https://goproxy.io"
+      GOPROXY: https://goproxy.io
     healthcheck:
-      test: ["CMD", "curl", "http://127.0.0.1:8080/healthCheck"]
+      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8080"]
       interval: 5s
       timeout: 20s
       retries: 10
