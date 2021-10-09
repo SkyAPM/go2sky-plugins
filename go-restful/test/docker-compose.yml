@@ -35,7 +35,7 @@ services:
     ports:
       - 8080
     healthcheck:
-      test: [ "CMD", "curl", "http://127.0.0.1:8080/healthCheck" ]
+      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8080"]
       interval: 5s
       timeout: 60s
       retries: 120

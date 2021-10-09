@@ -15,15 +15,14 @@
 #
 
 segmentItems:
-  {{- range .segmentItems }}
-    {{- if eq .serviceName "kratos-server" }}
+  {{- contains .segmentItems }}
     - serviceName: kratos-server
       segmentSize: {{ gt .segmentSize 0 }}
       segments:
-      {{- range .segments }}
+      {{- contains .segments }}
       - segmentId: {{ notEmpty .segmentId }}
         spans:
-        {{- range .spans}}
+        {{- contains .spans}}
         - operationName: /helloworld.Greeter/SayHello
           operationId: 0
           parentSpanId: -1
@@ -62,16 +61,13 @@ segmentItems:
           {{- end }}
         {{- end}}
       {{- end}}
-    {{- end}}
-    {{- if eq .serviceName "kratos-client" }}
     - serviceName: kratos-client
       segmentSize: {{ gt .segmentSize 0 }}
       segments:
-      {{- range .segments }}
+      {{- contains .segments }}
       - segmentId: {{ notEmpty .segmentId }}
         spans:
-        {{- range .spans}}
-        {{- if eq .peer "kratosserver:8000"}}
+        {{- contains .spans}}
         - operationName: /helloworld.Greeter/SayHello
           operationId: 0
           parentSpanId: 0
@@ -84,8 +80,6 @@ segmentItems:
           spanType: Exit
           peer: 'kratosserver:8000'
           skipAnalysis: false
-        {{- end}}
-        {{- if eq .peer "kratosserver:9000"}}
         - operationName: /helloworld.Greeter/SayHello
           operationId: 0
           parentSpanId: 0
@@ -98,22 +92,6 @@ segmentItems:
           spanType: Exit
           peer: 'kratosserver:9000'
           skipAnalysis: false
-        {{- end}}
-        {{- if eq .operationName "/healthCheck" }}
-        - operationName: /healthCheck
-          operationId: 0
-          parentSpanId: -1
-          spanId: 0
-          spanLayer: RPCFramework
-          startTime: {{ gt .startTime 0 }}
-          endTime: {{ gt .endTime 0 }}
-          componentId: 5010
-          isError: false
-          spanType: Entry
-          peer: ''
-          skipAnalysis: false
-        {{- end }}
-        {{- if eq .operationName "/hello" }}
         - operationName: /hello
           operationId: 0
           parentSpanId: -1
@@ -127,8 +105,6 @@ segmentItems:
           peer: ''
           skipAnalysis: false
         {{- end }}
-        {{- end }}
       {{- end }}
-    {{- end }}
   {{- end }}
 meterItems: []

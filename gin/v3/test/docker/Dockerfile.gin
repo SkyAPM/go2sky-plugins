@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM golang:1.12
+FROM golang:1.16
 
 ADD ./gin/v3 /gin/v3
 WORKDIR /gin/v3
