@@ -33,7 +33,7 @@ segmentItems:
           spanLayer: RPCFramework
           startTime: {{ gt .startTime 0 }}
           endTime: {{ gt .endTime 0 }}
-          componentId: 5014
+          componentId: 3
           isError: false
           spanType: Entry
           peer: ''
@@ -71,7 +71,7 @@ segmentItems:
           spanLayer: RPCFramework
           startTime: {{ gt .startTime 0 }}
           endTime: {{ gt .endTime 0 }}
-          componentId: 5013
+          componentId: 3
           isError: false
           spanType: Exit
           peer: {{ notEmpty .peer }}
