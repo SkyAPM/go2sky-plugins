@@ -50,8 +50,6 @@ services:
       - 8080
     ports:
       - 8080:8080
-    environment:
-      GOPROXY: https://goproxy.io
     healthcheck:
       test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8080"]
       interval: 5s
