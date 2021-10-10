@@ -29,7 +29,7 @@ import (
 const (
 	oap         = "mockoap:19876"
 	service     = "go-resty"
-	upstreamURL = "http://httpserver:8080/hello"
+	upstreamURL = "http://httpserver:8080/helloserver"
 )
 
 func main() {

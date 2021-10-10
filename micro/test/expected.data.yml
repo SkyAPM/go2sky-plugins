@@ -24,7 +24,6 @@ segmentItems:
         spans:
         {{- contains .spans}}
         - operationName: greeter.Greeter.Hello
-          operationId: 0
           parentSpanId: -1
           spanId: 0
           spanLayer: RPCFramework
@@ -59,7 +58,6 @@ segmentItems:
         spans:
         {{- contains .spans}}
         - operationName: greeter.Greeter.Hello
-          operationId: 0
           parentSpanId: 0
           spanId: 1
           spanLayer: RPCFramework
@@ -74,7 +72,6 @@ segmentItems:
             - key: Micro-From-Service
               value: 'micro-client'
         - operationName: /GET/hello
-          operationId: 0
           parentSpanId: -1
           spanId: 0
           spanLayer: Http

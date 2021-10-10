@@ -16,91 +16,90 @@
 
 segmentItems:
   {{- contains .segmentItems }}
-    - serviceName: go-resty
-      segmentSize: {{ gt .segmentSize 0 }}
-      segments:
-      {{- contains .segments }}
-      - segmentId: {{ notEmpty .segmentId }}
-        spans:
-        {{- contains .spans}}
-        - operationName: /GET/hello
-          operationId: 0
-          parentSpanId: 0
-          spanId: 1
-          spanLayer: Http
-          startTime: {{ gt .startTime 0 }}
-          endTime: {{ gt .endTime 0 }}
-          componentId: 5005
-          isError: false
-          spanType: Exit
-          peer: httpserver:8080
-          skipAnalysis: false
-          tags:
-            - key: http.method
-              value: GET
-            - key: url
-              value: 'http://httpserver:8080/hello'
-            - key: status_code
-              value: '200'
-        - operationName: /GET/hello
-          operationId: 0
-          parentSpanId: -1
-          spanId: 0
-          spanLayer: Http
-          startTime: {{ gt .startTime 0 }}
-          endTime: {{ gt .endTime 0 }}
-          componentId: 5004
-          isError: false
-          spanType: Entry
-          peer: ''
-          skipAnalysis: false
-          tags:
-            - key: http.method
-              value: GET
-            - key: url
-              value: {{ notEmpty (index .tags 1).value }}
-            - key: status_code
-              value: '200'
-        {{- end}}
-      {{- end}}
-    - serviceName: http-server
-      segmentSize: {{ gt .segmentSize 0 }}
-      segments:
-      {{- contains .segments }}
-      - segmentId: {{ notEmpty .segmentId }}
-        spans:
-        {{- contains .spans}}
-        - operationName: /GET/hello
-          operationId: 0
-          parentSpanId: -1
-          spanId: 0
-          spanLayer: Http
-          startTime: {{ gt .startTime 0 }}
-          endTime: {{ gt .endTime 0 }}
-          componentId: 5004
-          isError: false
-          spanType: Entry
-          peer: ''
-          skipAnalysis: false
-          tags:
-            - key: http.method
-              value: GET
-            - key: url
-              value: 'httpserver:8080/hello'
-            - key: status_code
-              value: '200'
-          refs:
-            {{- contains .refs }}
-            - parentEndpoint: /GET/hello
-              networkAddress: 'httpserver:8080'
-              refType: CrossProcess
-              parentSpanId: 1
-              parentTraceSegmentId: {{ notEmpty .parentTraceSegmentId }}
-              parentServiceInstance: {{ notEmpty .parentServiceInstance }}
-              parentService: go-resty
-              traceId: {{ notEmpty .traceId }}
-            {{- end }}
-        {{- end }}
+  - serviceName: http-server
+    segmentSize: {{ gt .segmentSize 0 }}
+    segments:
+    {{- contains .segments }}
+    - segmentId: {{ notEmpty .segmentId }}
+      spans:
+      {{- contains .spans }}
+      - operationName: /GET/helloserver
+        parentSpanId: -1
+        spanId: 0
+        spanLayer: Http
+        startTime: {{ gt .startTime 0 }}
+        endTime: {{ gt .endTime 0 }}
+        componentId: 5004
+        isError: false
+        spanType: Entry
+        peer: ''
+        skipAnalysis: false
+        tags:
+          - key: http.method
+            value: GET
+          - key: url
+            value: 'httpserver:8080/helloserver'
+          - key: status_code
+            value: '200'
+        refs:
+          {{- contains .refs }}
+          - parentEndpoint: /GET/hello
+            networkAddress: 'httpserver:8080'
+            refType: CrossProcess
+            parentSpanId: 1
+            parentTraceSegmentId: {{ notEmpty .parentTraceSegmentId }}
+            parentServiceInstance: {{ notEmpty .parentServiceInstance }}
+            parentService: go-resty
+            traceId: {{ notEmpty .traceId }}
+          {{- end }}
       {{- end }}
     {{- end }}
+  - serviceName: go-resty
+    segmentSize: {{ gt .segmentSize 0 }}
+    segments:
+    {{- contains .segments }}
+    - segmentId: {{ notEmpty .segmentId }}
+      spans:
+      {{- contains .spans}}
+      - operationName: /GET/helloserver
+        parentSpanId: 0
+        spanId: 1
+        spanLayer: Http
+        startTime: {{ gt .startTime 0 }}
+        endTime: {{ gt .endTime 0 }}
+        componentId: 5005
+        isError: false
+        spanType: Exit
+        peer: httpserver:8080
+        skipAnalysis: false
+        tags:
+          - key: http.method
+            value: GET
+          - key: url
+            value: 'http://httpserver:8080/helloserver'
+          - key: status_code
+            value: '200'
+      - operationName: /GET/hello
+        parentSpanId: -1
+        spanId: 0
+        spanLayer: Http
+        startTime: {{ gt .startTime 0 }}
+        endTime: {{ gt .endTime 0 }}
+        componentId: 5004
+        isError: false
+        spanType: Entry
+        peer: ''
+        skipAnalysis: false
+        tags:
+          {{- contains .tags }}
+          - key: http.method
+            value: GET
+          - key: url
+            value: {{ notEmpty .value }}
+          - key: status_code
+            value: '200'
+          {{- end }}
+      {{- end}}
+    {{- end}}
+  {{- end }}
 meterItems: []
