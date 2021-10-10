@@ -47,10 +47,6 @@ func main() {
 	ws := &restful.WebService{}
 	ws.Filter(go_restfile_plugin.NewTraceFilterFunction(tracer))
 
-	ws.Route(ws.GET("/healthCheck").To(func(request *restful.Request, response *restful.Response) {
-		_, _ = io.WriteString(response, "Success")
-	}))
-
 	ws.Route(ws.GET("/hello").To(func(request *restful.Request, response *restful.Response) {
 		_, _ = io.WriteString(response, "Hello World!")
 	}))
