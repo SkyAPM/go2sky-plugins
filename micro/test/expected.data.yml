@@ -83,12 +83,14 @@ segmentItems:
           peer: ''
           skipAnalysis: false
           tags:
-            - key: http.method
-              value: GET
-            - key: url
-              value: {{ notEmpty (index .tags 1).value }}
-            - key: status_code
-              value: '200'
+          {{- contains .tags }}
+          - key: http.method
+            value: GET
+          - key: url
+            value: {{ notEmpty .value }}
+          - key: status_code
+            value: '200'
+          {{- end }}
         {{- end }}
       {{- end }}
     {{- end }}
