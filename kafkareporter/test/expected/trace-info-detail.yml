@@ -15,7 +15,7 @@
 #
 
 spans:
-  {{- range .spans}}
+  {{- contains .spans}}
   - traceid: {{ notEmpty .traceid }}
     segmentid: {{ notEmpty .segmentid }}
     spanid: 0
@@ -33,4 +33,4 @@ spans:
     layer: Unknown
     tags: []
     logs: []
-  {{- end }}
+  {{- end }} 
