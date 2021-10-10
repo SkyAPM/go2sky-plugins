@@ -14,14 +14,12 @@
 # limitations under the License.
 #
 
-FROM golang:1.13
+FROM golang:1.16
 
 ADD ./go-restful /go-restful
 WORKDIR /go-restful
 
 EXPOSE 8080
-
-ENV GOPROXY=https://goproxy.io
 
 ENTRYPOINT ["go"]
 

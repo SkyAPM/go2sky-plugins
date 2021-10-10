@@ -113,15 +113,6 @@ func main() {
 		return ctx.Returns(h(ctx, &in))
 	})
 
-	route.GET("/healthCheck", func(ctx http.Context) error {
-		var in interface{}
-		http.SetOperation(ctx, "/healthCheck")
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return "Success", nil
-		})
-		return ctx.Returns(h(ctx, &in))
-	})
-
 	app := kratos.New(
 		kratos.Name(serviceName),
 		kratos.Server(server),

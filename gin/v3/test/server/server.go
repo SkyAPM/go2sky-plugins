@@ -47,11 +47,6 @@ func main() {
 	r := gin.New()
 
 	r.Use(ginplugin.Middleware(r, tracer))
-
-	r.GET("/healthCheck", func(ctx *gin.Context) {
-		ctx.String(200, "Success")
-	})
-
 	r.GET("/user/:name", func(ctx *gin.Context) {
 		name := ctx.Param("name")
 		ctx.String(200, "Hello %s", name)
