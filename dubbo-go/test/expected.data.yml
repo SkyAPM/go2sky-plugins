@@ -17,7 +17,30 @@
 
 segmentItems:
   {{- contains .segmentItems }}
-    {{- if eq .serviceName "dubbo-go-server" }}
+    - serviceName: dubbo-go-client
+      segmentSize: {{ gt .segmentSize 0 }}
+      segments:
+      {{- contains .segments }}
+      - segmentId: {{ notEmpty .segmentId }}
+        spans:
+        {{- contains .spans }}
+        - operationName: org.apache.dubbo.UserProvider#GetUser
+          parentSpanId: -1
+          spanId: 0
+          spanLayer: RPCFramework
+          startTime: {{ gt .startTime 0 }}
+          endTime: {{ gt .endTime 0 }}
+          componentId: 3
+          isError: false
+          spanType: Exit
+          peer: {{ notEmpty .peer }}
+          skipAnalysis: false
+          tags:
+            - {key: extra-tags, value: client}
+            - {key: release, value: dubbo-golang-3.0.0}
+            - {key: organization, value: dubbo.io}
+        {{- end}}
+      {{- end}}
     - serviceName: dubbo-go-server
       segmentSize: {{ gt .segmentSize 0 }}
       segments:
@@ -25,9 +48,7 @@ segmentItems:
       - segmentId: {{ notEmpty .segmentId }}
         spans:
         {{- contains .spans}}
-        {{- if eq .operationName "org.apache.dubbo.UserProvider#GetUser" }}
         - operationName: org.apache.dubbo.UserProvider#GetUser
-          operationId: 0
           parentSpanId: -1
           spanId: 0
           spanLayer: RPCFramework
@@ -43,88 +64,17 @@ segmentItems:
             - {key: release, value: dubbo-golang-3.0.0}
             - {key: organization, value: dubbo.io}
           refs:
-            - parentEndpoint: /GET/hello
-              networkAddress: {{ notEmpty (index .refs 0).networkAddress }}
+            {{- contains .refs }}
+            - parentEndpoint: org.apache.dubbo.UserProvider#GetUser
+              networkAddress: {{ notEmpty .networkAddress }}
               refType: CrossProcess
-              parentSpanId: {{ ge (index .refs 0).parentSpanId 0 }}
-              parentTraceSegmentId: {{ notEmpty (index .refs 0).parentTraceSegmentId }}
-              parentServiceInstance: {{ notEmpty (index .refs 0).parentServiceInstance }}
+              parentSpanId: {{ ge .parentSpanId 0 }}
+              parentTraceSegmentId: {{ notEmpty .parentTraceSegmentId }}
+              parentServiceInstance: {{ notEmpty .parentServiceInstance }}
               parentService: dubbo-go-client
-              traceId: {{ notEmpty (index .refs 0).traceId }}
-        {{- end}}
+              traceId: {{ notEmpty .traceId }}
+            {{- end}}
         {{- end}}
       {{- end}}
-    {{- end}}
-    {{- if eq .serviceName "dubbo-go-client" }}
-    - serviceName: dubbo-go-client
-      segmentSize: {{ gt .segmentSize 0 }}
-      segments:
-      {{- contains .segments }}
-      - segmentId: {{ notEmpty .segmentId }}
-        spans:
-        {{- contains .spans}}
-        {{- if eq .operationName "org.apache.dubbo.UserProvider#GetUser" }}
-        - operationName: org.apache.dubbo.UserProvider#GetUser
-          operationId: 0
-          parentSpanId: 0
-          spanId: 1
-          spanLayer: RPCFramework
-          startTime: {{ gt .startTime 0 }}
-          endTime: {{ gt .endTime 0 }}
-          componentId: 3
-          isError: false
-          spanType: Exit
-          peer: {{ notEmpty .peer }}
-          skipAnalysis: false
-          tags:
-            - {key: extra-tags, value: client}
-            - {key: release, value: dubbo-golang-3.0.0}
-            - {key: organization, value: dubbo.io}
-        {{- end }}
-        {{- if eq .operationName "/GET/healthCheck" }}
-        - operationName: /GET/healthCheck
-          operationId: 0
-          parentSpanId: -1
-          spanId: 0
-          spanLayer: Http
-          startTime: {{ gt .startTime 0 }}
-          endTime: {{ gt .endTime 0 }}
-          componentId: 5004
-          isError: false
-          spanType: Entry
-          peer: ''
-          skipAnalysis: false
-          tags:
-            - key: http.method
-              value: GET
-            - key: url
-              value: '127.0.0.1:8080/healthCheck'
-            - key: status_code
-              value: '200'
-        {{- end }}
-        {{- if eq .operationName "/GET/hello" }}
-        - operationName: /GET/hello
-          operationId: 0
-          parentSpanId: -1
-          spanId: 0
-          spanLayer: Http
-          startTime: {{ gt .startTime 0 }}
-          endTime: {{ gt .endTime 0 }}
-          componentId: 5004
-          isError: false
-          spanType: Entry
-          peer: ''
-          skipAnalysis: false
-          tags:
-            - key: http.method
-              value: GET
-            - key: url
-              value: {{ notEmpty (index .tags 1).value }}
-            - key: status_code
-              value: '200'
-        {{- end }}
-        {{- end }}
-      {{- end }}
-    {{- end }}
-  {{- end }}
+  {{- end}}
 meterItems: []

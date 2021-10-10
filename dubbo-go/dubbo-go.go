@@ -32,6 +32,9 @@ import (
 const (
 	// need add to component library
 	componentID = 3
+
+	filterTypeClient = 0
+	filterTypeServer = 1
 )
 
 var (
@@ -117,20 +120,20 @@ func (cf tracingFilter) Invoke(ctx context.Context, invoker protocol.Invoker, in
 	operationName := invoker.GetURL().ServiceKey() + "#" + invocation.MethodName()
 	var span go2sky.Span
 
-	if cf.componentID == componentIDGo2SkyClient {
+	if cf.componentID == filterTypeClient {
 		span, _ = cf.tracer.CreateExitSpan(ctx, operationName, invoker.GetURL().Location, func(key, value string) error {
 			invocation.SetAttachments(key, value)
 			return nil
 		})
 
-		span.SetComponent(componentIDGo2SkyClient)
+		span.SetComponent(componentID)
 	} else {
 		// componentIDGo2SkyServer
 		span, ctx, _ = cf.tracer.CreateEntrySpan(ctx, operationName, func(key string) (string, error) {
 			return invocation.AttachmentsByKey(key, ""), nil
 		})
 
-		span.SetComponent(componentIDGo2SkyServer)
+		span.SetComponent(componentID)
 	}
 	defer span.End()
 
@@ -185,7 +188,7 @@ func GetServerTracingFilterSingleton() filter.Filter {
 	serverFilterOnce.Do(func() {
 		serverFilter = &tracingFilter{
 			tracer:      defaultTracer,
-			componentID: componentIDGo2SkyServer,
+			componentID: filterTypeServer,
 		}
 	})
 	return serverFilter
@@ -196,7 +199,7 @@ func GetClientTracingFilterSingleton() filter.Filter {
 	clientFilterOnce.Do(func() {
 		clientFilter = &tracingFilter{
 			tracer:      defaultTracer,
-			componentID: componentIDGo2SkyClient,
+			componentID: filterTypeClient,
 		}
 	})
 	return clientFilter
