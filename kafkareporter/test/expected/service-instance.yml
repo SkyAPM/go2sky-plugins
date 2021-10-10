@@ -14,28 +14,20 @@
 # limitations under the License.
 #
 
-{{- range .}}
+{{- contains .}}
 - id: {{ b64enc "kafka-reporter" }}.1_{{ b64enc "provider1" }}
   name: {{ notEmpty .name }}
   attributes:
-  {{- range .attributes }}
-  {{- if eq .name "OS Name" }}
+  {{- contains .attributes }}
   - name: OS Name
     value: linux
-  {{- end }}
-  {{- if eq .name "hostname" }}
   - name: hostname
     value: {{ notEmpty .value }}
-  {{- end }}
-  {{- if eq .name "Process No." }}
-  - name: Process No.
+  - name: "Process No."
     value: "{{ notEmpty .value }}"
-  {{- end }}
-  {{- if eq .name "ipv4s" }}
   - name: ipv4s
     value: {{ notEmpty .value }}
   {{- end }}
-  {{- end}}
   language: GO
   instanceuuid: {{ b64enc "kafka-reporter" }}.1_{{ b64enc "provider1" }}
-{{- end}}
+{{- end }}
