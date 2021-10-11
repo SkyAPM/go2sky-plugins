@@ -43,6 +43,7 @@ jobs:
             kratos/test/go_kratos_plugin_test.yaml: kratos/**
             sql/test/sql_plugin_test.yaml: sql/**
             kafkareporter/test/go_kafka_reporter_plugin_test.yaml: kafkareporter/**
+            dubbo-go/test/dubbo_go_plugin_test.yaml: dubbo-go/**
 
   PluginsTest:
     name: Plugin

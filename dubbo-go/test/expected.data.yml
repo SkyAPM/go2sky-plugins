@@ -1,0 +1,99 @@
+#
+# Copyright 2021 SkyAPM org
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+segmentItems:
+  {{- contains .segmentItems }}
+  - serviceName: dubbo-go-client
+    segmentSize: {{ gt .segmentSize 0 }}
+    segments:
+    {{- contains .segments }}
+    - segmentId: {{ notEmpty .segmentId }}
+      spans:
+      {{- contains .spans }}
+      - operationName: org.apache.dubbo.UserProvider#GetUser
+        parentSpanId: 0
+        spanId: 1
+        spanLayer: RPCFramework
+        startTime: {{ gt .startTime 0 }}
+        endTime: {{ gt .endTime 0 }}
+        componentId: 3
+        isError: false
+        spanType: Exit
+        peer: {{ notEmpty .peer }}
+        skipAnalysis: false
+        tags:
+          - {key: extra-tags, value: client}
+          - {key: release, value: dubbo-golang-3.0.0}
+          - {key: organization, value: dubbo.io}
+      - operationName: /GET/hello
+        parentSpanId: -1
+        spanId: 0
+        spanLayer: Http
+        startTime: {{ gt .startTime 0 }}
+        endTime: {{ gt .endTime 0 }}
+        componentId: 5004
+        isError: false
+        spanType: Entry
+        peer: ''
+        skipAnalysis: false
+        tags:
+        {{- contains .tags }}
+        - key: http.method
+          value: GET
+        - key: url
+          value: {{ notEmpty .value }}
+        - key: status_code
+          value: '200'
+        {{- end }}
+      {{- end}}
+    {{- end}}
+  - serviceName: dubbo-go-server
+    segmentSize: {{ gt .segmentSize 0 }}
+    segments:
+    {{- contains .segments }}
+    - segmentId: {{ notEmpty .segmentId }}
+      spans:
+      {{- contains .spans}}
+      - operationName: org.apache.dubbo.UserProvider#GetUser
+        parentSpanId: -1
+        spanId: 0
+        spanLayer: RPCFramework
+        startTime: {{ gt .startTime 0 }}
+        endTime: {{ gt .endTime 0 }}
+        componentId: 3
+        isError: false
+        spanType: Entry
+        peer: ''
+        skipAnalysis: false
+        tags:
+          - {key: extra-tags, value: server}
+          - {key: release, value: dubbo-golang-3.0.0}
+          - {key: organization, value: dubbo.io}
+        refs:
+          {{- contains .refs }}
+          - parentEndpoint: /GET/hello
+            networkAddress: {{ notEmpty .networkAddress }}
+            refType: CrossProcess
+            parentSpanId: {{ ge .parentSpanId 0 }}
+            parentTraceSegmentId: {{ notEmpty .parentTraceSegmentId }}
+            parentServiceInstance: {{ notEmpty .parentServiceInstance }}
+            parentService: dubbo-go-client
+            traceId: {{ notEmpty .traceId }}
+          {{- end}}
+      {{- end}}
+    {{- end}}
+  {{- end}}
+meterItems: []

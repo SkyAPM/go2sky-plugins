@@ -20,6 +20,7 @@ The plugins of [go2sky](https://github.com/SkyAPM/go2sky)
 1. [go-restful](go-restful/README.md)
 1. [go-kratos](kratos/README.md)
 1. [sql](sql/README.md)
+1. [dubbo-go](dubbo-go/README.md)
 
 ### Log Plugins
 
