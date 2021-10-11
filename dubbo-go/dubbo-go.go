@@ -202,7 +202,7 @@ func GetClientTracingFilterSingleton() filter.Filter {
 	clientFilterOnce.Do(func() {
 		clientFilter = &tracingFilter{
 			tracer: defaultTracer,
-			side:   serverSide,
+			side:  clientSide,
 		}
 	})
 	return clientFilter
