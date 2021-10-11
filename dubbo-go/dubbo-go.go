@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
 package dubbo_go
 
 import (
@@ -29,12 +30,14 @@ import (
 	"github.com/SkyAPM/go2sky"
 )
 
+// side record the server or client
+type side int
+
 const (
-	// need add to component library
 	componentID = 3
 
-	filterTypeClient = 0
-	filterTypeServer = 1
+	serverSide side = iota
+	clientSide side = iota
 )
 
 var (
@@ -59,10 +62,10 @@ func init() {
 var defaultTracer *go2sky.Tracer
 
 type tracingFilter struct {
-	tracer      *go2sky.Tracer
-	extraTags   map[string]string
-	reportTags  []string
-	componentID int
+	tracer     *go2sky.Tracer
+	extraTags  map[string]string
+	reportTags []string
+	side       side
 }
 
 // SetClientTracer set client tracer with user's tracer.
@@ -120,7 +123,7 @@ func (cf tracingFilter) Invoke(ctx context.Context, invoker protocol.Invoker, in
 	operationName := invoker.GetURL().ServiceKey() + "#" + invocation.MethodName()
 	var span go2sky.Span
 
-	if cf.componentID == filterTypeClient {
+	if cf.side == clientSide {
 		span, _ = cf.tracer.CreateExitSpan(ctx, operationName, invoker.GetURL().Location, func(key, value string) error {
 			invocation.SetAttachments(key, value)
 			return nil
@@ -187,8 +190,8 @@ var (
 func GetServerTracingFilterSingleton() filter.Filter {
 	serverFilterOnce.Do(func() {
 		serverFilter = &tracingFilter{
-			tracer:      defaultTracer,
-			componentID: filterTypeServer,
+			tracer: defaultTracer,
+			side:   serverSide,
 		}
 	})
 	return serverFilter
@@ -198,8 +201,8 @@ func GetServerTracingFilterSingleton() filter.Filter {
 func GetClientTracingFilterSingleton() filter.Filter {
 	clientFilterOnce.Do(func() {
 		clientFilter = &tracingFilter{
-			tracer:      defaultTracer,
-			componentID: filterTypeClient,
+			tracer: defaultTracer,
+			side:   serverSide,
 		}
 	})
 	return clientFilter
