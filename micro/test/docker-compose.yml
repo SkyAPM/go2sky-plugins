@@ -33,8 +33,6 @@ services:
       - 8081
     ports:
       - 8081
-    environment:
-      GOPROXY: "https://goproxy.cn"
     healthcheck:
       test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8081"]
       interval: 5s
@@ -53,10 +51,8 @@ services:
       - 8080
     networks:
       - e2e
-    environment:
-      GOPROXY: "https://goproxy.cn"
     healthcheck:
-      test: [ "CMD", "curl", "http://127.0.0.1:8080/healthCheck" ]
+      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8080"]
       interval: 5s
       timeout: 60s
       retries: 120

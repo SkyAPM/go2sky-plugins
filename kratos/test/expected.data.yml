@@ -15,17 +15,15 @@
 #
 
 segmentItems:
-  {{- range .segmentItems }}
-    {{- if eq .serviceName "kratos-server" }}
+  {{- contains .segmentItems }}
     - serviceName: kratos-server
       segmentSize: {{ gt .segmentSize 0 }}
       segments:
-      {{- range .segments }}
+      {{- contains .segments }}
       - segmentId: {{ notEmpty .segmentId }}
         spans:
-        {{- range .spans}}
+        {{- contains .spans}}
         - operationName: /helloworld.Greeter/SayHello
-          operationId: 0
           parentSpanId: -1
           spanId: 0
           spanLayer: RPCFramework
@@ -36,44 +34,51 @@ segmentItems:
           spanType: Entry
           peer: ''
           skipAnalysis: false
-          {{- if eq (index .refs 0).networkAddress "kratosserver:8000"}}
           tags:
             - { key: User-Agent, value: Go-http-client/1.1 }
           refs:
+            {{- contains .refs }}
             - parentEndpoint: /hello
               networkAddress: 'kratosserver:8000'
               refType: CrossProcess
               parentSpanId: 1
-              parentTraceSegmentId: {{ notEmpty (index .refs 0).parentTraceSegmentId }}
-              parentServiceInstance: {{ notEmpty (index .refs 0).parentServiceInstance }}
+              parentTraceSegmentId: {{ notEmpty .parentTraceSegmentId }}
+              parentServiceInstance: {{ notEmpty .parentServiceInstance }}
               parentService: kratos-client
-              traceId: {{ notEmpty (index .refs 0).traceId }}
-          {{- end}}
-          {{- if eq (index .refs 0).networkAddress "kratosserver:9000" }}
+              traceId: {{ notEmpty .traceId }}
+            {{- end }}
+        - operationName: /helloworld.Greeter/SayHello
+          parentSpanId: -1
+          spanId: 0
+          spanLayer: RPCFramework
+          startTime: {{ gt .startTime 0 }}
+          endTime: {{ gt .endTime 0 }}
+          componentId: 5010
+          isError: false
+          spanType: Entry
+          peer: ''
+          skipAnalysis: false
           refs:
+          {{- contains .refs }}
             - parentEndpoint: /hello
               networkAddress: 'kratosserver:9000'
               refType: CrossProcess
               parentSpanId: 2
-              parentTraceSegmentId: {{ notEmpty (index .refs 0).parentTraceSegmentId }}
-              parentServiceInstance: {{ notEmpty (index .refs 0).parentServiceInstance }}
+              parentTraceSegmentId: {{ notEmpty .parentTraceSegmentId }}
+              parentServiceInstance: {{ notEmpty .parentServiceInstance }}
               parentService: kratos-client
-              traceId: {{ notEmpty (index .refs 0).traceId }}
+              traceId: {{ notEmpty .traceId }}
           {{- end }}
         {{- end}}
       {{- end}}
-    {{- end}}
-    {{- if eq .serviceName "kratos-client" }}
     - serviceName: kratos-client
       segmentSize: {{ gt .segmentSize 0 }}
       segments:
-      {{- range .segments }}
+      {{- contains .segments }}
       - segmentId: {{ notEmpty .segmentId }}
         spans:
-        {{- range .spans}}
-        {{- if eq .peer "kratosserver:8000"}}
+        {{- contains .spans}}
         - operationName: /helloworld.Greeter/SayHello
-          operationId: 0
           parentSpanId: 0
           spanId: 1
           spanLayer: RPCFramework
@@ -84,10 +89,7 @@ segmentItems:
           spanType: Exit
           peer: 'kratosserver:8000'
           skipAnalysis: false
-        {{- end}}
-        {{- if eq .peer "kratosserver:9000"}}
         - operationName: /helloworld.Greeter/SayHello
-          operationId: 0
           parentSpanId: 0
           spanId: 2
           spanLayer: RPCFramework
@@ -98,24 +100,7 @@ segmentItems:
           spanType: Exit
           peer: 'kratosserver:9000'
           skipAnalysis: false
-        {{- end}}
-        {{- if eq .operationName "/healthCheck" }}
-        - operationName: /healthCheck
-          operationId: 0
-          parentSpanId: -1
-          spanId: 0
-          spanLayer: RPCFramework
-          startTime: {{ gt .startTime 0 }}
-          endTime: {{ gt .endTime 0 }}
-          componentId: 5010
-          isError: false
-          spanType: Entry
-          peer: ''
-          skipAnalysis: false
-        {{- end }}
-        {{- if eq .operationName "/hello" }}
         - operationName: /hello
-          operationId: 0
           parentSpanId: -1
           spanId: 0
           spanLayer: RPCFramework
@@ -126,9 +111,7 @@ segmentItems:
           spanType: Entry
           peer: ''
           skipAnalysis: false
-        {{- end }}
         {{- end }}
       {{- end }}
-    {{- end }}
   {{- end }}
 meterItems: []

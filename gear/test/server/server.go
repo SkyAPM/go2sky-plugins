@@ -46,9 +46,6 @@ func main() {
 	app.Use(gear_plugin.Middleware(tracer))
 
 	router := gear.NewRouter()
-	router.Get("/healthCheck", func(ctx *gear.Context) error {
-		return ctx.End(http.StatusOK, []byte("Success"))
-	})
 	router.Get("/hello", func(ctx *gear.Context) error {
 		return ctx.End(http.StatusOK, []byte("Hello World!"))
 	})

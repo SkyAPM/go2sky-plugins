@@ -14,29 +14,20 @@
 # limitations under the License.
 #
 
-setup:
-  env: compose
-  file: docker-compose.yml
-  timeout: 1200
-
-cleanup:
-  # always never success failure
-  on: success
-
-trigger:
-  action: http
-  interval: 3s
-  times: 5
-  url: http://127.0.0.1:${client_8080}/execute
-  method: GET
-
-verify:
-  # verify with retry strategy
-  retry:
-    # max retry count
-    count: 10
-    # the interval between two retries, in millisecond.
-    interval: 10s
-  cases:
-    - query: curl http://127.0.0.1:${mockoap_12800}/receiveData
-      expected: expected.data.yml
+{{- contains .}}
+- id: {{ b64enc "kafka-reporter" }}.1_{{ b64enc "provider1" }}
+  name: {{ notEmpty .name }}
+  attributes:
+  {{- contains .attributes }}
+  - name: OS Name
+    value: linux
+  - name: hostname
+    value: {{ notEmpty .value }}
+  - name: "Process No."
+    value: "{{ notEmpty .value }}"
+  - name: ipv4s
+    value: {{ notEmpty .value }}
+  {{- end }}
+  language: GO
+  instanceuuid: {{ b64enc "kafka-reporter" }}.1_{{ b64enc "provider1" }}
+{{- end }}

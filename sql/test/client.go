@@ -23,6 +23,7 @@ import (
 	"net/http"
 
 	sqlPlugin "github.com/SkyAPM/go2sky-plugins/sql"
+	httpplugin "github.com/SkyAPM/go2sky/plugins/http"
 
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
@@ -60,9 +61,6 @@ func main() {
 	}
 
 	route := http.NewServeMux()
-	route.HandleFunc("/healthCheck", func(res http.ResponseWriter, req *http.Request) {
-		_, _ = res.Write([]byte("success"))
-	})
 	route.HandleFunc("/execute", func(res http.ResponseWriter, req *http.Request) {
 		tests := []struct {
 			name string
@@ -74,26 +72,22 @@ func main() {
 			{"rollbackTx", TestRollbackTx},
 		}
 
-		span, ctx, err := tracer.CreateLocalSpan(
-			context.Background(),
-			go2sky.WithOperationName("execute"),
-		)
-		if err != nil {
-			log.Fatalf("create span error: %v \n", err)
-		}
-		defer span.End()
-
 		for _, test := range tests {
 			log.Printf("excute test case %s", test.name)
-			if err := test.fn(ctx, db); err != nil {
+			if err := test.fn(req.Context(), db); err != nil {
 				log.Fatalf("test case %s failed: %v", test.name, err)
 			}
 		}
 		_, _ = res.Write([]byte("execute sql success"))
 	})
 
+	sm, err := httpplugin.NewServerMiddleware(tracer)
+	if err != nil {
+		log.Fatalf("create client error %v \n", err)
+	}
+
 	log.Println("start client")
-	err = http.ListenAndServe(addr, route)
+	err = http.ListenAndServe(addr, sm(route))
 	if err != nil {
 		log.Fatalf("client start error: %v \n", err)
 	}

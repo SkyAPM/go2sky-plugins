@@ -42,6 +42,7 @@ jobs:
             resty/test/go_resty_plugin_test.yaml: resty/**
             kratos/test/go_kratos_plugin_test.yaml: kratos/**
             sql/test/sql_plugin_test.yaml: sql/**
+            kafkareporter/test/go_kafka_reporter_plugin_test.yaml: kafkareporter/**
             dubbo-go/test/dubbo_go_plugin_test.yaml: dubbo-go/**
 
   PluginsTest:
@@ -57,3 +58,9 @@ jobs:
       - uses: apache/skywalking-infra-e2e@main
         with:
           e2e-file: ${{ matrix.e2e_file }}
+      - name: Show Container Logs
+        if: ${{ failure() }}
+        run: docker ps -a | grep -v CONTAINER | awk '{print $1}' | xargs -i docker logs {}
+      - name: Cleanup
+        if: ${{ failure() }}
+        run: e2e cleanup -c ${{ matrix.e2e_file }}
