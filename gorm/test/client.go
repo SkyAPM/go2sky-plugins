@@ -65,7 +65,12 @@ func main() {
 		log.Fatalf("open db error: %v \n", err)
 	}
 
-	db.Use(gormPlugin.New(tracer, peer, gormPlugin.MYSQL))
+	db.Use(gormPlugin.New(tracer,
+		gormPlugin.WithSqlDBType(gormPlugin.MYSQL),
+		gormPlugin.WithQueryReport(),
+		gormPlugin.WithParamReport(),
+		gormPlugin.WithPeerAddr(peer),
+	))
 
 	route := http.NewServeMux()
 	route.HandleFunc("/execute", func(res http.ResponseWriter, req *http.Request) {

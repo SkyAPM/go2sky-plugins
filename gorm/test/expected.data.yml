@@ -37,6 +37,8 @@ segmentItems:
             tags:
               - key: db.type
                 value: mysql
+              - key: db.instance
+                value: 'mysql:3306'
               - key: db.statement
                 value: 'CREATE TABLE IF NOT EXISTS users (id char(255), name VARCHAR(255), age INTEGER)'
           - operationName: users/create
@@ -53,10 +55,12 @@ segmentItems:
             tags:
               - key: db.type
                 value: mysql
+              - key: db.instance
+                value: 'mysql:3306'
               - key: db.statement
                 value: 'INSERT INTO `users` (`name`,`age`) VALUES (?,?)'
-              - key: db.bind_vars
-                value: '[Jinzhu 18]'
+              - key: db.sql.parameters
+                value: 'Jinzhu, 18'
           - operationName: users/query
             parentSpanId: 0
             spanId: 3
@@ -71,6 +75,8 @@ segmentItems:
             tags:
               - key: db.type
                 value: mysql
+              - key: db.instance
+                value: 'mysql:3306'
               - key: db.statement
                 value: SELECT * FROM `users` ORDER BY `users`.`id` LIMIT 1
           - operationName: users/row
@@ -87,10 +93,12 @@ segmentItems:
             tags:
               - key: db.type
                 value: mysql
+              - key: db.instance
+                value: 'mysql:3306'
               - key: db.statement
                 value: 'SELECT name,age FROM `users` WHERE name = ?'
-              - key: db.bind_vars
-                value: '[jinzhu]'
+              - key: db.sql.parameters
+                value: jinzhu
         - operationName: users/update
           parentSpanId: 0
           spanId: 5
@@ -105,10 +113,12 @@ segmentItems:
           tags:
             - key: db.type
               value: mysql
+            - key: db.instance
+              value: 'mysql:3306'
             - key: db.statement
               value: 'UPDATE `users` SET `name`=? WHERE name = ?'
-            - key: db.bind_vars
-              value: '[hello jinzhu]'
+            - key: db.sql.parameters
+              value: 'hello, jinzhu'
         - operationName: users/delete
           parentSpanId: 0
           spanId: 6
@@ -122,10 +132,12 @@ segmentItems:
           tags:
             - key: db.type
               value: mysql
+            - key: db.instance
+              value: 'mysql:3306'
             - key: db.statement
               value: 'DELETE FROM `users` WHERE `users`.`id` = ?'
-            - key: db.bind_vars
-              value: '[1]'
+            - key: db.sql.parameters
+              value: '1'
         - operationName: /GET/execute
           parentSpanId: -1
           spanId: 0

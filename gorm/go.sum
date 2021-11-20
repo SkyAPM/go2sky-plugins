@@ -5,6 +5,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/SkyAPM/go2sky v1.2.0 h1:DTkNf16MVZ/IHC6Bj9kFIoPKodgyXTPLHYca8qMgKbw=
 github.com/SkyAPM/go2sky v1.2.0/go.mod h1:LzuySkt/TsQL8FMANZu4BX/6Rn0UfGu5KS/r9TwG/dc=
+github.com/SkyAPM/go2sky v1.2.1-0.20211120040242-09e1525ced66 h1:FZ7WIMvVH4ioZGrVc4uvawPbJj0oY7BsJZg9ZgCQFhQ=
+github.com/SkyAPM/go2sky v1.2.1-0.20211120040242-09e1525ced66/go.mod h1:LzuySkt/TsQL8FMANZu4BX/6Rn0UfGu5KS/r9TwG/dc=
 github.com/agnivade/levenshtein v1.0.1/go.mod h1:CURSv5d9Uaml+FovSIICkLbAUZ9S4RqaHDIsdSBg7lM=
 github.com/agnivade/levenshtein v1.0.3/go.mod h1:4SFRZbbXWLF4MU1T9Qg0pGgH3Pjs+t6ie5efyrwRJXs=
 github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883/go.mod h1:rCTlJbsFo29Kk6CurOXKm700vrz8f0KW0JNfpkRJY/8=

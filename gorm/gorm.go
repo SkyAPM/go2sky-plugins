@@ -18,6 +18,7 @@ package gorm
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/SkyAPM/go2sky"
@@ -29,28 +30,30 @@ var (
 	_ gorm.Plugin = &SkyWalking{}
 )
 
-const (
-	componentIDUnknown = 0
-	componentIDMySQL   = 5012
-)
-
-type DBType string
-
-const (
-	UNKNOWN DBType = "unknown"
-	MYSQL   DBType = "mysql"
-)
-
 const spanKey = "spanKey"
 
 type SkyWalking struct {
-	tracer  *go2sky.Tracer
-	peer    string
-	sqlType DBType
+	tracer *go2sky.Tracer
+	opts   *options
 }
 
-func New(tracer *go2sky.Tracer, peer string, sqlType DBType) *SkyWalking {
-	return &SkyWalking{tracer, peer, sqlType}
+func New(tracer *go2sky.Tracer, opts ...Option) *SkyWalking {
+	options := &options{
+		dbType:      UNKNOWN,
+		componentID: componentIDUnknown,
+		peer:        "unknown",
+		reportQuery: false,
+		reportParam: false,
+	}
+
+	for _, o := range opts {
+		o(options)
+	}
+
+	return &SkyWalking{
+		tracer: tracer,
+		opts:   options,
+	}
 }
 
 func (s *SkyWalking) Name() string {
@@ -79,7 +82,7 @@ func (s *SkyWalking) Initialize(db *gorm.DB) (err error) {
 
 func (s *SkyWalking) BeforeCallback(operation string) func(db *gorm.DB) {
 	tracer := s.tracer
-	peer := s.peer
+	peer := s.opts.peer
 
 	if tracer == nil {
 		return func(db *gorm.DB) {}
@@ -94,6 +97,7 @@ func (s *SkyWalking) BeforeCallback(operation string) func(db *gorm.DB) {
 		})
 		if err != nil {
 			db.Logger.Error(db.Statement.Context, "gorm:skyWalking failed to create exit span, got error: %v", err)
+			return
 		}
 
 		// set span from db instance's context to pass span
@@ -110,7 +114,10 @@ func (s *SkyWalking) AfterCallback() func(db *gorm.DB) {
 	return func(db *gorm.DB) {
 		// get span from db instance's context
 		spanInterface, _ := db.Get(spanKey)
-		span := spanInterface.(go2sky.Span)
+		span, ok := spanInterface.(go2sky.Span)
+		if !ok {
+			return
+		}
 
 		defer span.End()
 
@@ -118,14 +125,16 @@ func (s *SkyWalking) AfterCallback() func(db *gorm.DB) {
 		vars := db.Statement.Vars
 		err := db.Statement.Error
 
-		span.SetComponent(s.getComponent())
+		span.SetComponent(s.opts.componentID)
 		span.SetSpanLayer(agentv3.SpanLayer_Database)
-		span.Tag(go2sky.TagDBType, string(s.sqlType))
-		span.Tag(go2sky.TagDBStatement, sql)
+		span.Tag(go2sky.TagDBType, string(s.opts.dbType))
+		span.Tag(go2sky.TagDBInstance, s.opts.peer)
 
-		if len(vars) != 0 {
-			varsStr := fmt.Sprintf("%v", vars)
-			span.Tag(go2sky.TagDBBindVariables, varsStr)
+		if s.opts.reportQuery {
+			span.Tag(go2sky.TagDBStatement, sql)
+		}
+		if s.opts.reportParam && len(vars) != 0 {
+			span.Tag(go2sky.TagDBSqlParameters, argsToString(vars))
 		}
 
 		if err != nil {
@@ -134,11 +143,19 @@ func (s *SkyWalking) AfterCallback() func(db *gorm.DB) {
 	}
 }
 
-func (s *SkyWalking) getComponent() int32 {
-	switch s.sqlType {
-	case MYSQL:
-		return componentIDMySQL
-	default:
-		return componentIDUnknown
+func argsToString(args []interface{}) string {
+	sb := strings.Builder{}
+
+	switch len(args) {
+	case 0:
+		return ""
+	case 1:
+		return fmt.Sprintf("%v", args[0])
 	}
+
+	sb.WriteString(fmt.Sprintf("%v", args[0]))
+	for _, arg := range args[1:] {
+		sb.WriteString(fmt.Sprintf(", %v", arg))
+	}
+	return sb.String()
 }
