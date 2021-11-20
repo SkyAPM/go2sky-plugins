@@ -23,6 +23,7 @@ import (
 	"strconv"
 )
 
+// ProcessNo pid
 func ProcessNo() string {
 	if os.Getpid() > 0 {
 		return strconv.Itoa(os.Getpid())
@@ -30,6 +31,7 @@ func ProcessNo() string {
 	return ""
 }
 
+// HostName hostname
 func HostName() string {
 	if hs, err := os.Hostname(); err == nil {
 		return hs
@@ -37,10 +39,12 @@ func HostName() string {
 	return "unknown"
 }
 
+// OSName os name
 func OSName() string {
 	return runtime.GOOS
 }
 
+// AllIPV4 all ipv4
 func AllIPV4() (ipv4s []string) {
 	adders, err := net.InterfaceAddrs()
 	if err != nil {
@@ -61,6 +65,7 @@ func AllIPV4() (ipv4s []string) {
 	return
 }
 
+// IPV4 ipv4
 func IPV4() string {
 	ipv4s := AllIPV4()
 	if len(ipv4s) > 0 {

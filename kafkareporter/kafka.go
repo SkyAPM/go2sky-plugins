@@ -59,7 +59,7 @@ type kafkaReporter struct {
 }
 
 // New create a new reporter to send data to kafka.
-func New(addrs []string, opts ...KafkaReporterOption) (go2sky.Reporter, error) {
+func New(addrs []string, opts ...Option) (go2sky.Reporter, error) {
 	r := &kafkaReporter{
 		c:               sarama.NewConfig(),
 		logger:          log.New(os.Stderr, defaultKafkaLogPrefix, log.LstdFlags),
@@ -89,47 +89,47 @@ func New(addrs []string, opts ...KafkaReporterOption) (go2sky.Reporter, error) {
 	return r, nil
 }
 
-// KafkaReporterOption allows for functional options to adjust behaviour
+// Option allows for functional options to adjust behaviour
 // of a kafka reporter to be created by New
-type KafkaReporterOption func(r *kafkaReporter)
+type Option func(r *kafkaReporter)
 
 // WithConfig setup sarama.Config for kafka reporter
-func WithConfig(c *sarama.Config) KafkaReporterOption {
+func WithConfig(c *sarama.Config) Option {
 	return func(r *kafkaReporter) {
 		r.c = c
 	}
 }
 
 // WithCheckInterval setup service and endpoint registry check interval
-func WithCheckInterval(interval time.Duration) KafkaReporterOption {
+func WithCheckInterval(interval time.Duration) Option {
 	return func(r *kafkaReporter) {
 		r.checkInterval = interval
 	}
 }
 
 // WithInstanceProps setup service instance properties eg: org=SkyAPM
-func WithInstanceProps(props map[string]string) KafkaReporterOption {
+func WithInstanceProps(props map[string]string) Option {
 	return func(r *kafkaReporter) {
 		r.instanceProps = props
 	}
 }
 
 // WithLogger setup logger for kafka reporter
-func WithLogger(logger *log.Logger) KafkaReporterOption {
+func WithLogger(logger *log.Logger) Option {
 	return func(r *kafkaReporter) {
 		r.logger = logger
 	}
 }
 
 // WithTopicManagement setup service management topic
-func WithTopicManagement(topicManagement string) KafkaReporterOption {
+func WithTopicManagement(topicManagement string) Option {
 	return func(r *kafkaReporter) {
 		r.topicManagement = topicManagement
 	}
 }
 
 // WithTopicSegment setup service segment topic
-func WithTopicSegment(topicSegment string) KafkaReporterOption {
+func WithTopicSegment(topicSegment string) Option {
 	return func(r *kafkaReporter) {
 		r.topicSegment = topicSegment
 	}
