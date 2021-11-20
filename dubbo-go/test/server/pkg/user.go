@@ -33,6 +33,7 @@ func init() {
 	hessian.RegisterPOJO(&User{})
 }
 
+// User user
 type User struct {
 	ID   string
 	Name string
@@ -40,9 +41,11 @@ type User struct {
 	Time time.Time
 }
 
+// UserProvider user provider service
 type UserProvider struct {
 }
 
+// GetUser get user
 func (u *UserProvider) GetUser(ctx context.Context, req []interface{}) (*User, error) {
 	gxlog.CInfo("req:%#v", req)
 	rsp := User{"A001", "Alex Stocks", 18, time.Now()}
@@ -50,10 +53,12 @@ func (u *UserProvider) GetUser(ctx context.Context, req []interface{}) (*User, e
 	return &rsp, nil
 }
 
+// Reference rpc service id or reference id
 func (u *UserProvider) Reference() string {
 	return "UserProvider"
 }
 
+// JavaClassName got a go struct's Java Class package name which should be a POJO class
 func (u User) JavaClassName() string {
 	return "org.apache.dubbo.User"
 }

@@ -21,6 +21,7 @@ import (
 	"time"
 )
 
+// User user
 type User struct {
 	ID   string
 	Name string
@@ -28,14 +29,17 @@ type User struct {
 	Time time.Time
 }
 
+// UserProvider user provider service
 type UserProvider struct {
 	GetUser func(ctx context.Context, req []interface{}, rsp *User) error
 }
 
+// Reference rpc service id or reference id
 func (u *UserProvider) Reference() string {
 	return "UserProvider"
 }
 
+// JavaClassName got a go struct's Java Class package name which should be a POJO class
 func (User) JavaClassName() string {
 	return "org.apache.dubbo.User"
 }

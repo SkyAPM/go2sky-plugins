@@ -157,7 +157,7 @@ func TestKafkaReporterOption(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		option     KafkaReporterOption
+		option     Option
 		verifyFunc func(t *testing.T, reporter *kafkaReporter)
 	}{
 		{
@@ -258,7 +258,7 @@ func TestKafkaReporter_reportInstanceProperties(t *testing.T) {
 		t.Error()
 	}
 	for msg := range reporter.producer.Successes() {
-		reporter.producer.Close()
+		_ = reporter.producer.Close()
 		if msg.Topic != reporter.topicManagement {
 			t.Errorf("Excepted kafka topic is %s not %s", reporter.topicManagement, msg.Topic)
 		}

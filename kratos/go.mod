@@ -3,7 +3,7 @@ module github.com/SkyAPM/go2sky-plugins/kratos
 go 1.16
 
 require (
-	github.com/SkyAPM/go2sky v1.2.0
+	github.com/SkyAPM/go2sky v1.3.0
 	github.com/go-kratos/kratos/examples v0.0.0-20210806031717-e5ae8dc3f1f4
 	github.com/go-kratos/kratos/v2 v2.0.4-0.20210806031717-e5ae8dc3f1f4
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect

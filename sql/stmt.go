@@ -20,8 +20,11 @@ import (
 	"context"
 	"database/sql"
 	"time"
+
+	"github.com/SkyAPM/go2sky"
 )
 
+// Stmt wrap sql.Stmt and support trace
 type Stmt struct {
 	*sql.Stmt
 
@@ -29,6 +32,7 @@ type Stmt struct {
 	query string
 }
 
+// ExecContext support trace
 func (s *Stmt) ExecContext(ctx context.Context, args ...interface{}) (sql.Result, error) {
 	span, err := createSpan(ctx, s.db.tracer, s.db.opts, "execute")
 	if err != nil {
@@ -37,10 +41,10 @@ func (s *Stmt) ExecContext(ctx context.Context, args ...interface{}) (sql.Result
 	defer span.End()
 
 	if s.db.opts.reportQuery {
-		span.Tag(tagDbStatement, s.query)
+		span.Tag(go2sky.TagDBStatement, s.query)
 	}
 	if s.db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	res, err := s.Stmt.ExecContext(ctx, args...)
@@ -50,6 +54,7 @@ func (s *Stmt) ExecContext(ctx context.Context, args ...interface{}) (sql.Result
 	return res, err
 }
 
+// QueryContext support trace
 func (s *Stmt) QueryContext(ctx context.Context, args ...interface{}) (*sql.Rows, error) {
 	span, err := createSpan(ctx, s.db.tracer, s.db.opts, "query")
 	if err != nil {
@@ -58,10 +63,10 @@ func (s *Stmt) QueryContext(ctx context.Context, args ...interface{}) (*sql.Rows
 	defer span.End()
 
 	if s.db.opts.reportQuery {
-		span.Tag(tagDbStatement, s.query)
+		span.Tag(go2sky.TagDBStatement, s.query)
 	}
 	if s.db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	rows, err := s.Stmt.QueryContext(ctx, args...)
@@ -71,6 +76,7 @@ func (s *Stmt) QueryContext(ctx context.Context, args ...interface{}) (*sql.Rows
 	return rows, err
 }
 
+// QueryRowContext support trace
 func (s *Stmt) QueryRowContext(ctx context.Context, args ...interface{}) *sql.Row {
 	span, err := createSpan(ctx, s.db.tracer, s.db.opts, "query")
 	if err != nil {
@@ -79,10 +85,10 @@ func (s *Stmt) QueryRowContext(ctx context.Context, args ...interface{}) *sql.Ro
 	defer span.End()
 
 	if s.db.opts.reportQuery {
-		span.Tag(tagDbStatement, s.query)
+		span.Tag(go2sky.TagDBStatement, s.query)
 	}
 	if s.db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	return s.Stmt.QueryRowContext(ctx, args...)

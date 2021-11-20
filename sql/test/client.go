@@ -53,7 +53,7 @@ func main() {
 	}
 
 	db, err := sqlPlugin.Open("mysql", dsn, tracer,
-		sqlPlugin.WithSqlDBType(sqlPlugin.MYSQL),
+		sqlPlugin.WithSQLDBType(sqlPlugin.MYSQL),
 		sqlPlugin.WithQueryReport(),
 	)
 	if err != nil {
@@ -66,16 +66,16 @@ func main() {
 			name string
 			fn   testFunc
 		}{
-			{"exec", TestExec},
-			{"stmt", TestStmt},
-			{"commitTx", TestCommitTx},
-			{"rollbackTx", TestRollbackTx},
+			{"exec", testExec},
+			{"stmt", testStmt},
+			{"commitTx", testCommitTx},
+			{"rollbackTx", testRollbackTx},
 		}
 
 		for _, test := range tests {
 			log.Printf("excute test case %s", test.name)
-			if err := test.fn(req.Context(), db); err != nil {
-				log.Fatalf("test case %s failed: %v", test.name, err)
+			if err1 := test.fn(req.Context(), db); err1 != nil {
+				log.Fatalf("test case %s failed: %v", test.name, err1)
 			}
 		}
 		_, _ = res.Write([]byte("execute sql success"))
@@ -93,7 +93,7 @@ func main() {
 	}
 }
 
-func TestExec(ctx context.Context, db *sqlPlugin.DB) error {
+func testExec(ctx context.Context, db *sqlPlugin.DB) error {
 	if err := db.PingContext(ctx); err != nil {
 		return err
 	}
@@ -120,12 +120,14 @@ func TestExec(ctx context.Context, db *sqlPlugin.DB) error {
 	return nil
 }
 
-func TestStmt(ctx context.Context, db *sqlPlugin.DB) error {
+func testStmt(ctx context.Context, db *sqlPlugin.DB) error {
 	stmt, err := db.PrepareContext(ctx, `INSERT INTO users (id, name, age) VALUE ( ?, ?, ?)`)
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer func() {
+		_ = stmt.Close()
+	}()
 
 	_, err = stmt.ExecContext(ctx, "1", "bar", 11)
 	if err != nil {
@@ -135,10 +137,10 @@ func TestStmt(ctx context.Context, db *sqlPlugin.DB) error {
 	return nil
 }
 
-func TestCommitTx(ctx context.Context, db *sqlPlugin.DB) error {
+func testCommitTx(ctx context.Context, db *sqlPlugin.DB) error {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("begin tx error: %v \n", err)
+		return fmt.Errorf("begin tx error: %v", err)
 	}
 
 	if _, err := tx.Exec(`INSERT INTO users (id, name, age) VALUE ( ?, ?, ? )`, "2", "foobar", 24); err != nil {
@@ -155,10 +157,10 @@ func TestCommitTx(ctx context.Context, db *sqlPlugin.DB) error {
 	return nil
 }
 
-func TestRollbackTx(ctx context.Context, db *sqlPlugin.DB) error {
+func testRollbackTx(ctx context.Context, db *sqlPlugin.DB) error {
 	tx, err := db.BeginTx(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("begin tx error: %v \n", err)
+		return fmt.Errorf("begin tx error: %v", err)
 	}
 
 	if _, err := tx.Exec(`UPDATE users SET age = ? WHERE id = ?`, 48, "2"); err != nil {

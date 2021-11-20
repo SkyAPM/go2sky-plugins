@@ -34,7 +34,7 @@ import (
 	"github.com/SkyAPM/go2sky/reporter"
 	hessian "github.com/apache/dubbo-go-hessian2"
 
-	dubbo_go "github.com/SkyAPM/go2sky-plugins/dubbo-go"
+	dubbogo "github.com/SkyAPM/go2sky-plugins/dubbo-go"
 	"github.com/SkyAPM/go2sky-plugins/dubbo-go/test/client/pkg"
 	httpplugin "github.com/SkyAPM/go2sky/plugins/http"
 )
@@ -67,22 +67,22 @@ func main() {
 		log.Fatalf("crate tracer error: %v \n", err)
 	}
 
-	err = dubbo_go.SetClientTracer(tracer)
+	err = dubbogo.SetClientTracer(tracer)
 	if err != nil {
 		log.Fatalf("set tracer error: %v \n", err)
 	}
-	dubbo_go.SetClientExtraTags("extra-tags", "client")
-	dubbo_go.SetClientReportTags("release")
-	dubbo_go.SetClientReportTags("organization")
+	dubbogo.SetClientExtraTags("extra-tags", "client")
+	dubbogo.SetClientReportTags("release")
+	dubbogo.SetClientReportTags("organization")
 
 	route := http.NewServeMux()
 
 	route.HandleFunc("/hello", func(writer http.ResponseWriter, req *http.Request) {
 		user := &pkg.User{}
-		err := userProvider.GetUser(req.Context(), []interface{}{"A001"}, user)
-		if err != nil {
+		err1 := userProvider.GetUser(req.Context(), []interface{}{"A001"}, user)
+		if err1 != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
-			_, _ = writer.Write([]byte(fmt.Sprintf("call service err %v \n", err)))
+			_, _ = writer.Write([]byte(fmt.Sprintf("call service err %v \n", err1)))
 			return
 		}
 

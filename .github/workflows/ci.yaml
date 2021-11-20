@@ -32,36 +32,49 @@ jobs:
       fail-fast: true
       matrix:
         case:
-          - { name: 'Gear', plugin_dir: 'gear', go_version: '1.12'}
-          - { name: 'Gin v2', plugin_dir: 'gin/v2', go_version: '1.12'}
-          - { name: 'Gin v3', plugin_dir: 'gin/v3', go_version: '1.12'}
-          - { name: 'Go micro', plugin_dir: 'micro', go_version: '1.14'}
-          - { name: 'Go resty', plugin_dir: 'resty', go_version: '1.12'}
-          - { name: 'Go restful', plugin_dir: 'go-restful', go_version: '1.13'}
-          - { name: 'Go logrus', plugin_dir: 'logrus', go_version: '1.12'}
+          - { name: 'gear', plugin_dir: 'gear', go_version: '1.12' }
+          - { name: 'gin/v2', plugin_dir: 'gin/v2', go_version: '1.12' }
+          - { name: 'gin/v3', plugin_dir: 'gin/v3', go_version: '1.12' }
+          - { name: 'micro', plugin_dir: 'micro', go_version: '1.14' }
+          - { name: 'resty', plugin_dir: 'resty', go_version: '1.12' }
+          - { name: 'go-restful', plugin_dir: 'go-restful', go_version: '1.13' }
+          - { name: 'logrus', plugin_dir: 'logrus', go_version: '1.12' }
+          - { name: 'dubbo-go', plugin_dir: 'dubbo-go', go_version: '1.14' }
+          - { name: 'grom', plugin_dir: 'grom', go_version: '1.16' }
+          - { name: 'kafka-reporter', plugin_dir: 'kafkareporter',  go_version: '1.16' }
+          - { name: 'kratos', plugin_dir: 'plugin_dir', go_version: '1.16' }
+          - { name: 'sql', plugin_dir: 'sql', go_version: '1.16' }
+          - { name: 'zap', plugin_dir: 'zap', go_version: '1.12' }
     steps:
-      - name: Set up Go ${{ matrix.case.go_version }}
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.case.go_version }}
-        id: go
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
-
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            plugin:
+              - '${{matrix.case.plugin_dir}}/**'
+      - name: Set up Go ${{ matrix.case.go_version }}
+        if: steps.filter.outputs.plugin == 'true'
+        uses: actions/setup-go@v2
+        id: go
+        with:
+          go-version: ${{ matrix.case.go_version }}
       - name: Get dependencies
+        if: steps.filter.outputs.plugin == 'true'
         run: make deps PLUGIN_DIR=${{ matrix.case.plugin_dir }}
-
       - name: Lint
+        if: steps.filter.outputs.plugin == 'true'
         run: make lint PLUGIN_DIR=${{ matrix.case.plugin_dir }}
-
       - name: Test
+        if: steps.filter.outputs.plugin == 'true'
         run: make test PLUGIN_DIR=${{ matrix.case.plugin_dir }}
 
   build-expected:
     name: Build & Test All
     runs-on: ubuntu-latest
     timeout-minutes: 90
-    needs: [build]
+    needs: [ build ]
     steps:
       - name: Call me by your name
         run: echo "Birds of a feather flock together"

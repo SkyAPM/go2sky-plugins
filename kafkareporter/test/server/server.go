@@ -48,11 +48,11 @@ func main() {
 		_, _ = res.Write([]byte("success"))
 	})
 	route.HandleFunc("/info", func(res http.ResponseWriter, req *http.Request) {
-		span, _, err := tracer.CreateEntrySpan(context.Background(), "/info", func(key string) (s string, e error) {
+		span, _, err1 := tracer.CreateEntrySpan(context.Background(), "/info", func(key string) (s string, e error) {
 			return "", nil
 		})
-		if err != nil {
-			log.Fatalf("create span error: %v \n", err)
+		if err1 != nil {
+			log.Fatalf("create span error: %v \n", err1)
 		}
 		defer span.End()
 

@@ -25,6 +25,7 @@ import (
 	"github.com/SkyAPM/go2sky"
 )
 
+// DB wrap sql.DB and support trace
 type DB struct {
 	*sql.DB
 
@@ -32,6 +33,7 @@ type DB struct {
 	opts   *options
 }
 
+// OpenDB support trace
 func OpenDB(c driver.Connector, tracer *go2sky.Tracer, opts ...Option) *DB {
 	db := sql.OpenDB(c)
 
@@ -52,6 +54,7 @@ func OpenDB(c driver.Connector, tracer *go2sky.Tracer, opts ...Option) *DB {
 	}
 }
 
+// Open support trace
 func Open(driverName, dataSourceName string, tracer *go2sky.Tracer, opts ...Option) (*DB, error) {
 	db, err := sql.Open(driverName, dataSourceName)
 	if err != nil {
@@ -79,6 +82,7 @@ func Open(driverName, dataSourceName string, tracer *go2sky.Tracer, opts ...Opti
 	}, nil
 }
 
+// PingContext support trace
 func (db *DB) PingContext(ctx context.Context) error {
 	span, err := createSpan(ctx, db.tracer, db.opts, "ping")
 	if err != nil {
@@ -92,6 +96,7 @@ func (db *DB) PingContext(ctx context.Context) error {
 	return err
 }
 
+// PrepareContext support trace
 func (db *DB) PrepareContext(ctx context.Context, query string) (*Stmt, error) {
 	stmt, err := db.DB.PrepareContext(ctx, query)
 	if err != nil {
@@ -104,6 +109,7 @@ func (db *DB) PrepareContext(ctx context.Context, query string) (*Stmt, error) {
 	}, nil
 }
 
+// ExecContext support trace
 func (db *DB) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
 	span, err := createSpan(ctx, db.tracer, db.opts, "execute")
 	if err != nil {
@@ -112,10 +118,10 @@ func (db *DB) ExecContext(ctx context.Context, query string, args ...interface{}
 	defer span.End()
 
 	if db.opts.reportQuery {
-		span.Tag(tagDbStatement, query)
+		span.Tag(go2sky.TagDBStatement, query)
 	}
 	if db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	res, err := db.DB.ExecContext(ctx, query, args...)
@@ -125,6 +131,7 @@ func (db *DB) ExecContext(ctx context.Context, query string, args ...interface{}
 	return res, err
 }
 
+// QueryContext support trace
 func (db *DB) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
 	span, err := createSpan(ctx, db.tracer, db.opts, "query")
 	if err != nil {
@@ -133,10 +140,10 @@ func (db *DB) QueryContext(ctx context.Context, query string, args ...interface{
 	defer span.End()
 
 	if db.opts.reportQuery {
-		span.Tag(tagDbStatement, query)
+		span.Tag(go2sky.TagDBStatement, query)
 	}
 	if db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	rows, err := db.DB.QueryContext(ctx, query, args...)
@@ -146,6 +153,7 @@ func (db *DB) QueryContext(ctx context.Context, query string, args ...interface{
 	return rows, err
 }
 
+// QueryRowContext support trace
 func (db *DB) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
 	span, err := createSpan(ctx, db.tracer, db.opts, "query")
 	if err != nil {
@@ -154,15 +162,16 @@ func (db *DB) QueryRowContext(ctx context.Context, query string, args ...interfa
 	defer span.End()
 
 	if db.opts.reportQuery {
-		span.Tag(tagDbStatement, query)
+		span.Tag(go2sky.TagDBStatement, query)
 	}
 	if db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	return db.DB.QueryRowContext(ctx, query, args...)
 }
 
+// BeginTx support trace
 func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
 	span, nCtx, err := createLocalSpan(ctx, db.tracer, db.opts, "transaction")
 	if err != nil {
@@ -183,6 +192,7 @@ func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
 	}, nil
 }
 
+// Conn support trace
 func (db *DB) Conn(ctx context.Context) (*Conn, error) {
 	conn, err := db.DB.Conn(ctx)
 	if err != nil {

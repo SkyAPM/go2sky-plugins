@@ -3,7 +3,7 @@ module github.com/SkyAPM/go2sky-plugins/sql
 go 1.16
 
 require (
-	github.com/SkyAPM/go2sky v1.2.0
+	github.com/SkyAPM/go2sky v1.3.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
