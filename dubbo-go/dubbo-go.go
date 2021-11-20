@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-package dubbo_go
+package dubbogo
 
 import (
 	"context"
@@ -22,12 +22,12 @@ import (
 	"sync"
 	"time"
 
+	"github.com/SkyAPM/go2sky"
+
 	"dubbo.apache.org/dubbo-go/v3/common/extension"
 	"dubbo.apache.org/dubbo-go/v3/filter"
 	"dubbo.apache.org/dubbo-go/v3/protocol"
 	agentv3 "skywalking.apache.org/repo/goapi/collect/language/agent/v3"
-
-	"github.com/SkyAPM/go2sky"
 )
 
 // side record the server or client
@@ -202,7 +202,7 @@ func GetClientTracingFilterSingleton() filter.Filter {
 	clientFilterOnce.Do(func() {
 		clientFilter = &tracingFilter{
 			tracer: defaultTracer,
-			side:  clientSide,
+			side:   clientSide,
 		}
 	})
 	return clientFilter

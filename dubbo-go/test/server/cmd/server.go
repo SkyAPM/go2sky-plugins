@@ -37,7 +37,7 @@ import (
 	"github.com/SkyAPM/go2sky/reporter"
 	hessian "github.com/apache/dubbo-go-hessian2"
 
-	dubbo_go "github.com/SkyAPM/go2sky-plugins/dubbo-go"
+	dubbogo "github.com/SkyAPM/go2sky-plugins/dubbo-go"
 	"github.com/SkyAPM/go2sky-plugins/dubbo-go/test/server/pkg"
 )
 
@@ -65,13 +65,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("crate tracer error: %v \n", err)
 	}
-	err = dubbo_go.SetServerTracer(tracer)
+	err = dubbogo.SetServerTracer(tracer)
 	if err != nil {
 		log.Fatalf("set tracer error: %v \n", err)
 	}
-	dubbo_go.SetServerExtraTags("extra-tags", "server")
-	dubbo_go.SetServerReportTags("release")
-	dubbo_go.SetServerReportTags("organization")
+	dubbogo.SetServerExtraTags("extra-tags", "server")
+	dubbogo.SetServerReportTags("release")
+	dubbogo.SetServerReportTags("organization")
 
 	initSignal()
 }
@@ -79,7 +79,7 @@ func main() {
 func initSignal() {
 	signals := make(chan os.Signal, 1)
 	// It is not possible to block SIGKILL or syscall.SIGSTOP
-	signal.Notify(signals, os.Interrupt, os.Kill, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
+	signal.Notify(signals, os.Interrupt, syscall.SIGHUP, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
 	for {
 		sig := <-signals
 		logger.Infof("get signal %s", sig.String())
