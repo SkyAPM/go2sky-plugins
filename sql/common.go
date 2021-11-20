@@ -18,7 +18,6 @@ package sql
 
 import (
 	"context"
-	"database/sql/driver"
 	"errors"
 	"fmt"
 	"regexp"
@@ -33,29 +32,8 @@ const (
 	componentIDMysql   = 5012
 )
 
+// ErrUnsupportedOp operation unsupported by the underlying driver
 var ErrUnsupportedOp = errors.New("operation unsupported by the underlying driver")
-
-// namedValueToValueString converts driver arguments of NamedValue format to Value string format.
-func namedValueToValueString(named []driver.NamedValue) string {
-	b := make([]string, 0, len(named))
-	for _, param := range named {
-		b = append(b, fmt.Sprintf("%v", param.Value))
-	}
-	return strings.Join(b, ",")
-}
-
-// namedValueToValue converts driver arguments of NamedValue format to Value format.
-// Implemented in the same way as in database/sql/ctxutil.go.
-func namedValueToValue(named []driver.NamedValue) ([]driver.Value, error) {
-	dargs := make([]driver.Value, len(named))
-	for n, param := range named {
-		if len(param.Name) > 0 {
-			return nil, errors.New("sql: driver does not support the use of Named Parameters")
-		}
-		dargs[n] = param.Value
-	}
-	return dargs, nil
-}
 
 func argsToString(args []interface{}) string {
 	sb := strings.Builder{}

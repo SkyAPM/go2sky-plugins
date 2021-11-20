@@ -24,6 +24,7 @@ import (
 	"github.com/SkyAPM/go2sky"
 )
 
+// Stmt wrap sql.Stmt and support trace
 type Stmt struct {
 	*sql.Stmt
 
@@ -31,6 +32,7 @@ type Stmt struct {
 	query string
 }
 
+// ExecContext support trace
 func (s *Stmt) ExecContext(ctx context.Context, args ...interface{}) (sql.Result, error) {
 	span, err := createSpan(ctx, s.db.tracer, s.db.opts, "execute")
 	if err != nil {
@@ -52,6 +54,7 @@ func (s *Stmt) ExecContext(ctx context.Context, args ...interface{}) (sql.Result
 	return res, err
 }
 
+// QueryContext support trace
 func (s *Stmt) QueryContext(ctx context.Context, args ...interface{}) (*sql.Rows, error) {
 	span, err := createSpan(ctx, s.db.tracer, s.db.opts, "query")
 	if err != nil {
@@ -73,6 +76,7 @@ func (s *Stmt) QueryContext(ctx context.Context, args ...interface{}) (*sql.Rows
 	return rows, err
 }
 
+// QueryRowContext support trace
 func (s *Stmt) QueryRowContext(ctx context.Context, args ...interface{}) *sql.Row {
 	span, err := createSpan(ctx, s.db.tracer, s.db.opts, "query")
 	if err != nil {

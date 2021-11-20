@@ -16,14 +16,19 @@
 
 package sql
 
+// DBType database type
 type DBType string
 
 const (
+	// UNKNOWN unknown database
 	UNKNOWN DBType = "unknown"
-	MYSQL   DBType = "mysql"
-	IPV4    DBType = "others"
+	// MYSQL mysql
+	MYSQL DBType = "mysql"
+	// IPV4 others database type
+	IPV4 DBType = "others"
 )
 
+// Option set plugin option
 type Option func(*options)
 
 type options struct {
@@ -35,11 +40,11 @@ type options struct {
 	reportParam bool
 }
 
-// WithSqlDBType set dbType option,
+// WithSQLDBType set dbType option,
 // dbType is used for parsing dsn string to peer address
 // and setting componentID, if DB type is not support in DBType
 // list, please use WithPeerAddr to set peer address manually
-func WithSqlDBType(t DBType) Option {
+func WithSQLDBType(t DBType) Option {
 	return func(o *options) {
 		o.dbType = t
 		o.setComponentID()
@@ -53,12 +58,14 @@ func WithPeerAddr(addr string) Option {
 	}
 }
 
+// WithQueryReport if set, the sql would be collected
 func WithQueryReport() Option {
 	return func(o *options) {
 		o.reportQuery = true
 	}
 }
 
+// WithParamReport if set, the parameters of the sql would be collected
 func WithParamReport() Option {
 	return func(o *options) {
 		o.reportParam = true

@@ -24,6 +24,7 @@ import (
 	"github.com/SkyAPM/go2sky"
 )
 
+// Tx wrap sql.Tx and support trace
 type Tx struct {
 	*sql.Tx
 
@@ -32,6 +33,7 @@ type Tx struct {
 	ctx  context.Context
 }
 
+// Commit support trace
 func (tx *Tx) Commit() error {
 	if tx.span != nil {
 		tx.span.Tag(go2sky.TagDBStatement, "commit")
@@ -40,6 +42,7 @@ func (tx *Tx) Commit() error {
 	return tx.Tx.Commit()
 }
 
+// Rollback support trace
 func (tx *Tx) Rollback() error {
 	if tx.span != nil {
 		tx.span.Tag(go2sky.TagDBStatement, "rollback")
@@ -48,6 +51,7 @@ func (tx *Tx) Rollback() error {
 	return tx.Tx.Rollback()
 }
 
+// Prepare support trace
 func (tx *Tx) Prepare(query string) (*Stmt, error) {
 	stmt, err := tx.Tx.Prepare(query)
 	if err != nil {
@@ -60,6 +64,7 @@ func (tx *Tx) Prepare(query string) (*Stmt, error) {
 	}, nil
 }
 
+// PrepareContext support trace
 func (tx *Tx) PrepareContext(ctx context.Context, query string) (*Stmt, error) {
 	stmt, err := tx.Tx.PrepareContext(ctx, query)
 	if err != nil {
@@ -72,6 +77,7 @@ func (tx *Tx) PrepareContext(ctx context.Context, query string) (*Stmt, error) {
 	}, nil
 }
 
+// StmtContext support trace
 func (tx *Tx) StmtContext(ctx context.Context, stmt *Stmt) *Stmt {
 	st := tx.Tx.StmtContext(ctx, stmt.Stmt)
 	return &Stmt{
@@ -81,10 +87,12 @@ func (tx *Tx) StmtContext(ctx context.Context, stmt *Stmt) *Stmt {
 	}
 }
 
+// Exec support trace
 func (tx *Tx) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return tx.ExecContext(tx.ctx, query, args...)
 }
 
+// ExecContext support trace
 func (tx *Tx) ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error) {
 	if id := go2sky.SpanID(ctx); id == go2sky.EmptySpanID {
 		// if ctx do not contain parent span, use transaction ctx instead
@@ -110,10 +118,12 @@ func (tx *Tx) ExecContext(ctx context.Context, query string, args ...interface{}
 	return res, err
 }
 
+// Query support trace
 func (tx *Tx) Query(query string, args ...interface{}) (*sql.Rows, error) {
 	return tx.QueryContext(tx.ctx, query, args)
 }
 
+// QueryContext support trace
 func (tx *Tx) QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error) {
 	if id := go2sky.SpanID(ctx); id == go2sky.EmptySpanID {
 		// if ctx do not contain parent span, use transaction ctx instead
@@ -139,10 +149,12 @@ func (tx *Tx) QueryContext(ctx context.Context, query string, args ...interface{
 	return rows, err
 }
 
+// QueryRow support trace
 func (tx *Tx) QueryRow(query string, args ...interface{}) *sql.Row {
 	return tx.QueryRowContext(tx.ctx, query, args)
 }
 
+// QueryRowContext support trace
 func (tx *Tx) QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row {
 	if id := go2sky.SpanID(ctx); id == go2sky.EmptySpanID {
 		// if ctx do not contain parent span, use transaction ctx instead
