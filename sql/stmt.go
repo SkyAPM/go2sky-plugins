@@ -20,6 +20,8 @@ import (
 	"context"
 	"database/sql"
 	"time"
+
+	"github.com/SkyAPM/go2sky"
 )
 
 type Stmt struct {
@@ -37,10 +39,10 @@ func (s *Stmt) ExecContext(ctx context.Context, args ...interface{}) (sql.Result
 	defer span.End()
 
 	if s.db.opts.reportQuery {
-		span.Tag(tagDbStatement, s.query)
+		span.Tag(go2sky.TagDBStatement, s.query)
 	}
 	if s.db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	res, err := s.Stmt.ExecContext(ctx, args...)
@@ -58,10 +60,10 @@ func (s *Stmt) QueryContext(ctx context.Context, args ...interface{}) (*sql.Rows
 	defer span.End()
 
 	if s.db.opts.reportQuery {
-		span.Tag(tagDbStatement, s.query)
+		span.Tag(go2sky.TagDBStatement, s.query)
 	}
 	if s.db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	rows, err := s.Stmt.QueryContext(ctx, args...)
@@ -79,10 +81,10 @@ func (s *Stmt) QueryRowContext(ctx context.Context, args ...interface{}) *sql.Ro
 	defer span.End()
 
 	if s.db.opts.reportQuery {
-		span.Tag(tagDbStatement, s.query)
+		span.Tag(go2sky.TagDBStatement, s.query)
 	}
 	if s.db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	return s.Stmt.QueryRowContext(ctx, args...)

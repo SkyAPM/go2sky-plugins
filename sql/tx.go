@@ -34,7 +34,7 @@ type Tx struct {
 
 func (tx *Tx) Commit() error {
 	if tx.span != nil {
-		tx.span.Tag(tagDbStatement, "commit")
+		tx.span.Tag(go2sky.TagDBStatement, "commit")
 		defer tx.span.End()
 	}
 	return tx.Tx.Commit()
@@ -42,7 +42,7 @@ func (tx *Tx) Commit() error {
 
 func (tx *Tx) Rollback() error {
 	if tx.span != nil {
-		tx.span.Tag(tagDbStatement, "rollback")
+		tx.span.Tag(go2sky.TagDBStatement, "rollback")
 		defer tx.span.End()
 	}
 	return tx.Tx.Rollback()
@@ -97,10 +97,10 @@ func (tx *Tx) ExecContext(ctx context.Context, query string, args ...interface{}
 	defer span.End()
 
 	if tx.db.opts.reportQuery {
-		span.Tag(tagDbStatement, query)
+		span.Tag(go2sky.TagDBStatement, query)
 	}
 	if tx.db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	res, err := tx.Tx.ExecContext(ctx, query, args...)
@@ -126,10 +126,10 @@ func (tx *Tx) QueryContext(ctx context.Context, query string, args ...interface{
 	defer span.End()
 
 	if tx.db.opts.reportQuery {
-		span.Tag(tagDbStatement, query)
+		span.Tag(go2sky.TagDBStatement, query)
 	}
 	if tx.db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	rows, err := tx.Tx.QueryContext(ctx, query, args...)
@@ -155,10 +155,10 @@ func (tx *Tx) QueryRowContext(ctx context.Context, query string, args ...interfa
 	defer span.End()
 
 	if tx.db.opts.reportQuery {
-		span.Tag(tagDbStatement, query)
+		span.Tag(go2sky.TagDBStatement, query)
 	}
 	if tx.db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	return tx.Tx.QueryRowContext(ctx, query, args...)

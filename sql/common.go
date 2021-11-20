@@ -33,13 +33,6 @@ const (
 	componentIDMysql   = 5012
 )
 
-const (
-	tagDbType          = "db.type"
-	tagDbInstance      = "db.instance"
-	tagDbStatement     = "db.statement"
-	tagDbSqlParameters = "db.sql.parameters"
-)
-
 var ErrUnsupportedOp = errors.New("operation unsupported by the underlying driver")
 
 // namedValueToValueString converts driver arguments of NamedValue format to Value string format.
@@ -83,8 +76,8 @@ func createSpan(ctx context.Context, tracer *go2sky.Tracer, opts *options, opera
 	s.SetPeer(opts.peer)
 	s.SetComponent(opts.componentID)
 	s.SetSpanLayer(agentv3.SpanLayer_Database)
-	s.Tag(tagDbType, string(opts.dbType))
-	s.Tag(tagDbInstance, opts.peer)
+	s.Tag(go2sky.TagDBType, string(opts.dbType))
+	s.Tag(go2sky.TagDBInstance, opts.peer)
 	return s, nil
 }
 
@@ -98,8 +91,8 @@ func createLocalSpan(ctx context.Context, tracer *go2sky.Tracer, opts *options, 
 	}
 	s.SetComponent(opts.componentID)
 	s.SetSpanLayer(agentv3.SpanLayer_Database)
-	s.Tag(tagDbType, string(opts.dbType))
-	s.Tag(tagDbInstance, opts.peer)
+	s.Tag(go2sky.TagDBType, string(opts.dbType))
+	s.Tag(go2sky.TagDBInstance, opts.peer)
 	return s, nCtx, nil
 }
 

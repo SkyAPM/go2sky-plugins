@@ -112,10 +112,10 @@ func (db *DB) ExecContext(ctx context.Context, query string, args ...interface{}
 	defer span.End()
 
 	if db.opts.reportQuery {
-		span.Tag(tagDbStatement, query)
+		span.Tag(go2sky.TagDBStatement, query)
 	}
 	if db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	res, err := db.DB.ExecContext(ctx, query, args...)
@@ -133,10 +133,10 @@ func (db *DB) QueryContext(ctx context.Context, query string, args ...interface{
 	defer span.End()
 
 	if db.opts.reportQuery {
-		span.Tag(tagDbStatement, query)
+		span.Tag(go2sky.TagDBStatement, query)
 	}
 	if db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	rows, err := db.DB.QueryContext(ctx, query, args...)
@@ -154,10 +154,10 @@ func (db *DB) QueryRowContext(ctx context.Context, query string, args ...interfa
 	defer span.End()
 
 	if db.opts.reportQuery {
-		span.Tag(tagDbStatement, query)
+		span.Tag(go2sky.TagDBStatement, query)
 	}
 	if db.opts.reportParam {
-		span.Tag(tagDbSqlParameters, argsToString(args))
+		span.Tag(go2sky.TagDBSqlParameters, argsToString(args))
 	}
 
 	return db.DB.QueryRowContext(ctx, query, args...)
