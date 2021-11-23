@@ -34,19 +34,32 @@ type Tx struct {
 }
 
 // Commit support trace
-func (tx *Tx) Commit() error {
+// If
+func (tx *Tx) Commit() (err error) {
 	if tx.span != nil {
 		tx.span.Tag(go2sky.TagDBStatement, "commit")
-		defer tx.span.End()
+		defer func() {
+			if err != nil {
+				tx.span.Error(time.Now(), err.Error())
+				return
+			}
+			tx.span.End()
+		}()
 	}
 	return tx.Tx.Commit()
 }
 
 // Rollback support trace
-func (tx *Tx) Rollback() error {
+func (tx *Tx) Rollback() (err error) {
 	if tx.span != nil {
 		tx.span.Tag(go2sky.TagDBStatement, "rollback")
-		defer tx.span.End()
+		defer func() {
+			if err != nil {
+				tx.span.Error(time.Now(), err.Error())
+				return
+			}
+			tx.span.End()
+		}()
 	}
 	return tx.Tx.Rollback()
 }
