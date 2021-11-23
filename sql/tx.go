@@ -33,8 +33,7 @@ type Tx struct {
 	ctx  context.Context
 }
 
-// Commit support trace
-// If
+// Commit support trace, span will not End when tx.Commit returns error
 func (tx *Tx) Commit() (err error) {
 	if tx.span != nil {
 		tx.span.Tag(go2sky.TagDBStatement, "commit")
@@ -49,7 +48,7 @@ func (tx *Tx) Commit() (err error) {
 	return tx.Tx.Commit()
 }
 
-// Rollback support trace
+// Rollback support trace, span will not End when tx.Rollback returns error
 func (tx *Tx) Rollback() (err error) {
 	if tx.span != nil {
 		tx.span.Tag(go2sky.TagDBStatement, "rollback")
