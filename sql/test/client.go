@@ -18,7 +18,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -153,10 +152,6 @@ func testCommitTx(ctx context.Context, db *sqlPlugin.DB) error {
 	}
 
 	if err := tx.Commit(); err != nil {
-		return err
-	}
-
-	if err := tx.Rollback(); err != sql.ErrTxDone {
 		return err
 	}
 
