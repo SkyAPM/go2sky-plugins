@@ -173,22 +173,22 @@ func (db *DB) QueryRowContext(ctx context.Context, query string, args ...interfa
 
 // BeginTx support trace
 func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
-	span, nCtx, err := createLocalSpan(ctx, db.tracer, db.opts, "transaction")
+	span, nCtx, err := createLocalSpan(ctx, db.tracer, db.opts, "begin")
 	if err != nil {
 		return nil, err
 	}
+	defer span.End()
 
 	tx, err := db.DB.BeginTx(ctx, opts)
 	if err != nil {
 		span.Error(time.Now(), err.Error())
-		span.End()
 		return nil, err
 	}
+
 	return &Tx{
-		Tx:   tx,
-		db:   db,
-		span: span,
-		ctx:  nCtx,
+		Tx:  tx,
+		db:  db,
+		ctx: nCtx,
 	}, nil
 }
 

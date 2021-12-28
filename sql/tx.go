@@ -28,21 +28,21 @@ import (
 type Tx struct {
 	*sql.Tx
 
-	db   *DB
-	span go2sky.Span
-	ctx  context.Context
+	db  *DB
+	ctx context.Context
 }
 
 // Commit support trace
 func (tx *Tx) Commit() (err error) {
-	if tx.span != nil {
-		tx.span.Tag(go2sky.TagDBStatement, "commit")
-		defer tx.span.End()
+	span, _, err := createLocalSpan(tx.ctx, tx.db.tracer, tx.db.opts, "commit")
+	if err != nil {
+		return err
 	}
+	defer span.End()
 
 	err = tx.Tx.Commit()
 	if err != nil {
-		tx.span.Error(time.Now(), err.Error())
+		span.Error(time.Now(), err.Error())
 		return err
 	}
 
@@ -51,14 +51,15 @@ func (tx *Tx) Commit() (err error) {
 
 // Rollback support trace
 func (tx *Tx) Rollback() (err error) {
-	if tx.span != nil {
-		tx.span.Tag(go2sky.TagDBStatement, "rollback")
-		defer tx.span.End()
+	span, _, err := createLocalSpan(tx.ctx, tx.db.tracer, tx.db.opts, "rollback")
+	if err != nil {
+		return err
 	}
+	defer span.End()
 
 	err = tx.Tx.Rollback()
 	if err != nil {
-		tx.span.Error(time.Now(), err.Error())
+		span.Error(time.Now(), err.Error())
 		return err
 	}
 

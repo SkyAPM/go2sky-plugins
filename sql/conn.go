@@ -119,23 +119,21 @@ func (c *Conn) PrepareContext(ctx context.Context, query string) (*Stmt, error) 
 
 // BeginTx support trace
 func (c *Conn) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
-	span, nCtx, err := createLocalSpan(ctx, c.db.tracer, c.db.opts, "transaction")
+	span, nCtx, err := createLocalSpan(ctx, c.db.tracer, c.db.opts, "begin")
 	if err != nil {
 		return nil, err
 	}
+	defer span.End()
 
 	tx, err := c.Conn.BeginTx(ctx, opts)
 	if err != nil {
 		span.Error(time.Now(), err.Error())
-		span.End()
 		return nil, err
 	}
 
 	return &Tx{
-		Tx:   tx,
-		db:   c.db,
-		span: span,
-		ctx:  nCtx,
+		Tx:  tx,
+		db:  c.db,
+		ctx: nCtx,
 	}, nil
-
 }
