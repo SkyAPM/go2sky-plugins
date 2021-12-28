@@ -7,9 +7,10 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
-	golang.org/x/sys v0.0.0-20210806184541-e5e7981a1069 // indirect
-	google.golang.org/genproto v0.0.0-20210805201207-89edb61ffb67 // indirect
-	google.golang.org/grpc v1.39.1 // indirect
-	skywalking.apache.org/repo/goapi v0.0.0-20210804062511-c324007aab53
+	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
+	golang.org/x/text v0.3.7 // indirect
+	google.golang.org/genproto v0.0.0-20211223182754-3ac035c7e7cb // indirect
+	google.golang.org/grpc v1.43.0 // indirect
+	skywalking.apache.org/repo/goapi v0.0.0-20211130045256-aee6db90e633
 )

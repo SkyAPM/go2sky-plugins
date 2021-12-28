@@ -173,7 +173,7 @@ func (db *DB) QueryRowContext(ctx context.Context, query string, args ...interfa
 
 // BeginTx support trace
 func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
-	span, nCtx, err := createLocalSpan(ctx, db.tracer, db.opts, "begin")
+	span, err := createSpan(ctx, db.tracer, db.opts, "begin")
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +188,7 @@ func (db *DB) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) {
 	return &Tx{
 		Tx:  tx,
 		db:  db,
-		ctx: nCtx,
+		ctx: ctx,
 	}, nil
 }
 

@@ -34,7 +34,7 @@ type Tx struct {
 
 // Commit support trace
 func (tx *Tx) Commit() (err error) {
-	span, _, err := createLocalSpan(tx.ctx, tx.db.tracer, tx.db.opts, "commit")
+	span, err := createSpan(tx.ctx, tx.db.tracer, tx.db.opts, "commit")
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (tx *Tx) Commit() (err error) {
 
 // Rollback support trace
 func (tx *Tx) Rollback() (err error) {
-	span, _, err := createLocalSpan(tx.ctx, tx.db.tracer, tx.db.opts, "rollback")
+	span, err := createSpan(tx.ctx, tx.db.tracer, tx.db.opts, "rollback")
 	if err != nil {
 		return err
 	}
