@@ -154,6 +154,7 @@ func testCommitTx(ctx context.Context, db *sqlPlugin.DB) error {
 	if err := tx.Commit(); err != nil {
 		return err
 	}
+
 	return nil
 }
 

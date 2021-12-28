@@ -37,7 +37,7 @@ services:
       MYSQL_PASSWORD: "password"
       MYSQL_DATABASE: "database"
     healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       timeout: 20s
       retries: 10
   client:
@@ -51,7 +51,13 @@ services:
     ports:
       - 8080:8080
     healthcheck:
-      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8080"]
+      test:
+        [
+          "CMD",
+          "bash",
+          "-c",
+          "cat < /dev/null > /dev/tcp/127.0.0.1/8080"
+        ]
       interval: 5s
       timeout: 20s
       retries: 10
@@ -62,4 +68,4 @@ services:
         condition: service_healthy
 
 networks:
-  e2e:
+  e2e: null

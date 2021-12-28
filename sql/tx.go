@@ -28,27 +28,42 @@ import (
 type Tx struct {
 	*sql.Tx
 
-	db   *DB
-	span go2sky.Span
-	ctx  context.Context
+	db  *DB
+	ctx context.Context
 }
 
 // Commit support trace
-func (tx *Tx) Commit() error {
-	if tx.span != nil {
-		tx.span.Tag(go2sky.TagDBStatement, "commit")
-		defer tx.span.End()
+func (tx *Tx) Commit() (err error) {
+	span, err := createSpan(tx.ctx, tx.db.tracer, tx.db.opts, "commit")
+	if err != nil {
+		return err
 	}
-	return tx.Tx.Commit()
+	defer span.End()
+
+	err = tx.Tx.Commit()
+	if err != nil {
+		span.Error(time.Now(), err.Error())
+		return err
+	}
+
+	return nil
 }
 
 // Rollback support trace
-func (tx *Tx) Rollback() error {
-	if tx.span != nil {
-		tx.span.Tag(go2sky.TagDBStatement, "rollback")
-		defer tx.span.End()
+func (tx *Tx) Rollback() (err error) {
+	span, err := createSpan(tx.ctx, tx.db.tracer, tx.db.opts, "rollback")
+	if err != nil {
+		return err
 	}
-	return tx.Tx.Rollback()
+	defer span.End()
+
+	err = tx.Tx.Rollback()
+	if err != nil {
+		span.Error(time.Now(), err.Error())
+		return err
+	}
+
+	return nil
 }
 
 // Prepare support trace

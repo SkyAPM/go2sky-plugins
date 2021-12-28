@@ -59,21 +59,6 @@ func createSpan(ctx context.Context, tracer *go2sky.Tracer, opts *options, opera
 	return s, nil
 }
 
-func createLocalSpan(ctx context.Context, tracer *go2sky.Tracer, opts *options, operation string) (go2sky.Span, context.Context, error) {
-	s, nCtx, err := tracer.CreateLocalSpan(ctx,
-		go2sky.WithSpanType(go2sky.SpanTypeLocal),
-		go2sky.WithOperationName(opts.getOpName(operation)),
-	)
-	if err != nil {
-		return nil, nil, err
-	}
-	s.SetComponent(opts.componentID)
-	s.SetSpanLayer(agentv3.SpanLayer_Database)
-	s.Tag(go2sky.TagDBType, string(opts.dbType))
-	s.Tag(go2sky.TagDBInstance, opts.peer)
-	return s, nCtx, nil
-}
-
 // parseDsn parse dsn to a endpoint addr string (host:port)
 func parseDsn(dbType DBType, dsn string) string {
 	var addr string
