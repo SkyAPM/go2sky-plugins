@@ -3,9 +3,9 @@ module github.com/SkyAPM/go2sky-plugins/gorm
 go 1.16
 
 require (
-	github.com/SkyAPM/go2sky v1.3.0
+	github.com/SkyAPM/go2sky v1.4.0
 	gorm.io/gorm v1.22.3
-	skywalking.apache.org/repo/goapi v0.0.0-20211014145040-b215a7f7b270
+	skywalking.apache.org/repo/goapi v0.0.0-20220121092418-9c455d0dda3f
 )
 
 require (
