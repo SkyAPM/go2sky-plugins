@@ -17,7 +17,7 @@
 setup:
   env: compose
   file: docker-compose.yml
-  timeout: 1200
+  timeout: 5m
 
 cleanup:
   # always never success failure
