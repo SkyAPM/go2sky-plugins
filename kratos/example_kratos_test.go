@@ -26,7 +26,7 @@ import (
 
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
-	"github.com/go-kratos/kratos/examples/helloworld/helloworld"
+	"github.com/go-kratos/examples/helloworld/helloworld"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
