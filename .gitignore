@@ -23,6 +23,9 @@ Thumbs.db
 .vscode/
 *.swp
 
+# Go
+go.work
+
 # project
 *.cert
 *.key
