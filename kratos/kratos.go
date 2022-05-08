@@ -33,6 +33,7 @@ const (
 	componentIDKratos = 5010
 )
 
+// Option allows for functional options to adjust behaviour
 type Option func(*options)
 
 type options struct {
@@ -55,9 +56,9 @@ func Server(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 		o(options)
 	}
 	return func(handler middleware.Handler) middleware.Handler {
-		return func(ctx context.Context, req interface{}) (interface{}, error) {
-			if tr, ok := transport.FromServerContext(ctx); ok {
-				span, ctx, err := tracer.CreateEntrySpan(ctx, tr.Operation(), func(key string) (string, error) {
+		return func(c context.Context, req interface{}) (interface{}, error) {
+			if tr, ok := transport.FromServerContext(c); ok {
+				span, ctx, err := tracer.CreateEntrySpan(c, tr.Operation(), func(key string) (string, error) {
 					return tr.RequestHeader().Get(key), nil
 				})
 				if err != nil {
@@ -79,10 +80,8 @@ func Server(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 					span.Error(time.Now(), err.Error())
 				}
 				return reply, err
-			} else {
-				fmt.Printf("%+v, %+v", ctx, req)
 			}
-			return handler(ctx, req)
+			return handler(c, req)
 		}
 	}
 }
@@ -96,9 +95,9 @@ func Client(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 		o(options)
 	}
 	return func(handler middleware.Handler) middleware.Handler {
-		return func(ctx context.Context, req interface{}) (interface{}, error) {
-			if tr, ok := transport.FromClientContext(ctx); ok {
-				span, ctx, err := tracer.CreateExitSpanWithContext(ctx, tr.Operation(), tr.Endpoint(), func(key, value string) error {
+		return func(c context.Context, req interface{}) (interface{}, error) {
+			if tr, ok := transport.FromClientContext(c); ok {
+				span, ctx, err := tracer.CreateExitSpanWithContext(c, tr.Operation(), tr.Endpoint(), func(key, value string) error {
 					tr.RequestHeader().Set(key, value)
 					return nil
 				})
@@ -122,11 +121,12 @@ func Client(tracer *go2sky.Tracer, opts ...Option) middleware.Middleware {
 				}
 				return reply, err
 			}
-			return handler(ctx, req)
+			return handler(c, req)
 		}
 	}
 }
 
+// TraceID inject the current traceId into the kratos log
 func TraceID() log.Valuer {
 	return func(ctx context.Context) interface{} {
 		if id := go2sky.TraceID(ctx); id != go2sky.EmptyTraceID {
@@ -136,6 +136,7 @@ func TraceID() log.Valuer {
 	}
 }
 
+// SpanID inject the current spanId into the kratos log
 func SpanID() log.Valuer {
 	return func(ctx context.Context) interface{} {
 		if id := go2sky.SpanID(ctx); id != go2sky.EmptySpanID {
@@ -145,6 +146,7 @@ func SpanID() log.Valuer {
 	}
 }
 
+// SegmentID inject the current segmentId into the kratos log
 func SegmentID() log.Valuer {
 	return func(ctx context.Context) interface{} {
 		if id := go2sky.TraceSegmentID(ctx); id != go2sky.EmptyTraceSegmentID {
