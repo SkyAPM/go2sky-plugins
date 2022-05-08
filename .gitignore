@@ -25,6 +25,7 @@ Thumbs.db
 
 # Go
 go.work
+go.work.sum
 
 # project
 *.cert

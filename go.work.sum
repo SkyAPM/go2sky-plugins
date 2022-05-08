@@ -1,5 +1,0 @@
-github.com/SkyAPM/go2sky v1.4.1/go.mod h1:cebzbFtq5oc9VrgJy0Sv7oePj/TjIlXPdj2ntHdCXd0=
-golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
-golang.org/x/sys v0.0.0-20211019181941-9d821ace8654/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-google.golang.org/protobuf v1.28.0/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
-skywalking.apache.org/repo/goapi v0.0.0-20220401015832-2c9eee9481eb/go.mod h1:uWwwvhcwe2MD/nJCg0c1EE/eL6KzaBosLHDfMFoEJ30=
