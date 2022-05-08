@@ -240,7 +240,9 @@ func ExampleClient() {
 	if err != nil {
 		panic(err)
 	}
-	defer httpCli.Close()
+	defer func() {
+		_ = httpCli.Close()
+	}()
 
 	grpcCli, err := grpc.DialInsecure(
 		context.Background(),
@@ -253,7 +255,9 @@ func ExampleClient() {
 	if err != nil {
 		panic(err)
 	}
-	defer grpcCli.Close()
+	defer func() {
+		_ = grpcCli.Close()
+	}()
 
 	httpClient := helloworld.NewGreeterHTTPClient(httpCli)
 	grpcClient := helloworld.NewGreeterClient(grpcCli)
