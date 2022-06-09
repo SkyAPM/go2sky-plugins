@@ -33,8 +33,8 @@ db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 if err != nil {
   log.Fatalf("open db error: %v \n", err)
 }
-db.Use(gormPlugin.New(tracer, "127.0.0.1:3306", gormPlugin.MYSQL))
+db.Use(gormPlugin.New(tracer, gormPlugin.WithPeerAddr("127.0.0.1:3306"), gormPlugin.WithSqlDBType(gormPlugin.MYSQL)))
 
 // use with context
 dbWithCtx := db.WithContext(ctx)
-```
+```(
