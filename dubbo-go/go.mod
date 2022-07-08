@@ -1,6 +1,6 @@
 module github.com/SkyAPM/go2sky-plugins/dubbo-go
 
-go 1.14
+go 1.15
 
 require (
 	dubbo.apache.org/dubbo-go/v3 v3.0.1

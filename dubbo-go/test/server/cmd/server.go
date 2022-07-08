@@ -53,7 +53,10 @@ var (
 // need to setup environment variable "CONF_PROVIDER_FILE_PATH" to "conf/server.yml" before run
 func main() {
 	hessian.RegisterPOJO(&pkg.User{})
-	config.Load()
+	err := config.Load()
+	if err != nil {
+		log.Fatalf("load config error: %v \n", err)
+	}
 	time.Sleep(1 * time.Second)
 
 	report, err := reporter.NewGRPCReporter(oap)

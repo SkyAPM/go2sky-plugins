@@ -54,7 +54,10 @@ const (
 // need to setup environment variable "CONF_CONSUMER_FILE_PATH" to "conf/client.yml" before run
 func main() {
 	hessian.RegisterPOJO(&pkg.User{})
-	config.Load()
+	err := config.Load()
+	if err != nil {
+		log.Fatalf("load config error: %v \n", err)
+	}
 	time.Sleep(3 * time.Second)
 
 	report, err := reporter.NewGRPCReporter(oap)
