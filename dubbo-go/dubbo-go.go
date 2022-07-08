@@ -125,7 +125,7 @@ func (cf tracingFilter) Invoke(ctx context.Context, invoker protocol.Invoker, in
 
 	if cf.side == clientSide {
 		span, _ = cf.tracer.CreateExitSpan(ctx, operationName, invoker.GetURL().Location, func(key, value string) error {
-			invocation.SetAttachments(key, value)
+			invocation.SetAttachment(key, value)
 			return nil
 		})
 
@@ -133,7 +133,10 @@ func (cf tracingFilter) Invoke(ctx context.Context, invoker protocol.Invoker, in
 	} else {
 		// componentIDGo2SkyServer
 		span, ctx, _ = cf.tracer.CreateEntrySpan(ctx, operationName, func(key string) (string, error) {
-			return invocation.AttachmentsByKey(key, ""), nil
+			if attachment, ok := invocation.GetAttachment(key); ok {
+				return attachment, nil
+			}
+			return "", nil
 		})
 
 		span.SetComponent(componentID)
