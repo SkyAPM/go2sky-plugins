@@ -16,7 +16,7 @@
 
 
 
-FROM golang:1.14
+FROM golang:1.15
 
 ADD ./dubbo-go /dubbo-go
 WORKDIR /dubbo-go

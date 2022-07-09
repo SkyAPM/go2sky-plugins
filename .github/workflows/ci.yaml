@@ -39,7 +39,7 @@ jobs:
           - { name: 'resty', plugin_dir: 'resty', go_version: '1.13' }
           - { name: 'go-restful', plugin_dir: 'go-restful', go_version: '1.13' }
           - { name: 'logrus', plugin_dir: 'logrus', go_version: '1.13' }
-          - { name: 'dubbo-go', plugin_dir: 'dubbo-go', go_version: '1.14' }
+          - { name: 'dubbo-go', plugin_dir: 'dubbo-go', go_version: '1.15' }
           - { name: 'grom', plugin_dir: 'grom', go_version: '1.16' }
           - { name: 'kafka-reporter', plugin_dir: 'kafkareporter',  go_version: '1.16' }
           - { name: 'kratos', plugin_dir: 'kratos', go_version: '1.16' }
