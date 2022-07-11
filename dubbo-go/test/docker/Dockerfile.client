@@ -20,7 +20,7 @@ ADD ./dubbo-go /dubbo-go
 WORKDIR /dubbo-go
 
 ENV APP_LOG_CONF_FILE /dubbo-go/test/client/conf/log.yml
-ENV CONF_CONSUMER_FILE_PATH /dubbo-go/test/client/conf/client.yml
+ENV DUBBO_GO_CONFIG_PATH /dubbo-go/test/client/conf/client.yml
 
 EXPOSE 8080
 

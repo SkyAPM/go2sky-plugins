@@ -22,7 +22,7 @@ ADD ./dubbo-go /dubbo-go
 WORKDIR /dubbo-go
 
 ENV APP_LOG_CONF_FILE /dubbo-go/test/server/conf/log.yml
-ENV CONF_PROVIDER_FILE_PATH /dubbo-go/test/server/conf/server.yml
+ENV DUBBO_GO_CONFIG_PATH /dubbo-go/test/server/conf/server.yml
 
 EXPOSE 20000
 
