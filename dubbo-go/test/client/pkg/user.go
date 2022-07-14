@@ -31,7 +31,7 @@ type User struct {
 
 // UserProvider user provider service
 type UserProvider struct {
-	GetUser func(ctx context.Context, req []interface{}, rsp *User) error
+	GetUser func(ctx context.Context, req []interface{}) (*User, error)
 }
 
 // Reference rpc service id or reference id
