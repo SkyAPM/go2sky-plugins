@@ -75,7 +75,7 @@ func main() {
 	route := http.NewServeMux()
 
 	route.HandleFunc("/hello", func(writer http.ResponseWriter, req *http.Request) {
-		user := &pkg.User{}
+		var user *pkg.User
 		var err1 error
 		user, err1 = userProvider.GetUser(req.Context(), []interface{}{"A001"})
 		if err1 != nil {
