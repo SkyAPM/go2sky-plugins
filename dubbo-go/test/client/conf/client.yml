@@ -44,7 +44,8 @@ dubbo:
         filter: "go2sky-tracing-client"
         cluster: "failover"
         methods:
-          - name: "GetUser"
+          -
+            name: "GetUser"
             retries: 3
 
   # protocol config

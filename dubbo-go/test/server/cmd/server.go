@@ -44,7 +44,7 @@ var (
 	survivalTimeout = int(3e9)
 )
 
-// need to setup environment variable "CONF_PROVIDER_FILE_PATH" to "conf/server.yml" before run
+// need to setup environment variable "DUBBO_GO_CONFIG_PATH" to "conf/server.yml" before run
 func main() {
 	hessian.RegisterPOJO(&pkg.User{})
 	err := config.Load()
