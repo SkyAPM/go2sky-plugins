@@ -27,7 +27,7 @@ dubbo:
 
   # registry config
   registries:
-    "demoZk":
+    demoZk:
       protocol: "zookeeper"
       timeout: "3s"
       address: "zookeeper:2181"
