@@ -17,6 +17,7 @@
 name: PluginsTest
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches:
@@ -34,17 +35,17 @@ jobs:
         with:
           filters: |
             # e2e_file path: plugin path 
-            gear/test/gear_plugin_test.yaml: gear/**
-            gin/v2/test/gin_plugin_test.yaml: gin/v2/**
-            gin/v3/test/gin_plugin_test.yaml: gin/v3/**
-            go-restful/test/go_restful_plugin_test.yaml: go-restful/**
-            micro/test/go_micro_plugin_test.yaml: micro/**
-            resty/test/go_resty_plugin_test.yaml: resty/**
-            kratos/test/go_kratos_plugin_test.yaml: kratos/**
-            sql/test/sql_plugin_test.yaml: sql/**
-            kafkareporter/test/go_kafka_reporter_plugin_test.yaml: kafkareporter/**
+            # gear/test/gear_plugin_test.yaml: gear/**
+            # gin/v2/test/gin_plugin_test.yaml: gin/v2/**
+            # gin/v3/test/gin_plugin_test.yaml: gin/v3/**
+            # go-restful/test/go_restful_plugin_test.yaml: go-restful/**
+            #  micro/test/go_micro_plugin_test.yaml: micro/**
+            # resty/test/go_resty_plugin_test.yaml: resty/**
+            # kratos/test/go_kratos_plugin_test.yaml: kratos/**
+            # sql/test/sql_plugin_test.yaml: sql/**
+            # kafkareporter/test/go_kafka_reporter_plugin_test.yaml: kafkareporter/**
             dubbo-go/test/dubbo_go_plugin_test.yaml: dubbo-go/**
-            gorm/test/gorm_plugin_test.yaml: gorm/**
+            # gorm/test/gorm_plugin_test.yaml: gorm/**
 
   PluginsTest:
     name: Plugin
