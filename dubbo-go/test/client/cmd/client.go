@@ -22,14 +22,8 @@ import (
 	"net/http"
 	"time"
 
-	_ "dubbo.apache.org/dubbo-go/v3/cluster/cluster_impl"
-	_ "dubbo.apache.org/dubbo-go/v3/cluster/loadbalance"
-	_ "dubbo.apache.org/dubbo-go/v3/common/proxy/proxy_factory"
 	"dubbo.apache.org/dubbo-go/v3/config"
-	_ "dubbo.apache.org/dubbo-go/v3/filter/filter_impl"
-	_ "dubbo.apache.org/dubbo-go/v3/protocol/dubbo"
-	_ "dubbo.apache.org/dubbo-go/v3/registry/protocol"
-	_ "dubbo.apache.org/dubbo-go/v3/registry/zookeeper"
+	_ "dubbo.apache.org/dubbo-go/v3/imports"
 	"github.com/SkyAPM/go2sky"
 	"github.com/SkyAPM/go2sky/reporter"
 	hessian "github.com/apache/dubbo-go-hessian2"
@@ -51,10 +45,13 @@ const (
 	serviceName = "dubbo-go-client"
 )
 
-// need to setup environment variable "CONF_CONSUMER_FILE_PATH" to "conf/client.yml" before run
+// need to setup environment variable "DUBBO_GO_CONFIG_PATH" to "conf/client.yml" before run
 func main() {
 	hessian.RegisterPOJO(&pkg.User{})
-	config.Load()
+	err := config.Load()
+	if err != nil {
+		log.Fatalf("load config error: %v \n", err)
+	}
 	time.Sleep(3 * time.Second)
 
 	report, err := reporter.NewGRPCReporter(oap)
@@ -78,8 +75,9 @@ func main() {
 	route := http.NewServeMux()
 
 	route.HandleFunc("/hello", func(writer http.ResponseWriter, req *http.Request) {
-		user := &pkg.User{}
-		err1 := userProvider.GetUser(req.Context(), []interface{}{"A001"}, user)
+		var user *pkg.User
+		var err1 error
+		user, err1 = userProvider.GetUser(req.Context(), []interface{}{"A001"})
 		if err1 != nil {
 			writer.WriteHeader(http.StatusInternalServerError)
 			_, _ = writer.Write([]byte(fmt.Sprintf("call service err %v \n", err1)))
