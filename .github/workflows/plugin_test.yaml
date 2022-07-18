@@ -33,7 +33,7 @@ jobs:
         id: filter
         with:
           filters: |
-            e2e_file path: plugin path 
+            # e2e_file path: plugin path 
             gear/test/gear_plugin_test.yaml: gear/**
             gin/v2/test/gin_plugin_test.yaml: gin/v2/**
             gin/v3/test/gin_plugin_test.yaml: gin/v3/**
