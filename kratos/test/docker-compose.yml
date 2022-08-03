@@ -36,8 +36,6 @@ services:
     ports:
       - 8000
       - 9000
-    environment:
-      GOPROXY: "https://goproxy.cn"
     healthcheck:
       test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8000"]
       interval: 5s
@@ -57,8 +55,6 @@ services:
       - 8080
     networks:
       - e2e
-    environment:
-      GOPROXY: "https://goproxy.cn"
     healthcheck:
       test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/8000"]
       interval: 5s

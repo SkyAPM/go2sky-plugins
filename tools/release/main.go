@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	go2sky = "github.com/SkyAPM/go2sky@v1.4.1"
+	go2sky = "github.com/SkyAPM/go2sky@v1.5.0"
 )
 
 func main() {
