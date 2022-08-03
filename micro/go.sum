@@ -41,8 +41,8 @@ github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAE
 github.com/OpenDNS/vegadns2client v0.0.0-20180418235048-a3fa4a771d87/go.mod h1:iGLljf5n9GjT6kc0HBvyI1nOKnGQbNB66VzSNbK5iks=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
-github.com/SkyAPM/go2sky v1.4.1 h1:FV0jUB8UeC5CW0Z12j8xgrK0LoVV85Z92ShQU0G3Xfo=
-github.com/SkyAPM/go2sky v1.4.1/go.mod h1:cebzbFtq5oc9VrgJy0Sv7oePj/TjIlXPdj2ntHdCXd0=
+github.com/SkyAPM/go2sky v1.5.0 h1:TzhKL9IyVCegCUdcqRI7R7g+rQCYNnF6QAzp6IhDy08=
+github.com/SkyAPM/go2sky v1.5.0/go.mod h1:cebzbFtq5oc9VrgJy0Sv7oePj/TjIlXPdj2ntHdCXd0=
 github.com/akamai/AkamaiOPEN-edgegrid-golang v0.9.0/go.mod h1:zpDJeKyp9ScW4NNrbdr+Eyxvry3ilGPewKoXw3XGN1k=
 github.com/alcortesm/tgz v0.0.0-20161220082320-9c5fe88206d7 h1:uSoVVbwJiQipAclBbw+8quDsfcvFjOpI5iCf4p/cqCs=
 github.com/alcortesm/tgz v0.0.0-20161220082320-9c5fe88206d7/go.mod h1:6zEj6s6u/ghQa61ZWa/C2Aw3RkjiTBOix7dkqa1VLIs=
