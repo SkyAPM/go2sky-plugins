@@ -22,6 +22,7 @@ The plugins of [go2sky](https://github.com/SkyAPM/go2sky)
 1. [sql](sql/README.md)
 1. [dubbo-go](dubbo-go/README.md)
 1. [gorm](gorm/README.md)
+1. [mongodb](mongo/README.md)
 
 ### Log Plugins
 
