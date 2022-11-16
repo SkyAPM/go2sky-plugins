@@ -29,7 +29,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	mongoPlugin "go2sky-plugins/mongo"
+	mongoPlugin "github.com/SkyAPM/go2sky-plugins/mongo"
 )
 
 type testFunc func(ctx context.Context, client *mongo.Client) error

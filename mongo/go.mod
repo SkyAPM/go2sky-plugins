@@ -1,4 +1,4 @@
-module go2sky-plugins/mongo
+module github.com/SkyAPM/go2sky-plugins/mongo
 
 go 1.18
 
