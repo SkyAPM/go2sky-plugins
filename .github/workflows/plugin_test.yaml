@@ -45,6 +45,7 @@ jobs:
             kafkareporter/test/go_kafka_reporter_plugin_test.yaml: kafkareporter/**
             dubbo-go/test/dubbo_go_plugin_test.yaml: dubbo-go/**
             gorm/test/gorm_plugin_test.yaml: gorm/**
+            mongo/test/mongo_plugin_test.yaml: mongo/**
 
   PluginsTest:
     name: Plugin
