@@ -18,6 +18,7 @@ package mongo
 
 import (
 	"context"
+	"sync"
 
 	"github.com/SkyAPM/go2sky"
 	"go.mongodb.org/mongo-driver/bson"
@@ -38,7 +39,7 @@ type Option func(span go2sky.Span, evt *event.CommandStartedEvent)
 
 // Middleware mongo monitor.
 func Middleware(tracer *go2sky.Tracer, peer string, opts ...Option) *event.CommandMonitor {
-	spanMap := make(map[int64]go2sky.Span)
+	spanMap := sync.Map{}
 	apmMonitor := &event.CommandMonitor{
 		Started: func(ctx context.Context, evt *event.CommandStartedEvent) {
 			span, _, err := tracer.CreateLocalSpan(ctx,
@@ -56,16 +57,18 @@ func Middleware(tracer *go2sky.Tracer, peer string, opts ...Option) *event.Comma
 			for _, opt := range opts {
 				opt(span, evt)
 			}
-			spanMap[evt.RequestID] = span
+			spanMap.Store(evt.RequestID, span)
 		},
 		Succeeded: func(ctx context.Context, evt *event.CommandSucceededEvent) {
-			if span, ok := spanMap[evt.RequestID]; ok {
-				span.End()
+			if span, ok := spanMap.Load(evt.RequestID); ok {
+				span.(go2sky.Span).End()
+				spanMap.Delete(evt.RequestID)
 			}
 		},
 		Failed: func(ctx context.Context, evt *event.CommandFailedEvent) {
-			if span, ok := spanMap[evt.RequestID]; ok {
-				span.End()
+			if span, ok := spanMap.Load(evt.RequestID); ok {
+				span.(go2sky.Span).End()
+				spanMap.Delete(evt.RequestID)
 			}
 		},
 	}
