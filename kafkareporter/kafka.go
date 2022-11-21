@@ -85,7 +85,7 @@ func New(addrs []string, opts ...Option) (go2sky.Reporter, error) {
 			}
 		}()
 	}
-
+	go r.readBackMessage()
 	return r, nil
 }
 
@@ -295,6 +295,17 @@ func (r *kafkaReporter) Close() {
 	r.wg.Wait()
 	if err := r.producer.Close(); err != nil {
 		r.logger.Print(err)
+	}
+}
+//循环处理上报信息的结果信息，以实现kafka单次连接多次上报。
+func (r *kafkaReporter) readBackMessage() {
+	for {
+		select {
+		case <-r.producer.Successes():
+		case err := <- r.producer.Errors():
+			r.logger.Fatalf( "kafkaReport readBackMessage error detail is %s",err)
+		default:
+		}
 	}
 }
 
