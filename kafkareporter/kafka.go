@@ -297,7 +297,7 @@ func (r *kafkaReporter) Close() {
 		r.logger.Print(err)
 	}
 }
-//循环处理上报信息的结果信息，以实现kafka单次连接多次上报。
+//The result information of the reported information is processed in a loop to achieve multiple reports in a single kafka connection.
 func (r *kafkaReporter) readBackMessage() {
 	for {
 		select {
