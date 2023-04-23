@@ -4,6 +4,10 @@
 
 The plugins of [go2sky](https://github.com/SkyAPM/go2sky)
 
+## NOTICE, SkyWalking upstream began to build the auto-instrument agent on April 2023
+**This repository are going to be archived and replaced by [the official agent](https://github.com/apache/skywalking-go) once the upstream does the first release.**
+**Please consider immigrating to the better solution.**
+
 ## Plugin Summary
 
 ### Reporter Plugins
