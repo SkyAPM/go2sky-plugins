@@ -1,12 +1,12 @@
-# go2sky-plugins
-
-[![Build](https://github.com/SkyAPM/go2sky-plugins/workflows/Build/badge.svg?branch=master)](https://github.com/SkyAPM/go2sky-plugins/actions?query=branch%3Amaster+event%3Apush+workflow%3ABuild)
-
-The plugins of [go2sky](https://github.com/SkyAPM/go2sky)
+# go2sky-plugins (Archived)
 
 ## NOTICE, SkyWalking upstream began to build the auto-instrument agent on April 2023
 **This repository are going to be archived and replaced by [the official agent](https://github.com/apache/skywalking-go) once the upstream does the first release.**
 **Please consider immigrating to the better solution.**
+
+[![Build](https://github.com/SkyAPM/go2sky-plugins/workflows/Build/badge.svg?branch=master)](https://github.com/SkyAPM/go2sky-plugins/actions?query=branch%3Amaster+event%3Apush+workflow%3ABuild)
+
+The plugins of [go2sky](https://github.com/SkyAPM/go2sky)
 
 ## Plugin Summary
 
